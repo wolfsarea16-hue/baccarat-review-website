@@ -1,0 +1,149 @@
+/* Add at the TOP of WithdrawalHistory.css */
+
+.page-with-sidebar.withdrawal-history-page {
+  position: relative;
+  min-height: 100vh;
+}
+/* Ensure content is above background */
+.page-with-sidebar.withdrawal-history-page .main-content {
+  position: relative;
+  z-index: 2;
+}
+
+.page-with-sidebar.withdrawal-history-page .sidebar {
+  z-index: 10;
+}
+/* Background that extends under sidebar */
+.page-with-sidebar.withdrawal-history-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0F0F0F; /* Your black shade - change as needed */
+  z-index: 0;
+}
+
+
+/* frontend/src/components/WithdrawalHistory.css */
+.withdrawal-history-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.no-withdrawals {
+  background: white;
+  padding: 60px;
+  border-radius: 15px;
+  text-align: center;
+  color: #666;
+}
+
+.withdrawals-list {
+  display: grid;
+  gap: 20px;
+}
+
+.withdrawal-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.withdrawal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.withdrawal-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.status-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-approved {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-completed {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.withdrawal-details {
+  display: grid;
+  gap: 12px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.detail-row label {
+  font-weight: 600;
+  color: #666;
+  min-width: 120px;
+}
+
+.detail-row span {
+  color: #333;
+  text-align: right;
+  flex: 1;
+}
+
+.detail-row.amount span {
+  color: #28a745;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.detail-row.wallet span {
+  font-family: monospace;
+  font-size: 12px;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.detail-row.notes {
+  flex-direction: column;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.detail-row.notes label {
+  margin-bottom: 8px;
+}
+
+.detail-row.notes span {
+  text-align: left;
+  font-style: italic;
+}

@@ -1,0 +1,737 @@
+/* frontend/src/App.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f5f5;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #545b62;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 24px;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - Mobile First Approach
+   ============================================ */
+
+/* Tablet and below (768px) */
+@media (max-width: 768px) {
+  /* Sidebar adjustments */
+  .sidebar.open {
+    width: 200px;
+  }
+  
+  .sidebar-toggle {
+    z-index: 1002;
+  }
+  
+  .main-content {
+    margin-left: 60px;
+    padding: 15px;
+  }
+  
+  /* Home page */
+  .home-content {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .home-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .home-header h1 {
+    font-size: 24px;
+  }
+  
+  /* Review tab */
+  .review-stats {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .review-tab-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  /* Product review */
+  .product-display {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .product-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .tab-buttons {
+    flex-direction: column;
+  }
+  
+  .tab-buttons button {
+    width: 100%;
+  }
+  
+  /* Profile */
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 36px;
+  }
+  
+  .profile-item {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+  
+  /* Withdrawal */
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .balance-amount {
+    font-size: 36px;
+  }
+  
+  /* Admin dashboard */
+  .dashboard-content {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .user-details {
+    max-height: none;
+  }
+  
+  .search-section {
+    flex-direction: column;
+  }
+  
+  .search-section input {
+    width: 100%;
+  }
+  
+  /* History */
+  .history-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .review-card-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}
+
+/* Mobile phones (480px and below) */
+@media (max-width: 480px) {
+  /* Sidebar - auto collapse on mobile */
+  .sidebar.open {
+    position: fixed;
+    width: 200px;
+    z-index: 1001;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .sidebar.closed {
+    width: 0;
+    overflow: hidden;
+  }
+  
+  .main-content {
+    margin-left: 0 !important;
+    padding: 10px;
+  }
+  
+  .sidebar-toggle {
+    left: 10px;
+    background: #667eea;
+    padding: 12px 8px;
+  }
+  
+  /* Typography adjustments */
+  h1 {
+    font-size: 20px !important;
+  }
+  
+  h2 {
+    font-size: 18px !important;
+  }
+  
+  h3 {
+    font-size: 16px !important;
+  }
+  
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 12px 16px;
+  }
+  
+  .btn-large {
+    font-size: 16px;
+    padding: 14px 20px;
+  }
+  
+  /* Cards and containers */
+  .menu-card,
+  .stat-card,
+  .info-card,
+  .profile-card,
+  .withdrawal-form-card,
+  .withdrawal-details-card {
+    padding: 20px;
+  }
+  
+  /* Balance display */
+  .balance {
+    font-size: 24px !important;
+  }
+  
+  .balance-amount {
+    font-size: 28px !important;
+  }
+  
+  /* Product review specifics */
+  .product-image img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .product-details p {
+    font-size: 14px;
+  }
+  
+  .tab-content {
+    min-height: 200px;
+  }
+  
+  .review-form textarea {
+    font-size: 14px;
+  }
+  
+  /* Admin dashboard */
+  .admin-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .user-row {
+    padding: 12px;
+  }
+  
+  .user-info {
+    font-size: 12px;
+  }
+  
+  .detail-section {
+    margin-bottom: 20px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Wallet address display */
+  .wallet-address {
+    font-size: 10px;
+    word-break: break-all;
+  }
+  
+  /* Review history */
+  .review-card {
+    padding: 15px;
+  }
+  
+  /* Withdrawal history */
+  .withdrawal-card {
+    padding: 15px;
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+  
+  .detail-row span {
+    text-align: left;
+  }
+
+  /* Home container on mobile */
+  .home-container {
+    padding: 15px !important;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .sidebar.open {
+    width: 180px;
+  }
+  
+  .main-content {
+    margin-left: 50px;
+  }
+}
+
+/* Large screens (1920px and above) */
+@media (min-width: 1920px) {
+  .home-container,
+  .review-tab-container,
+  .product-review-container,
+  .history-container,
+  .profile-container,
+  .withdrawal-container,
+  .withdrawal-history-container {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  
+  .admin-dashboard {
+    max-width: 1800px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  .btn,
+  .sidebar-item,
+  .menu-card,
+  .tab-buttons button {
+    min-height: 44px;
+  }
+  
+  /* Prevent text selection on buttons */
+  button,
+  .menu-card {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  
+  /* Smooth scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Print styles */
+@media print {
+  .sidebar,
+  .sidebar-toggle,
+  .btn,
+  button {
+    display: none !important;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .page-with-sidebar {
+    display: block;
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+@media (max-width: 768px) {
+  /* Sidebar adjustments */
+  .sidebar.open {
+    width: 200px;
+  }
+  
+  .sidebar-toggle {
+    z-index: 1002;
+  }
+  
+  .main-content {
+    margin-left: 60px;
+    padding: 15px;
+  }
+  
+  /* Home page */
+  .home-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .home-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .home-header h1 {
+    font-size: 24px;
+  }
+  
+  /* Review tab */
+  .review-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .review-tab-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  /* Product review */
+  .product-display {
+    grid-template-columns: 1fr;
+  }
+  
+  .product-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .tab-buttons {
+    flex-direction: column;
+  }
+  
+  .tab-buttons button {
+    width: 100%;
+  }
+  
+  /* Profile */
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 36px;
+  }
+  
+  .profile-item {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+  
+  /* Withdrawal */
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .balance-amount {
+    font-size: 36px;
+  }
+  
+  /* Admin dashboard */
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .user-details {
+    max-height: none;
+  }
+  
+  .search-section {
+    flex-direction: column;
+  }
+  
+  .search-section input {
+    width: 100%;
+  }
+  
+  /* History */
+  .history-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .review-card-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}
+
+/* Mobile phones (480px and below) */
+@media (max-width: 480px) {
+  /* Sidebar - auto collapse on mobile */
+  .sidebar.open {
+    position: fixed;
+    width: 200px;
+    z-index: 1001;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .sidebar.closed {
+    width: 0;
+    overflow: hidden;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    padding: 10px;
+  }
+  
+  .sidebar-toggle {
+    left: 10px;
+    background: #667eea;
+    padding: 12px 8px;
+  }
+  
+  /* Typography adjustments */
+  h1 {
+    font-size: 24px;
+  }
+  
+  h2 {
+    font-size: 20px;
+  }
+  
+  h3 {
+    font-size: 18px;
+  }
+  
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 12px 16px;
+  }
+  
+  .btn-large {
+    font-size: 16px;
+    padding: 14px 20px;
+  }
+  
+  /* Cards and containers */
+  .menu-card,
+  .stat-card,
+  .info-card,
+  .profile-card,
+  .withdrawal-form-card,
+  .withdrawal-details-card {
+    padding: 20px;
+  }
+  
+  /* Balance display */
+  .balance {
+    font-size: 28px;
+  }
+  
+  .balance-amount {
+    font-size: 28px;
+  }
+  
+  /* Product review specifics */
+  .product-image img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .product-details p {
+    font-size: 14px;
+  }
+  
+  .tab-content {
+    min-height: 200px;
+  }
+  
+  .review-form textarea {
+    font-size: 14px;
+  }
+  
+  /* Admin dashboard */
+  .admin-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .user-row {
+    padding: 12px;
+  }
+  
+  .user-info {
+    font-size: 12px;
+  }
+  
+  .detail-section {
+    margin-bottom: 20px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Wallet address display */
+  .wallet-address {
+    font-size: 10px;
+    word-break: break-all;
+  }
+  
+  /* Review history */
+  .review-card {
+    padding: 15px;
+  }
+  
+  /* Withdrawal history */
+  .withdrawal-card {
+    padding: 15px;
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+  
+  .detail-row span {
+    text-align: left;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .sidebar.open {
+    width: 180px;
+  }
+  
+  .main-content {
+    margin-left: 50px;
+  }
+}
+
+/* Large screens (1920px and above) */
+@media (min-width: 1920px) {
+  .home-container,
+  .review-tab-container,
+  .product-review-container,
+  .history-container,
+  .profile-container,
+  .withdrawal-container,
+  .withdrawal-history-container {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  
+  .admin-dashboard {
+    max-width: 1800px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  .btn,
+  .sidebar-item,
+  .menu-card,
+  .tab-buttons button {
+    min-height: 44px;
+  }
+  
+  /* Prevent text selection on buttons */
+  button,
+  .menu-card {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  
+  /* Smooth scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Print styles */
+@media print {
+  .sidebar,
+  .sidebar-toggle,
+  .btn,
+  button {
+    display: none !important;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .page-with-sidebar {
+    display: block;
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  /* Add dark mode styles if desired */
+  /* This is optional and can be implemented later */
+}

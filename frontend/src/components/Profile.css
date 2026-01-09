@@ -1,0 +1,130 @@
+/* ========================================
+   PROFILE PAGE - Profile.css
+   ======================================== */
+
+/* Add at the TOP of Profile.css */
+
+.page-with-sidebar.profile-page {
+  position: relative;
+  min-height: 100vh;
+}
+/* Ensure content is above background */
+.page-with-sidebar.profile-page .main-content {
+  position: relative;
+  z-index: 2;
+}
+
+.page-with-sidebar.profile-page .sidebar {
+  z-index: 10;
+}
+
+/* Background that extends under sidebar */
+.page-with-sidebar.profile-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0F0F0F; /* Your black shade - change as needed */
+  z-index: 0;
+}
+
+
+/* frontend/src/components/Profile.css */
+.page-with-sidebar {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 250px;
+  padding: 30px;
+  transition: margin-left 0.3s;
+  background: #0F0F0F;
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profile-card {
+  background: #1A1A1A;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.profile-header {
+  background: linear-gradient(135deg, #111111 0%, #B11226 100%);
+  color: #EFEFEF;
+  padding: 40px;
+  text-align: center;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: white;
+  color: #667eea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: bold;
+  margin: 0 auto 20px;
+}
+
+.profile-header h2 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.profile-details {
+  padding: 30px;
+}
+
+.profile-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-item:last-child {
+  border-bottom: none;
+}
+
+.profile-item label {
+  font-weight: 600;
+  color: #8E8E8E;
+}
+
+.profile-item span {
+  color: #333;
+}
+
+.profile-item .balance {
+  color: #28a745;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.profile-item .commission {
+  color: #667eea;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.status-active {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.status-frozen {
+  color: #dc3545;
+  font-weight: bold;
+}

@@ -1,0 +1,179 @@
+/* frontend/src/components/Landing.css */
+
+.landing-page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== BACKGROUND VIDEO ===== */
+.landing-bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* ===== OVERLAY ===== */
+.landing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: -1;
+}
+
+/* ===== CONTENT ===== */
+.landing-container {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 600px;
+  padding: 40px;
+  padding-top: 80px; /* Push content higher up */
+  animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-logo {
+  margin-bottom: 10px;
+  animation: fadeIn 1.5s ease-in;
+}
+
+.landing-logo img {
+  max-width: 500px; /* ADJUST THIS VALUE - Increased from 400px to 500px */
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+}
+
+.landing-title {
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 5px; /* Reduced to bring title closer to logo */
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.landing-subtitle {
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 150px; /* ADJUST THIS VALUE - Increased from 80px to 150px to push buttons lower */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.landing-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-large {
+  padding: 15px 50px;
+  font-size: 18px;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #111111 0%, #B11226 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 8px 20px rgba(177, 18, 38, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(177, 18, 38, 0.6);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #111111 0%, #B11226 100%);
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(177, 18, 38, 0.5);
+  background: linear-gradient(135deg, #B11226 0%, #111111 100%);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .landing-container {
+    padding-top: 60px; /* Move content slightly higher on mobile */
+  }
+
+  .landing-logo img {
+    max-width: 200px;
+  }
+
+  .landing-title {
+    font-size: 36px;
+  }
+
+  .landing-subtitle {
+    font-size: 18px;
+    margin-bottom: 200px; /* Push buttons much lower on mobile */
+  }
+
+  .btn-large {
+    min-width: 150px;
+    padding: 12px 40px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-container {
+    padding: 20px;
+    padding-top: 50px; /* Move content higher on small mobile */
+  }
+
+  .landing-logo img {
+    max-width: 150px;
+  }
+
+  .landing-title {
+    font-size: 28px;
+  }
+
+  .landing-subtitle {
+    font-size: 16px;
+    margin-bottom: 250px; /* Push buttons even lower on small mobile */
+  }
+
+  .landing-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn-large {
+    width: 100%;
+    min-width: unset;
+  }
+}

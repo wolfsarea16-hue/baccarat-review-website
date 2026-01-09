@@ -1,0 +1,306 @@
+/* frontend/src/components/Sidebar.css */
+
+/* ===== SIDEBAR TOGGLE BUTTON (Always Transparent) ===== */
+.sidebar-toggle {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  z-index: 1001;
+  background: transparent !important;
+  color: white;
+  border: none !important;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 28px;
+  transition: all 0.3s;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.sidebar-toggle:hover {
+  transform: scale(1.1);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+  background: transparent !important;
+}
+
+.sidebar-toggle:focus {
+  outline: none;
+  background: transparent !important;
+}
+
+.sidebar-toggle:active {
+  background: transparent !important;
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background: linear-gradient(180deg, #111111 0%, #B11226 100%);
+  color: white;
+  transition: transform 0.3s, width 0.3s;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  width: 250px;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar.closed {
+  transform: translateX(-100%);
+}
+
+/* Overlay when sidebar is open */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  cursor: pointer;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Ensure sidebar is above overlay */
+.sidebar {
+  z-index: 1000 !important;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-logo {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.sidebar-logo img {
+  max-width: 120px;
+  height: auto;
+  transition: max-width 0.3s;
+}
+
+.sidebar.closed .sidebar-logo {
+  margin-bottom: 0;
+}
+
+.sidebar.closed .sidebar-logo img {
+  max-width: 40px;
+}
+
+.sidebar-username {
+  margin: 10px 0 0 0;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 0;
+  overflow-y: auto;
+}
+
+.sidebar-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 16px;
+  text-align: left;
+}
+
+.sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-left: 4px solid white;
+}
+
+.sidebar-icon {
+  font-size: 24px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.sidebar-label {
+  white-space: nowrap;
+}
+
+.sidebar.closed .sidebar-label,
+.sidebar.closed .sidebar-username {
+  display: none;
+}
+
+.sidebar.closed .sidebar-item {
+  justify-content: center;
+  padding: 15px 0;
+}
+
+.sidebar-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 0;
+}
+
+.sidebar-item.logout {
+  color: #ffcccb;
+}
+
+.sidebar-item.logout:hover {
+  background: rgba(255, 0, 0, 0.2);
+}
+
+/* Adjust main content area */
+.with-sidebar {
+  margin-left: 0;
+  transition: margin-left 0.3s;
+}
+
+.main-content {
+  margin-left: 0;
+  transition: margin-left 0.3s;
+}
+
+/* ===== PREVENT CONTENT OVERLAP ON MOBILE ===== */
+/* This prevents the sidebar button from overlapping page content */
+@media (max-width: 768px) {
+  /* Add padding to all main content on tablets */
+  .main-content {
+    padding-top: 70px !important;
+  }
+
+  /* Specific page containers also need padding */
+  .home-container,
+  .profile-container,
+  .review-tab-container,
+  .product-review-container,
+  .history-container,
+  .withdrawal-container,
+  .withdrawal-history-container,
+  .certification-container {
+    padding-top: 20px !important;
+  }
+}
+
+/* ===== MEDIA QUERIES FOR MOBILE ===== */
+
+/* Tablets and below */
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    background: transparent !important;
+    border: none !important;
+    top: 15px;
+    left: 15px;
+    font-size: 26px;
+    padding: 8px;
+  }
+  
+  .sidebar-toggle:hover,
+  .sidebar-toggle:focus,
+  .sidebar-toggle:active {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .sidebar {
+    width: 250px;
+  }
+
+  .sidebar-logo img {
+    max-width: 100px;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  /* More padding on phones */
+  .main-content {
+    padding-top: 60px !important;
+  }
+
+  .sidebar-toggle {
+    background: transparent !important;
+    border: none !important;
+    top: 10px;
+    left: 10px;
+    font-size: 24px;
+    padding: 6px;
+  }
+  
+  .sidebar-toggle:hover,
+  .sidebar-toggle:focus,
+  .sidebar-toggle:active {
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .sidebar {
+    width: 220px;
+  }
+
+  .sidebar-logo img {
+    max-width: 80px;
+  }
+
+  .sidebar-item {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+
+  .sidebar-icon {
+    font-size: 20px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 320px) {
+  .sidebar-toggle {
+    background: transparent !important;
+    border: none !important;
+    top: 8px;
+    left: 8px;
+    font-size: 22px;
+  }
+
+  .sidebar {
+    width: 200px;
+  }
+
+  .sidebar-logo img {
+    max-width: 70px;
+  }
+}
