@@ -1,7 +1,7 @@
 // frontend/src/services/api.js
 import axios from 'axios';
 
-const API_URL = "https://myrtis-reparable-heliotypically.ngrok-free.dev";
+const API_URL = 'https://myrtis-reparable-heliotypically.ngrok-free.dev/api';
 
 const api = axios.create({
   baseURL: API_URL,
