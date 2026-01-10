@@ -1,7 +1,7 @@
 // frontend/src/services/api.js
 import axios from 'axios';
 
-const API_URL = "https://baccarat-review-website-production.up.railway.app";
+const API_URL = " https://myrtis-reparable-heliotypically.ngrok-free.dev";
 
 const api = axios.create({
   baseURL: API_URL,
