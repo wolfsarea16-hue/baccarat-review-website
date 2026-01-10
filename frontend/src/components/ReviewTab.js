@@ -22,14 +22,14 @@ function ReviewTab() {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching status:', err);
+      setError('Failed to load review status');
+      setLoading(false);
+      
       if (err.response?.status === 401) {
         setTimeout(() => {
           localStorage.clear();
           navigate('/login');
         }, 1000);
-      } else {
-        setError('Failed to load review status');
-        setLoading(false);
       }
     }
   };
@@ -58,7 +58,25 @@ function ReviewTab() {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="page-with-sidebar review-tab-page">
+        <Sidebar />
+        <div className="main-content">
+          <div className="loading">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !status) {
+    return (
+      <div className="page-with-sidebar review-tab-page">
+        <Sidebar />
+        <div className="main-content">
+          <div className="error-message">{error}</div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -78,19 +96,21 @@ function ReviewTab() {
           <div className="review-stats">
             <div className="stat-card">
               <h3>Account Balance</h3>
-              <p className="stat-value">${status?.accountBalance.toFixed(2)}</p>
+              <p className="stat-value">
+                ${status?.accountBalance ? status.accountBalance.toFixed(2) : '0.00'}
+              </p>
             </div>
 
             <div className="stat-card">
               <h3>Reviews Completed</h3>
               <p className="stat-value">
-                {status?.reviewsCompleted} / {status?.totalReviewsAssigned}
+                {status?.reviewsCompleted || 0} / {status?.totalReviewsAssigned || 0}
               </p>
             </div>
 
             <div className="stat-card">
               <h3>Reviews Remaining</h3>
-              <p className="stat-value">{status?.reviewsRemaining}</p>
+              <p className="stat-value">{status?.reviewsRemaining || 0}</p>
             </div>
           </div>
 
@@ -98,7 +118,7 @@ function ReviewTab() {
             {status?.accountBalance < 0 ? (
               <div className="error-message" style={{textAlign: 'center', padding: '20px'}}>
                 <h2>⚠️ Negative Balance</h2>
-                <p>Your account balance is negative: ${status?.accountBalance.toFixed(2)}</p>
+                <p>Your account balance is negative: ${status?.accountBalance?.toFixed(2) || '0.00'}</p>
                 <p>Please contact an administrator to add balance before you can continue reviewing.</p>
               </div>
             ) : status?.reviewsRemaining > 0 ? (

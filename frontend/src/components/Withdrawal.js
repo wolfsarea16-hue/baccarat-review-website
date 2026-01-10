@@ -36,7 +36,15 @@ function Withdrawal() {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching data:', err);
+      setError('Failed to load withdrawal information');
       setLoading(false);
+      
+      if (err.response?.status === 401) {
+        setTimeout(() => {
+          localStorage.clear();
+          navigate('/login');
+        }, 1000);
+      }
     }
   };
 
@@ -75,7 +83,7 @@ function Withdrawal() {
   };
 
   const handleSubmitWithdrawal = async () => {
-    if (!user.withdrawalEnabled) {
+    if (!user?.withdrawalEnabled) {
       setError('Withdrawal is not enabled for your account. Please contact admin.');
       return;
     }
@@ -104,7 +112,25 @@ function Withdrawal() {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="page-with-sidebar withdrawal-page">
+        <Sidebar />
+        <div className="main-content">
+          <div className="loading">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !user) {
+    return (
+      <div className="page-with-sidebar withdrawal-page">
+        <Sidebar />
+        <div className="main-content">
+          <div className="error-message">{error}</div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -119,11 +145,13 @@ function Withdrawal() {
 
           <div className="withdrawal-balance-card">
             <h3>Available Balance</h3>
-            <p className="balance-amount">${user?.accountBalance.toFixed(2)}</p>
-            <p className="review-progress">
-              Reviews Completed: {user?.reviewsCompleted} / {user?.totalReviewsAssigned}
+            <p className="balance-amount">
+              ${user?.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}
             </p>
-            {user?.reviewsCompleted < user?.totalReviewsAssigned && (
+            <p className="review-progress">
+              Reviews Completed: {user?.reviewsCompleted || 0} / {user?.totalReviewsAssigned || 0}
+            </p>
+            {user && user.reviewsCompleted < user.totalReviewsAssigned && (
               <p className="warning-text">
                 ⚠️ Complete all reviews before withdrawing
               </p>
@@ -243,17 +271,17 @@ function Withdrawal() {
                 disabled={
                   submitting ||
                   !user?.withdrawalEnabled ||
-                  user?.reviewsCompleted < user?.totalReviewsAssigned ||
-                  user?.accountBalance <= 0
+                  (user?.reviewsCompleted || 0) < (user?.totalReviewsAssigned || 0) ||
+                  (user?.accountBalance || 0) <= 0
                 }
               >
                 {submitting
                   ? 'Processing...'
                   : !user?.withdrawalEnabled
                   ? '🔒 Withdrawal Disabled (Contact Admin)'
-                  : user?.reviewsCompleted < user?.totalReviewsAssigned
+                  : (user?.reviewsCompleted || 0) < (user?.totalReviewsAssigned || 0)
                   ? '🔒 Complete All Reviews First'
-                  : user?.accountBalance <= 0
+                  : (user?.accountBalance || 0) <= 0
                   ? '🔒 Insufficient Balance'
                   : 'Submit Withdrawal Request'}
               </button>

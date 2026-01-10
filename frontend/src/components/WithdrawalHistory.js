@@ -1,12 +1,15 @@
 // frontend/src/components/WithdrawalHistory.js
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { withdrawalAPI } from '../services/api';
 import Sidebar from './Sidebar';
 import './WithdrawalHistory.css';
 
 function WithdrawalHistory() {
+  const navigate = useNavigate();
   const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchHistory();
@@ -15,11 +18,19 @@ function WithdrawalHistory() {
   const fetchHistory = async () => {
     try {
       const response = await withdrawalAPI.getHistory();
-      setWithdrawals(response.data);
+      setWithdrawals(response.data || []);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching withdrawal history:', err);
+      setError('Failed to load withdrawal history');
       setLoading(false);
+      
+      if (err.response?.status === 401) {
+        setTimeout(() => {
+          localStorage.clear();
+          navigate('/login');
+        }, 1000);
+      }
     }
   };
 
@@ -34,7 +45,14 @@ function WithdrawalHistory() {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return (
+      <div className="page-with-sidebar withdrawal-history-page">
+        <Sidebar />
+        <div className="main-content">
+          <div className="loading">Loading...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -43,6 +61,8 @@ function WithdrawalHistory() {
       <div className="main-content">
         <div className="withdrawal-history-container">
           <h1>Withdrawal History</h1>
+
+          {error && <div className="error-message">{error}</div>}
 
           {withdrawals.length === 0 ? (
             <div className="no-withdrawals">
@@ -55,34 +75,41 @@ function WithdrawalHistory() {
                   <div className="withdrawal-header">
                     <h3>Withdrawal Request</h3>
                     <span className={`status-badge ${getStatusBadgeClass(withdrawal.status)}`}>
-                      {withdrawal.status.toUpperCase()}
+                      {withdrawal.status ? withdrawal.status.toUpperCase() : 'UNKNOWN'}
                     </span>
                   </div>
 
                   <div className="withdrawal-details">
                     <div className="detail-row">
                       <label>Amount:</label>
-                      <span className="amount">${withdrawal.amount.toFixed(2)}</span>
+                      <span className="amount">
+                        ${withdrawal.amount ? withdrawal.amount.toFixed(2) : '0.00'}
+                      </span>
                     </div>
 
                     <div className="detail-row">
                       <label>Wallet Address:</label>
-                      <span className="wallet">{withdrawal.walletAddress}</span>
+                      <span className="wallet">{withdrawal.walletAddress || 'N/A'}</span>
                     </div>
 
                     <div className="detail-row">
                       <label>Currency:</label>
-                      <span>{withdrawal.currency}</span>
+                      <span>{withdrawal.currency || 'N/A'}</span>
                     </div>
 
                     <div className="detail-row">
                       <label>Network:</label>
-                      <span>{withdrawal.network}</span>
+                      <span>{withdrawal.network || 'N/A'}</span>
                     </div>
 
                     <div className="detail-row">
                       <label>Requested:</label>
-                      <span>{new Date(withdrawal.requestedAt).toLocaleString()}</span>
+                      <span>
+                        {withdrawal.requestedAt 
+                          ? new Date(withdrawal.requestedAt).toLocaleString()
+                          : 'N/A'
+                        }
+                      </span>
                     </div>
 
                     {withdrawal.processedAt && (

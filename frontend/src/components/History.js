@@ -9,6 +9,7 @@ function History() {
   const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchHistory();
@@ -18,15 +19,30 @@ function History() {
     try {
       const response = await reviewAPI.getHistory();
       setReviews(response.data || []);
+      setLoading(false);
     } catch (err) {
       console.error('Error fetching history:', err);
-    } finally {
+      setError('Failed to load review history');
       setLoading(false);
+      
+      if (err.response?.status === 401) {
+        setTimeout(() => {
+          localStorage.clear();
+          navigate('/login');
+        }, 1000);
+      }
     }
   };
 
   if (loading) {
-    return <div className="loading">Loading history...</div>;
+    return (
+      <div className="page-with-sidebar history-page">
+        <Sidebar />
+        <div className="main-content">
+          <div className="loading">Loading history...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -46,6 +62,8 @@ function History() {
             <h1>Review History</h1>
           </div>
 
+          {error && <div className="error-message">{error}</div>}
+
           {reviews.length === 0 ? (
             <div className="no-reviews">
               <p>No reviews yet. Start reviewing products to see your history!</p>
@@ -64,16 +82,16 @@ function History() {
                   <div className="review-card-body">
                     <p>
                       <span style={{ color: "#D4AF37" }}><strong>Price:</strong></span> $
-                      {(review.productPrice ?? 0).toFixed(2)}
+                      {review.productPrice ? review.productPrice.toFixed(2) : '0.00'}
                     </p>
 
                     <p>
                       <strong>Commission:</strong> $
-                      {(review.commission ?? 0).toFixed(2)}
+                      {review.commission ? review.commission.toFixed(2) : '0.00'}
                     </p>
 
                     <p>
-                      <strong>Code:</strong> {review.uniqueCode}
+                      <strong>Code:</strong> {review.uniqueCode || 'N/A'}
                     </p>
 
                     {review.isSpecial && (
@@ -88,13 +106,11 @@ function History() {
                     )}
 
                     <p className="review-date">
-                      {review.status === 'completed'
-                        ? `Completed: ${new Date(
-                            review.completedAt
-                          ).toLocaleDateString()}`
-                        : `Started: ${new Date(
-                            review.createdAt
-                          ).toLocaleDateString()}`
+                      {review.status === 'completed' && review.completedAt
+                        ? `Completed: ${new Date(review.completedAt).toLocaleDateString()}`
+                        : review.createdAt
+                        ? `Started: ${new Date(review.createdAt).toLocaleDateString()}`
+                        : 'Date unknown'
                       }
                     </p>
                   </div>
