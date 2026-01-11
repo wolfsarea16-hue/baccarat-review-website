@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
-import logo from '../assets/baccarat-logo.svg';
 import './Admin.css';
 
 function AdminLogin() {
@@ -27,10 +26,10 @@ function AdminLogin() {
       const response = await authAPI.adminLogin(formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', 'admin');
+      localStorage.setItem('username', response.data.username || 'admin');
       navigate('/admin/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
-    } finally {
       setLoading(false);
     }
   };
@@ -39,7 +38,7 @@ function AdminLogin() {
     <div className="admin-login-container">
       <div className="admin-login-box">
         <div className="admin-logo">
-          <img src={logo} alt="Logo" />
+          <img src="/baccarat-logo.svg" alt="Logo" />
         </div>
         <h2>Admin Login</h2>
         {error && <div className="error-message">{error}</div>}
