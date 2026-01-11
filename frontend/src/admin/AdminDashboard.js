@@ -12,31 +12,38 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load data in parallel for speed
-    Promise.all([
-      adminAPI.getAllUsers().catch(err => {
-        console.error('Users fetch failed:', err);
-        return { data: [] };
-      }),
-      adminAPI.getAllProducts().catch(err => {
-        console.error('Products fetch failed:', err);
-        return { data: [] };
-      })
-    ]).then(([usersRes, productsRes]) => {
-      // Ensure we have arrays
-      const usersData = Array.isArray(usersRes.data) ? usersRes.data : [];
-      const productsData = Array.isArray(productsRes.data) ? productsRes.data : [];
-      
-      setUsers(usersData);
-      setProducts(productsData);
-      setLoading(false);
-    }).catch(err => {
-      console.error('Critical error:', err);
-      setUsers([]);
-      setProducts([]);
-      setLoading(false);
-    });
-  }, []);
+  // Load data in parallel for speed
+  Promise.all([
+    adminAPI.getAllUsers().catch(err => {
+      console.error('Users fetch failed:', err);
+      return { data: [] };
+    }),
+    adminAPI.getAllProducts().catch(err => {
+      console.error('Products fetch failed:', err);
+      return { data: [] };
+    })
+  ]).then(([usersRes, productsRes]) => {
+    // ADD THESE CONSOLE LOGS
+    console.log('Users Response:', usersRes);
+    console.log('Users Data:', usersRes.data);
+    console.log('Is Array?', Array.isArray(usersRes.data));
+    
+    // Ensure we have arrays
+    const usersData = Array.isArray(usersRes.data) ? usersRes.data : [];
+    const productsData = Array.isArray(productsRes.data) ? productsRes.data : [];
+    
+    console.log('Final users array:', usersData);
+    
+    setUsers(usersData);
+    setProducts(productsData);
+    setLoading(false);
+  }).catch(err => {
+    console.error('Critical error:', err);
+    setUsers([]);
+    setProducts([]);
+    setLoading(false);
+  });
+}, []);
 
   const handleLogout = () => {
     localStorage.clear();
