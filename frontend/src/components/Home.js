@@ -72,6 +72,7 @@ function Home() {
           loop
           muted
           playsInline
+          preload="metadata"
         />
 
         {/* Overlay */}

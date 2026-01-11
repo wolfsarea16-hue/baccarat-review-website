@@ -25,7 +25,12 @@ function Certification() {
         <div className="certification-container">
           {/* Header with Logo */}
           <div className="certification-header">
-            <img src={logo} alt="Logo" className="certification-logo" />
+            <img 
+              src={logo} 
+              alt="Logo" 
+              className="certification-logo"
+              loading="lazy"
+            />
             <h1>Certification</h1>
           </div>
 
@@ -38,6 +43,7 @@ function Certification() {
               onClick={openModal}
               onContextMenu={handleContextMenu}
               style={{ cursor: 'pointer' }}
+              loading="lazy"
             />
             <p className="click-hint">Click to view full size</p>
           </div>
