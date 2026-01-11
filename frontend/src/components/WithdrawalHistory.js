@@ -18,10 +18,21 @@ function WithdrawalHistory() {
   const fetchHistory = async () => {
     try {
       const response = await withdrawalAPI.getHistory();
-      setWithdrawals(response.data || []);
+      const data = response.data;
+      
+      // Make sure we have an array
+      if (Array.isArray(data)) {
+        setWithdrawals(data);
+      } else if (data && Array.isArray(data.withdrawals)) {
+        setWithdrawals(data.withdrawals);
+      } else {
+        setWithdrawals([]);
+      }
+      
       setLoading(false);
     } catch (err) {
       console.error('Error fetching withdrawal history:', err);
+      setWithdrawals([]);
       setError('Failed to load withdrawal history');
       setLoading(false);
       

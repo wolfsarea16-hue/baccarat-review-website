@@ -18,10 +18,21 @@ function History() {
   const fetchHistory = async () => {
     try {
       const response = await reviewAPI.getHistory();
-      setReviews(response.data || []);
+      const data = response.data;
+      
+      // Make sure we have an array
+      if (Array.isArray(data)) {
+        setReviews(data);
+      } else if (data && Array.isArray(data.reviews)) {
+        setReviews(data.reviews);
+      } else {
+        setReviews([]);
+      }
+      
       setLoading(false);
     } catch (err) {
       console.error('Error fetching history:', err);
+      setReviews([]);
       setError('Failed to load review history');
       setLoading(false);
       
