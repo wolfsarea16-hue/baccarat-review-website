@@ -6,7 +6,8 @@ const API_URL = 'https://myrtis-reparable-heliotypically.ngrok-free.dev/api';
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true'  // ← THIS BYPASSES THE NGROK WARNING!
   }
 });
 
@@ -85,7 +86,7 @@ export const adminAPI = {
 
 // Withdrawal API
 export const withdrawalAPI = {
-  getDetails: () => api.get('/withdrawal/details'), // Changed from getInfo to getDetails
+  getDetails: () => api.get('/withdrawal/details'),
   setDetails: (data) => api.post('/withdrawal/set-details', data),
   submitRequest: () => api.post('/withdrawal/request'),
   getHistory: () => api.get('/withdrawal/history')
