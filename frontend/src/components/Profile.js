@@ -1,16 +1,15 @@
-// frontend/src/components/Home.js
+// frontend/src/components/Profile.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../services/api';
 import Sidebar from './Sidebar';
-import './Home.css';
+import './Profile.css';
 
-function Home() {
+function Profile() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const username = localStorage.getItem('username');
 
   useEffect(() => {
     fetchProfile();
@@ -37,83 +36,96 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="page-with-sidebar home-page">
+      <div className="page-with-sidebar profile-page">
         <Sidebar />
         <div className="main-content">
-          <div className="loading">Loading...</div>
+          <div className="loading">Loading profile...</div>
         </div>
       </div>
     );
   }
 
-  if (error && !user) {
+  if (error || !user) {
     return (
-      <div className="page-with-sidebar home-page">
+      <div className="page-with-sidebar profile-page">
         <Sidebar />
         <div className="main-content">
-          <div className="error-message">{error}</div>
+          <div className="error-message">{error || 'Failed to load profile'}</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="page-with-sidebar home-page">
+    <div className="page-with-sidebar profile-page">
       <Sidebar />
+      <div className="main-content">
+        <div className="profile-container">
+          <h1>Profile</h1>
 
-      {/* MAIN CONTENT */}
-      <div className="main-content home-content-wrapper">
-
-        {/* 🎥 BACKGROUND VIDEO */}
-        <video
-          className="home-bg-video"
-          src="/bcc.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-        />
-
-        {/* Overlay */}
-        <div className="home-bg-overlay" />
-
-        {/* CONTENT */}
-        <div className="home-container">
-          <div className="home-header">
-            <h1>Welcome, {username}!</h1>
-          </div>
-
-          <div className="home-content">
-            <div
-              className="menu-card"
-              onClick={() => navigate('/review')}
-            >
-              <h2>Start Reviewing</h2>
-              <p>Review products and earn commissions</p>
-            </div>
-
-            <div
-              className="menu-card"
-              onClick={() => navigate('/history')}
-            >
-              <h2>Review History</h2>
-              <p>View all your completed and pending reviews</p>
-            </div>
-
-            {user && (
-              <div className="info-card menu-card">
-                <h3>Account Balance</h3>
-                <p className="balance">
-                  ${user.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}
-                </p>
+          <div className="profile-card">
+            <div className="profile-section">
+              <h2>Account Information</h2>
+              <div className="profile-info">
+                <div className="info-row">
+                  <label>Username:</label>
+                  <span>{user.username || 'N/A'}</span>
+                </div>
+                <div className="info-row">
+                  <label>Email:</label>
+                  <span>{user.email || 'N/A'}</span>
+                </div>
+                <div className="info-row">
+                  <label>Phone:</label>
+                  <span>{user.phoneNumber || 'N/A'}</span>
+                </div>
               </div>
-            )}
+            </div>
+
+            <div className="profile-section">
+              <h2>Balance & Statistics</h2>
+              <div className="profile-info">
+                <div className="info-row">
+                  <label>Account Balance:</label>
+                  <span className="balance-amount">
+                    ${user.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}
+                  </span>
+                </div>
+                <div className="info-row">
+                  <label>Session Commission:</label>
+                  <span className="commission-amount">
+                    ${user.sessionCommission ? user.sessionCommission.toFixed(2) : '0.00'}
+                  </span>
+                </div>
+                <div className="info-row">
+                  <label>Reviews Completed:</label>
+                  <span>{user.reviewsCompleted || 0} / {user.totalReviewsAssigned || 0}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="profile-section">
+              <h2>Account Status</h2>
+              <div className="profile-info">
+                <div className="info-row">
+                  <label>Status:</label>
+                  <span className={user.isFrozen ? 'status-frozen' : 'status-active'}>
+                    {user.isFrozen ? '🔒 Frozen' : '✅ Active'}
+                  </span>
+                </div>
+                <div className="info-row">
+                  <label>Withdrawal Enabled:</label>
+                  <span className={user.withdrawalEnabled ? 'status-active' : 'status-frozen'}>
+                    {user.withdrawalEnabled ? '✅ Yes' : '❌ No'}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
       </div>
     </div>
   );
 }
 
-export default Home;
+export default Profile;
