@@ -23,11 +23,17 @@ function AdminDashboard() {
         return { data: [] };
       })
     ]).then(([usersRes, productsRes]) => {
-      setUsers(usersRes.data || []);
-      setProducts(productsRes.data || []);
+      // Ensure we have arrays
+      const usersData = Array.isArray(usersRes.data) ? usersRes.data : [];
+      const productsData = Array.isArray(productsRes.data) ? productsRes.data : [];
+      
+      setUsers(usersData);
+      setProducts(productsData);
       setLoading(false);
     }).catch(err => {
       console.error('Critical error:', err);
+      setUsers([]);
+      setProducts([]);
       setLoading(false);
     });
   }, []);
@@ -122,22 +128,28 @@ function AdminDashboard() {
         <div className="users-list">
           <h2>Registered Users</h2>
           <div className="users-table">
-            {users.map((user, index) => (
-              <div
-                key={user._id}
-                className={`user-row ${selectedUser?._id === user._id ? 'selected' : ''}`}
-                onClick={() => selectUser(user)}
-              >
-                <div className="user-number">{index + 1}</div>
-                <div className="user-info">
-                  <strong>{user.username}</strong>
-                  <span>{user.email}</span>
-                  <span>Balance: ${(user.accountBalance || 0).toFixed(2)}</span>
-                  <span>Reviews: {user.reviewsCompleted || 0}/{user.totalReviewsAssigned || 0}</span>
-                  {user.isFrozen && <span className="frozen-badge">FROZEN</span>}
+            {users && users.length > 0 ? (
+              users.map((user, index) => (
+                <div
+                  key={user._id}
+                  className={`user-row ${selectedUser?._id === user._id ? 'selected' : ''}`}
+                  onClick={() => selectUser(user)}
+                >
+                  <div className="user-number">{index + 1}</div>
+                  <div className="user-info">
+                    <strong>{user.username}</strong>
+                    <span>{user.email}</span>
+                    <span>Balance: ${(user.accountBalance || 0).toFixed(2)}</span>
+                    <span>Reviews: {user.reviewsCompleted || 0}/{user.totalReviewsAssigned || 0}</span>
+                    {user.isFrozen && <span className="frozen-badge">FROZEN</span>}
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+                No users found. Have you seeded the database?
               </div>
-            ))}
+            )}
           </div>
         </div>
 
