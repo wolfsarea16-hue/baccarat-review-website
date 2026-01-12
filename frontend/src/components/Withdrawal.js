@@ -27,16 +27,21 @@ function Withdrawal() {
 
   const fetchData = async () => {
     try {
-      const [profileRes, detailsRes] = await Promise.all([
-        userAPI.getProfile(),
-        withdrawalAPI.getDetails()
-      ]);
+      const profileRes = await userAPI.getProfile();
       setUser(profileRes.data);
-      setDetails(detailsRes.data);
+      
+      try {
+        const detailsRes = await withdrawalAPI.getDetails();
+        setDetails(detailsRes.data);
+      } catch (detailsErr) {
+        console.log('No withdrawal details yet:', detailsErr);
+        setDetails({ isLocked: false, hasDetails: false });
+      }
+      
       setLoading(false);
     } catch (err) {
       console.error('Error fetching data:', err);
-      setError('Failed to load withdrawal information');
+      setError('Failed to load profile information');
       setLoading(false);
       
       if (err.response?.status === 401) {
@@ -75,6 +80,12 @@ function Withdrawal() {
       await withdrawalAPI.setDetails(formData);
       setSuccess('Withdrawal details saved successfully! These details are now locked.');
       fetchData();
+      setFormData({
+        walletAddress: '',
+        confirmWallet: '',
+        currency: 'USDT',
+        network: 'TRC20'
+      });
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save withdrawal details');
     } finally {
@@ -83,17 +94,17 @@ function Withdrawal() {
   };
 
   const handleSubmitWithdrawal = async () => {
-    if (!user?.withdrawalEnabled) {
+    if (!user?.canWithdraw) {
       setError('Withdrawal is not enabled for your account. Please contact admin.');
       return;
     }
 
-    if (user.reviewsCompleted < user.totalReviewsAssigned) {
+    if ((user?.reviewsCompleted || 0) < (user?.totalReviewsAssigned || 0)) {
       setError(`You must complete all ${user.totalReviewsAssigned} reviews before withdrawing. Currently completed: ${user.reviewsCompleted}`);
       return;
     }
 
-    if (user.accountBalance <= 0) {
+    if ((user?.accountBalance || 0) <= 0) {
       setError('Insufficient balance to withdraw');
       return;
     }
@@ -101,6 +112,7 @@ function Withdrawal() {
     if (window.confirm(`Confirm withdrawal of $${user.accountBalance.toFixed(2)}? Your balance will be set to $0.`)) {
       try {
         setSubmitting(true);
+        setError('');
         await withdrawalAPI.submitRequest();
         setSuccess('Withdrawal request submitted successfully! Your balance is now $0.');
         setTimeout(() => navigate('/withdrawal-history'), 2000);
@@ -151,7 +163,7 @@ function Withdrawal() {
             <p className="review-progress">
               Reviews Completed: {user?.reviewsCompleted || 0} / {user?.totalReviewsAssigned || 0}
             </p>
-            {user && user.reviewsCompleted < user.totalReviewsAssigned && (
+            {user && (user.reviewsCompleted || 0) < (user.totalReviewsAssigned || 0) && (
               <p className="warning-text">
                 ⚠️ Complete all reviews before withdrawing
               </p>
@@ -246,7 +258,7 @@ function Withdrawal() {
               <div className="details-display">
                 <div className="detail-item">
                   <label>Withdrawal To:</label>
-                  <span>{details.username}</span>
+                  <span>{details.username || user?.username}</span>
                 </div>
 
                 <div className="detail-item">
@@ -270,14 +282,14 @@ function Withdrawal() {
                 className="btn btn-success btn-large"
                 disabled={
                   submitting ||
-                  !user?.withdrawalEnabled ||
+                  !user?.canWithdraw ||
                   (user?.reviewsCompleted || 0) < (user?.totalReviewsAssigned || 0) ||
                   (user?.accountBalance || 0) <= 0
                 }
               >
                 {submitting
                   ? 'Processing...'
-                  : !user?.withdrawalEnabled
+                  : !user?.canWithdraw
                   ? '🔒 Withdrawal Disabled (Contact Admin)'
                   : (user?.reviewsCompleted || 0) < (user?.totalReviewsAssigned || 0)
                   ? '🔒 Complete All Reviews First'
