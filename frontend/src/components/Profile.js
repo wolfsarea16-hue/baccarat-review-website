@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../services/api';
 import Sidebar from './Sidebar';
+import logo from '../assets/baccarat-logo.svg';
 import './Profile.css';
 
 function Profile() {
@@ -55,143 +56,57 @@ function Profile() {
 
       <div className="main-content">
         <div className="profile-container">
+          {/* Profile Header - Centered Title */}
           <div className="profile-header">
-            <h1>My Profile</h1>
+            <button 
+              onClick={() => navigate('/home')} 
+              className="back-to-home-btn"
+            >
+              back to home
+            </button>
+            <h1>My profile</h1>
+            <div className="spacer"></div>
           </div>
 
-          <div className="profile-content">
-            {/* Account Overview */}
-            <div className="profile-card">
-              <h2>Account Overview</h2>
-              <div className="info-grid">
-                <div className="info-item">
-                  <span className="info-label">Username</span>
-                  <span className="info-value">{user.username}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Email</span>
-                  <span className="info-value">{user.email}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Phone Number</span>
-                  <span className="info-value">{user.phoneNumber}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Member Since</span>
-                  <span className="info-value">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
+          {/* User Avatar and Name */}
+          <div className="profile-avatar">
+            <div className="avatar-circle">
+              {user.username.charAt(0).toUpperCase()}
             </div>
+            <h2 className="username">{user.username}</h2>
+          </div>
 
-            {/* Financial Summary */}
-            <div className="profile-card">
-              <h2>Financial Summary</h2>
-              <div className="financial-grid">
-                <div className="financial-item highlight">
-                  <span className="financial-label">Account Balance</span>
-                  <span className="financial-value">
-                    ${user.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}
-                  </span>
-                </div>
-                <div className="financial-item">
-                  <span className="financial-label">Current Session Commission</span>
-                  <span className="financial-value">
-                    ${user.currentSessionCommission ? user.currentSessionCommission.toFixed(2) : '0.00'}
-                  </span>
-                </div>
-                <div className="financial-item">
-                  <span className="financial-label">Target Balance</span>
-                  <span className="financial-value">
-                    ${user.targetBalance ? user.targetBalance.toFixed(2) : '0.00'}
-                  </span>
-                </div>
-              </div>
+          {/* Stats Grid - Top Row */}
+          <div className="stats-top-row">
+            <div className="stat-box">
+              <span className="stat-label">Account Balance</span>
+              <span className="stat-value">${user.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}</span>
             </div>
-
-            {/* Review Statistics */}
-            <div className="profile-card">
-              <h2>Review Statistics</h2>
-              <div className="stats-grid">
-                <div className="stat-item">
-                  <span className="stat-value">{user.reviewsCompleted || 0}</span>
-                  <span className="stat-label">Reviews Completed</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-value">{user.totalReviewsAssigned || 0}</span>
-                  <span className="stat-label">Total Reviews Assigned</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-value">{user.currentReviewPosition || 0}</span>
-                  <span className="stat-label">Current Position</span>
-                </div>
-              </div>
+            <div className="stat-box">
+              <span className="stat-label">Reviews Completed</span>
+              <span className="stat-value">{user.reviewsCompleted || 0}</span>
             </div>
-
-            {/* Account Status */}
-            <div className="profile-card">
-              <h2>Account Status</h2>
-              <div className="status-grid">
-                <div className="status-item">
-                  <span className="status-label">Withdrawal Permission</span>
-                  <span className={`status-badge ${user.canWithdraw ? 'active' : 'inactive'}`}>
-                    {user.canWithdraw ? 'Enabled' : 'Disabled'}
-                  </span>
-                </div>
-                <div className="status-item">
-                  <span className="status-label">Account Status</span>
-                  <span className={`status-badge ${user.isFrozen ? 'inactive' : 'active'}`}>
-                    {user.isFrozen ? 'Frozen' : 'Active'}
-                  </span>
-                </div>
-                <div className="status-item">
-                  <span className="status-label">Withdrawal Details</span>
-                  <span className={`status-badge ${user.withdrawalInfo?.isLocked ? 'inactive' : 'active'}`}>
-                    {user.withdrawalInfo?.isLocked ? 'Locked' : 'Unlocked'}
-                  </span>
-                </div>
-              </div>
+            <div className="stat-box">
+              <span className="stat-label">Commission earned</span>
+              <span className="stat-value">${user.currentSessionCommission ? user.currentSessionCommission.toFixed(2) : '0.00'}</span>
             </div>
+          </div>
 
-            {/* Withdrawal Information */}
-            {user.withdrawalInfo && user.withdrawalInfo.walletAddress && (
-              <div className="profile-card">
-                <h2>Withdrawal Information</h2>
-                <div className="info-grid">
-                  <div className="info-item">
-                    <span className="info-label">Currency</span>
-                    <span className="info-value">{user.withdrawalInfo.currency}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-label">Network</span>
-                    <span className="info-value">{user.withdrawalInfo.network}</span>
-                  </div>
-                  <div className="info-item full-width">
-                    <span className="info-label">Wallet Address</span>
-                    <span className="info-value wallet-address">
-                      {user.withdrawalInfo.walletAddress}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Special Reviews */}
-            {user.specialReviews && user.specialReviews.length > 0 && (
-              <div className="profile-card">
-                <h2>Special Reviews Assigned</h2>
-                <div className="special-reviews-list">
-                  {user.specialReviews.map((review, index) => (
-                    <div key={index} className="special-review-item">
-                      <span>Position: {review.position}</span>
-                      <span>Price: ${review.price.toFixed(2)}</span>
-                      <span>Commission: ${review.commission.toFixed(2)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* Member Since Section - Date Next to Label, Logo Below */}
+          <div className="member-since-section">
+            <div className="member-info-row">
+              <span className="member-label">Member since :</span>
+              <span className="member-date">
+                {new Date(user.createdAt).toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </span>
+            </div>
+            <div className="logo-container">
+              <img src={logo} alt="Baccarat Logo" className="profile-logo" />
+            </div>
           </div>
         </div>
       </div>

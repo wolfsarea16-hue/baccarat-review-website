@@ -81,7 +81,14 @@ function Home() {
         {/* CONTENT */}
         <div className="home-container">
           <div className="home-header">
-            <h1>Welcome, {username}!</h1>
+            <h1 style={{ 
+              color: 'white', 
+              textShadow: '0 2px 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6)',
+              position: 'relative',
+              zIndex: 10
+            }}>
+              Welcome, {user.username}!
+            </h1>
           </div>
 
           <div className="home-content">

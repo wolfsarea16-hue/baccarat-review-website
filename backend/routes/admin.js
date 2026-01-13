@@ -134,6 +134,27 @@ router.post('/users/:userId/target-balance', adminMiddleware, async (req, res) =
   }
 });
 
+// Clear target balance
+router.post('/users/:userId/clear-target-balance', adminMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.targetBalance = 0;
+    await user.save();
+
+    res.json({ 
+      message: 'Target balance cleared successfully', 
+      targetBalance: user.targetBalance 
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Assign special review
 router.post('/users/:userId/special-review', adminMiddleware, async (req, res) => {
   try {
@@ -264,6 +285,36 @@ router.post('/users/:userId/unlock-withdrawal', adminMiddleware, async (req, res
     res.json({ 
       message: 'Withdrawal details unlocked. User can now update their information.',
       withdrawalInfo: user.withdrawalInfo
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Change user password
+router.post('/users/:userId/change-password', adminMiddleware, async (req, res) => {
+  try {
+    const { newPassword } = req.body;
+    
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+    }
+
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Hash the new password
+    const bcrypt = require('bcryptjs');
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    await user.save();
+
+    res.json({ 
+      message: 'Password changed successfully'
     });
   } catch (err) {
     console.error(err);

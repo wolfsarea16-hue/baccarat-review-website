@@ -131,6 +131,12 @@
   box-sizing: border-box;
 }
 
+.form-group select option {
+  background: #1a1a1a;
+  color: white;
+  padding: 10px;
+}
+
 .form-group input:focus,
 .form-group select:focus {
   outline: none;

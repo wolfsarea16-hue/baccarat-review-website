@@ -85,8 +85,11 @@ function ReviewTab() {
       <div className="main-content">
         <div className="review-tab-container">
           <div className="review-tab-header">
-            <button onClick={() => navigate('/home')} className="btn btn-secondary">
-              Back to Home
+            <button 
+              onClick={() => navigate('/home')} 
+              className="back-to-home-btn"
+            >
+              back to home
             </button>
             <h1>Review Dashboard</h1>
           </div>

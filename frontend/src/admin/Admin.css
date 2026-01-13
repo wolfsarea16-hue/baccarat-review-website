@@ -54,9 +54,18 @@
   font-size: 16px;
   box-sizing: border-box;
   transition: all 0.3s;
+  background: white;
+  color: #333;
 }
 
-.form-group input:focus {
+.form-group select option {
+  background: white;
+  color: #333;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
   outline: none;
   border-color: #B11226;
 }
@@ -147,6 +156,8 @@
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 16px;
+  background: white;
+  color: #333;
 }
 
 .dashboard-content {

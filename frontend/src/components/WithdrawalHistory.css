@@ -21,7 +21,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #0F0F0F; /* Your black shade - change as needed */
+  background: #0F0F0F;
   z-index: 0;
 }
 
@@ -30,6 +30,26 @@
 .withdrawal-history-container {
   max-width: 1000px;
   margin: 0 auto;
+  padding: 20px;
+}
+
+.withdrawal-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.withdrawal-history-header .spacer {
+  width: 140px;
+}
+
+.withdrawal-history-header h1 {
+  color: #D4AF37;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+  font-size: 32px;
 }
 
 .no-withdrawals {
@@ -116,13 +136,13 @@
   flex: 1;
 }
 
-.detail-row.amount span {
+.detail-row .amount {
   color: #28a745;
   font-size: 24px;
   font-weight: bold;
 }
 
-.detail-row.wallet span {
+.detail-row .wallet {
   font-family: monospace;
   font-size: 12px;
   background: #f0f0f0;
@@ -146,4 +166,70 @@
 .detail-row.notes span {
   text-align: left;
   font-style: italic;
+}
+
+.error-message {
+  background: rgba(220, 53, 69, 0.15);
+  border-left: 4px solid #dc3545;
+  color: #ff6b6b;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .withdrawal-history-container {
+    padding: 15px;
+  }
+
+  .withdrawal-history-header {
+    position: relative;
+  }
+
+  .withdrawal-history-header .spacer {
+    display: none;
+  }
+
+  .withdrawal-history-header h1 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    font-size: 24px;
+  }
+
+  .withdrawal-card {
+    padding: 20px;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .detail-row span {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .withdrawal-history-header h1 {
+    font-size: 20px;
+  }
+
+  .withdrawal-card {
+    padding: 15px;
+  }
+
+  .detail-row .amount {
+    font-size: 20px;
+  }
 }

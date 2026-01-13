@@ -44,6 +44,12 @@ function AdminDashboard() {
     commission: ''
   });
 
+  // Password change state
+  const [passwordForm, setPasswordForm] = useState({
+    newPassword: '',
+    confirmPassword: ''
+  });
+
   // Product form state
   const [showProductForm, setShowProductForm] = useState(false);
   const [productForm, setProductForm] = useState({
@@ -179,9 +185,28 @@ function AdminDashboard() {
       );
       alert('Target balance set successfully!');
       fetchUsers();
+      const updatedUser = users.find(u => u._id === selectedUser._id);
+      if (updatedUser) handleUserSelect(updatedUser);
     } catch (err) {
       console.error('Error setting target balance:', err);
       alert('Failed to set target balance');
+    }
+  };
+
+  const handleClearTargetBalance = async () => {
+    if (!window.confirm('Are you sure you want to clear the target balance? User will be able to start reviews without target restriction.')) {
+      return;
+    }
+
+    try {
+      await adminAPI.clearTargetBalance(selectedUser._id);
+      alert('Target balance cleared successfully! User can now start reviews without target restriction.');
+      fetchUsers();
+      const updatedUser = users.find(u => u._id === selectedUser._id);
+      if (updatedUser) handleUserSelect(updatedUser);
+    } catch (err) {
+      console.error('Error clearing target balance:', err);
+      alert('Failed to clear target balance');
     }
   };
 
@@ -253,6 +278,31 @@ function AdminDashboard() {
     } catch (err) {
       console.error('Error unlocking withdrawal:', err);
       alert('Failed to unlock withdrawal details');
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!passwordForm.newPassword || passwordForm.newPassword.length < 6) {
+      alert('Password must be at least 6 characters long');
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to change this user\'s password?')) {
+      return;
+    }
+
+    try {
+      await adminAPI.changeUserPassword(selectedUser._id, passwordForm.newPassword);
+      alert('Password changed successfully!');
+      setPasswordForm({ newPassword: '', confirmPassword: '' });
+    } catch (err) {
+      console.error('Error changing password:', err);
+      alert('Failed to change password');
     }
   };
 
@@ -461,9 +511,14 @@ function AdminDashboard() {
                       placeholder="Enter target balance"
                     />
                   </div>
-                  <button onClick={handleSetTargetBalance} className="btn btn-primary">
-                    Set Target Balance
-                  </button>
+                  <div className="button-group">
+                    <button onClick={handleSetTargetBalance} className="btn btn-primary">
+                      Set Target Balance
+                    </button>
+                    <button onClick={handleClearTargetBalance} className="btn btn-danger">
+                      Clear Target Balance
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -545,6 +600,36 @@ function AdminDashboard() {
                   </button>
                   <button onClick={handleResetAccount} className="btn btn-danger">
                     Reset Account
+                  </button>
+                </div>
+              </div>
+
+              {/* CHANGE PASSWORD SECTION */}
+              <div className="detail-section">
+                <h3>Change User Password</h3>
+                <div className="balance-form">
+                  <div className="form-group">
+                    <label>New Password</label>
+                    <input
+                      type="password"
+                      value={passwordForm.newPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                      placeholder="Enter new password (min 6 characters)"
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Confirm Password</label>
+                    <input
+                      type="password"
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                      placeholder="Confirm new password"
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  <button onClick={handleChangePassword} className="btn btn-primary">
+                    Change Password
                   </button>
                 </div>
               </div>

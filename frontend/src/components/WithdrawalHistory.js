@@ -71,7 +71,11 @@ function WithdrawalHistory() {
       <Sidebar />
       <div className="main-content">
         <div className="withdrawal-history-container">
-          <h1>Withdrawal History</h1>
+          <div className="withdrawal-history-header">
+            <div className="spacer"></div>
+            <h1>Withdrawal History</h1>
+            <div className="spacer"></div>
+          </div>
 
           {error && <div className="error-message">{error}</div>}
 

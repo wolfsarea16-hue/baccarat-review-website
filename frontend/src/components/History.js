@@ -64,13 +64,15 @@ function History() {
         <div className="history-container">
 
           <div className="history-header">
-            <button
+             <button
               onClick={() => navigate('/home')}
               className="luxury-back-btn"
             >
               Back to Home
             </button>
             <h1>Review History</h1>
+            <div></div> {/* Spacer for flex layout */}
+          
           </div>
 
           {error && <div className="error-message">{error}</div>}
