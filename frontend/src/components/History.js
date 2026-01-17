@@ -1,5 +1,5 @@
 // frontend/src/components/History.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reviewAPI } from '../services/api';
 import Sidebar from './Sidebar';
@@ -13,13 +13,13 @@ function History() {
 
   useEffect(() => {
     fetchHistory();
-  }, []);
+  }, [fetchHistory]);
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     try {
       const response = await reviewAPI.getHistory();
       const data = response.data;
-      
+
       // Make sure we have an array
       if (Array.isArray(data)) {
         setReviews(data);
@@ -28,14 +28,14 @@ function History() {
       } else {
         setReviews([]);
       }
-      
+
       setLoading(false);
     } catch (err) {
       console.error('Error fetching history:', err);
       setReviews([]);
       setError('Failed to load review history');
       setLoading(false);
-      
+
       if (err.response?.status === 401) {
         setTimeout(() => {
           localStorage.clear();
@@ -43,7 +43,7 @@ function History() {
         }, 1000);
       }
     }
-  };
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -64,7 +64,7 @@ function History() {
         <div className="history-container">
 
           <div className="history-header">
-             <button
+            <button
               onClick={() => navigate('/home')}
               className="luxury-back-btn"
             >
@@ -72,7 +72,7 @@ function History() {
             </button>
             <h1>Review History</h1>
             <div></div> {/* Spacer for flex layout */}
-          
+
           </div>
 
           {error && <div className="error-message">{error}</div>}
@@ -122,8 +122,8 @@ function History() {
                       {review.status === 'completed' && review.completedAt
                         ? `Completed: ${new Date(review.completedAt).toLocaleDateString()}`
                         : review.createdAt
-                        ? `Started: ${new Date(review.createdAt).toLocaleDateString()}`
-                        : 'Date unknown'
+                          ? `Started: ${new Date(review.createdAt).toLocaleDateString()}`
+                          : 'Date unknown'
                       }
                     </p>
                   </div>

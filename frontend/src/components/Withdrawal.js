@@ -1,5 +1,5 @@
 // frontend/src/components/Withdrawal.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { withdrawalAPI, userAPI } from '../services/api';
 import Sidebar from './Sidebar';
@@ -23,9 +23,9 @@ function Withdrawal() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const profileRes = await userAPI.getProfile();
       setUser(profileRes.data);
@@ -51,7 +51,7 @@ function Withdrawal() {
         }, 1000);
       }
     }
-  };
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({

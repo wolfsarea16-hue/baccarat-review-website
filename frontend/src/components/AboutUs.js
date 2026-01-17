@@ -11,7 +11,7 @@ const AboutUs = () => {
             setCurrentImageIndex((prev) => (prev + 1) % images.length);
         }, 4000);
         return () => clearInterval(timer);
-    }, [currentImageIndex]);
+    }, [currentImageIndex, images.length]);
 
     const nextImage = () => {
         setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -33,7 +33,7 @@ const AboutUs = () => {
             setCurrentLoversIndex((prev) => (prev + 1) % loversImages.length);
         }, 4000);
         return () => clearInterval(timer);
-    }, [currentLoversIndex]);
+    }, [currentLoversIndex, loversImages.length]);
 
     const nextLovers = () => {
         setCurrentLoversIndex((prev) => (prev + 1) % loversImages.length);
@@ -55,7 +55,7 @@ const AboutUs = () => {
             setCurrentConquestIndex((prev) => (prev + 1) % conquestImages.length);
         }, 4000);
         return () => clearInterval(timer);
-    }, [currentConquestIndex]);
+    }, [currentConquestIndex, conquestImages.length]);
 
     const nextConquest = () => {
         setCurrentConquestIndex((prev) => (prev + 1) % conquestImages.length);
@@ -73,7 +73,7 @@ const AboutUs = () => {
             setCurrentArtistIndex((prev) => (prev + 1) % artistImages.length);
         }, 4000);
         return () => clearInterval(timer);
-    }, [currentArtistIndex]);
+    }, [currentArtistIndex, artistImages.length]);
 
     const nextArtist = () => {
         setCurrentArtistIndex((prev) => (prev + 1) % artistImages.length);

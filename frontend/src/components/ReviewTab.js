@@ -1,5 +1,5 @@
 // frontend/src/components/ReviewTab.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reviewAPI } from '../services/api';
 import Sidebar from './Sidebar';
@@ -13,9 +13,9 @@ function ReviewTab() {
 
   useEffect(() => {
     fetchStatus();
-  }, []);
+  }, [fetchStatus]);
 
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async () => {
     try {
       const response = await reviewAPI.getStatus();
       setStatus(response.data);
@@ -32,7 +32,7 @@ function ReviewTab() {
         }, 1000);
       }
     }
-  };
+  }, [navigate]);
 
   const handleStartReview = async () => {
     try {

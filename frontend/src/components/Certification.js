@@ -1,12 +1,10 @@
 // frontend/src/components/Certification.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import logo from '../assets/baccarat-logo.svg';
 import './Certification.css';
 
 function Certification() {
-  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
@@ -25,9 +23,9 @@ function Certification() {
         <div className="certification-container">
           {/* Header with Logo */}
           <div className="certification-header">
-            <img 
-              src={logo} 
-              alt="Logo" 
+            <img
+              src={logo}
+              alt="Logo"
               className="certification-logo"
               loading="lazy"
             />
@@ -36,9 +34,9 @@ function Certification() {
 
           {/* Certificate Image - Click to view */}
           <div className="certification-image-wrapper">
-            <img 
-              src="/cert.jpg" 
-              alt="Certification" 
+            <img
+              src="/cert.jpg"
+              alt="Certification"
               className="certification-image"
               onClick={openModal}
               onContextMenu={handleContextMenu}
@@ -53,9 +51,9 @@ function Certification() {
             <div className="cert-modal" onClick={closeModal}>
               <div className="cert-modal-content" onClick={(e) => e.stopPropagation()}>
                 <button className="cert-modal-close" onClick={closeModal}>✕</button>
-                <img 
-                  src="/cert.jpg" 
-                  alt="Certification Full Size" 
+                <img
+                  src="/cert.jpg"
+                  alt="Certification Full Size"
                   className="cert-modal-image"
                   onContextMenu={handleContextMenu}
                   draggable="false"

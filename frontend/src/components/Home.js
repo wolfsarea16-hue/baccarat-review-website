@@ -1,5 +1,5 @@
 // frontend/src/components/Home.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../services/api';
 import Sidebar from './Sidebar';
@@ -11,13 +11,12 @@ function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const username = localStorage.getItem('username');
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [fetchProfile]);
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const response = await userAPI.getProfile();
       setUser(response.data);
@@ -34,7 +33,7 @@ function Home() {
         }, 1000);
       }
     }
-  };
+  }, [navigate]);
 
   if (loading) {
     return (

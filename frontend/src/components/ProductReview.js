@@ -1,5 +1,5 @@
 // frontend/src/components/ProductReview.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reviewAPI } from '../services/api';
 import Sidebar from './Sidebar';
@@ -18,9 +18,9 @@ function ProductReview() {
 
   useEffect(() => {
     fetchPendingReview();
-  }, []);
+  }, [fetchPendingReview]);
 
-  const fetchPendingReview = async () => {
+  const fetchPendingReview = useCallback(async () => {
     try {
       const response = await reviewAPI.getPending();
       setProduct(response.data);
@@ -42,7 +42,7 @@ function ProductReview() {
         setTimeout(() => navigate('/review'), 2000);
       }
     }
-  };
+  }, [navigate]);
 
   const handleSubmit = async () => {
     if (!reviewText.trim()) {

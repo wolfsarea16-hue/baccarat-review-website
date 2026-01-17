@@ -1,5 +1,5 @@
 // frontend/src/components/WithdrawalHistory.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { withdrawalAPI } from '../services/api';
 import Sidebar from './Sidebar';
@@ -13,9 +13,9 @@ function WithdrawalHistory() {
 
   useEffect(() => {
     fetchHistory();
-  }, []);
+  }, [fetchHistory]);
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     try {
       const response = await withdrawalAPI.getHistory();
       const data = response.data;
@@ -43,7 +43,7 @@ function WithdrawalHistory() {
         }, 1000);
       }
     }
-  };
+  }, [navigate]);
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
