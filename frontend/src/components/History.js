@@ -11,10 +11,6 @@ function History() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchHistory();
-  }, [fetchHistory]);
-
   const fetchHistory = useCallback(async () => {
     try {
       const response = await reviewAPI.getHistory();
@@ -44,6 +40,12 @@ function History() {
       }
     }
   }, [navigate]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  /* REMOVED fetchHistory definition from here */
 
   if (loading) {
     return (

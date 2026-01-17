@@ -11,10 +11,6 @@ function WithdrawalHistory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchHistory();
-  }, [fetchHistory]);
-
   const fetchHistory = useCallback(async () => {
     try {
       const response = await withdrawalAPI.getHistory();
@@ -44,6 +40,12 @@ function WithdrawalHistory() {
       }
     }
   }, [navigate]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  /* REMOVED fetchHistory definition from here */
 
   const getStatusBadgeClass = (status) => {
     switch (status) {

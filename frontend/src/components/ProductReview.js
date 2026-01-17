@@ -16,10 +16,6 @@ function ProductReview() {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [isBalanceNegative, setIsBalanceNegative] = useState(false);
 
-  useEffect(() => {
-    fetchPendingReview();
-  }, [fetchPendingReview]);
-
   const fetchPendingReview = useCallback(async () => {
     try {
       const response = await reviewAPI.getPending();
@@ -43,6 +39,12 @@ function ProductReview() {
       }
     }
   }, [navigate]);
+
+  useEffect(() => {
+    fetchPendingReview();
+  }, [fetchPendingReview]);
+
+  /* REMOVED fetchPendingReview definition from here */
 
   const handleSubmit = async () => {
     if (!reviewText.trim()) {

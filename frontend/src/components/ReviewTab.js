@@ -11,10 +11,6 @@ function ReviewTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchStatus();
-  }, [fetchStatus]);
-
   const fetchStatus = useCallback(async () => {
     try {
       const response = await reviewAPI.getStatus();
@@ -33,6 +29,12 @@ function ReviewTab() {
       }
     }
   }, [navigate]);
+
+  useEffect(() => {
+    fetchStatus();
+  }, [fetchStatus]);
+
+  /* REMOVED fetchStatus definition from here */
 
   const handleStartReview = async () => {
     try {

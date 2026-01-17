@@ -12,10 +12,6 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
-
   const fetchProfile = useCallback(async () => {
     try {
       const response = await userAPI.getProfile();
@@ -34,6 +30,12 @@ function Home() {
       }
     }
   }, [navigate]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  /* REMOVED fetchProfile definition from here */
 
   if (loading) {
     return (

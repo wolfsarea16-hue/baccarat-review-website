@@ -21,10 +21,6 @@ function Withdrawal() {
     network: 'TRC20'
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const fetchData = useCallback(async () => {
     try {
       const profileRes = await userAPI.getProfile();
@@ -52,6 +48,12 @@ function Withdrawal() {
       }
     }
   }, [navigate]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  /* REMOVED fetchData definition from here */
 
   const handleChange = (e) => {
     setFormData({
