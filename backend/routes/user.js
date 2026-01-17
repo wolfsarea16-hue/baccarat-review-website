@@ -11,10 +11,36 @@ router.get('/profile', authMiddleware, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
     res.json(user);
   } catch (err) {
     console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update profile image
+router.post('/profile/image', authMiddleware, async (req, res) => {
+  try {
+    const { profileImage } = req.body;
+    
+    if (!profileImage) {
+      return res.status(400).json({ message: 'No image provided' });
+    }
+
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.profileImage = profileImage;
+    await user.save();
+
+    res.json({ 
+      message: 'Profile image updated successfully',
+      profileImage: user.profileImage
+    });
+  } catch (err) {
+    console.error('Error updating profile image:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });

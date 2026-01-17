@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../services/api';
 import Sidebar from './Sidebar';
+import GlassSurface from './GlassSurface';
 import './Home.css';
 
 function Home() {
@@ -25,7 +26,7 @@ function Home() {
       console.error('Error fetching profile:', err);
       setError('Failed to load profile');
       setLoading(false);
-      
+
       if (err.response?.status === 401) {
         setTimeout(() => {
           localStorage.clear();
@@ -81,8 +82,8 @@ function Home() {
         {/* CONTENT */}
         <div className="home-container">
           <div className="home-header">
-            <h1 style={{ 
-              color: 'white', 
+            <h1 style={{
+              color: 'white',
               textShadow: '0 2px 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.6)',
               position: 'relative',
               zIndex: 10
@@ -92,29 +93,65 @@ function Home() {
           </div>
 
           <div className="home-content">
-            <div
-              className="menu-card"
-              onClick={() => navigate('/review')}
+            <GlassSurface
+              width="100%"
+              height="auto"
+              borderRadius={15}
+              brightness={45}
+              opacity={0.85}
+              blur={10}
+              displace={0.5}
+              saturation={1.2}
+              className="menu-card-glass"
             >
-              <h2>Start Reviewing</h2>
-              <p>Review products and earn commissions</p>
-            </div>
+              <div
+                className="menu-card-content"
+                onClick={() => navigate('/review')}
+              >
+                <h2>Start Reviewing</h2>
+                <p>Review products and earn commissions</p>
+              </div>
+            </GlassSurface>
 
-            <div
-              className="menu-card"
-              onClick={() => navigate('/history')}
+            <GlassSurface
+              width="100%"
+              height="auto"
+              borderRadius={15}
+              brightness={45}
+              opacity={0.85}
+              blur={10}
+              displace={0.5}
+              saturation={1.2}
+              className="menu-card-glass"
             >
-              <h2>Review History</h2>
-              <p>View all your completed and pending reviews</p>
-            </div>
+              <div
+                className="menu-card-content"
+                onClick={() => navigate('/history')}
+              >
+                <h2>Review History</h2>
+                <p>View all your completed and pending reviews</p>
+              </div>
+            </GlassSurface>
 
             {user && (
-              <div className="info-card menu-card">
-                <h3>Account Balance</h3>
-                <p className="balance">
-                  ${user.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}
-                </p>
-              </div>
+              <GlassSurface
+                width="100%"
+                height="auto"
+                borderRadius={15}
+                brightness={45}
+                opacity={0.85}
+                blur={10}
+                displace={0.5}
+                saturation={1.2}
+                className="menu-card-glass"
+              >
+                <div className="menu-card-content info-card">
+                  <h3>Account Balance</h3>
+                  <p className="balance">
+                    ${user.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}
+                  </p>
+                </div>
+              </GlassSurface>
             )}
           </div>
         </div>

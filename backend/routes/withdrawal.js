@@ -115,10 +115,11 @@ router.post('/request', authMiddleware, async (req, res) => {
     // Create withdrawal request
     const withdrawal = new Withdrawal({
       userId: user._id,
+      username: user.username, // Add username field
       amount: user.accountBalance,
       walletAddress: user.withdrawalInfo.walletAddress,
-      currency: user.withdrawalInfo.currency,
-      network: user.withdrawalInfo.network,
+      currency: user.withdrawalInfo.currency || 'USDT',
+      network: user.withdrawalInfo.network || 'TRC20',
       status: 'pending'
     });
 
@@ -139,7 +140,7 @@ router.post('/request', authMiddleware, async (req, res) => {
     });
   } catch (err) {
     console.error('Error submitting withdrawal request:', err);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
 
@@ -156,4 +157,4 @@ router.get('/history', authMiddleware, async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

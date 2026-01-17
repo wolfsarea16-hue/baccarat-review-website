@@ -29,7 +29,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   z-index: -1;
 }
 
@@ -48,6 +48,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -66,13 +67,13 @@
 }
 
 .auth-card {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 40px;
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .auth-card h2 {
@@ -80,43 +81,81 @@
   margin-bottom: 30px;
   color: white;
   font-size: 28px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  font-weight: 700;
 }
 
 .form-group {
   margin-bottom: 20px;
 }
 
-.form-group label {
+.auth-page .form-group label {
   display: block;
   margin-bottom: 8px;
   color: white;
   font-weight: 600;
   font-size: 14px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
-.form-group input {
+.auth-page .form-group input {
   width: 100%;
   padding: 12px 15px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   font-size: 16px;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.9);
-  color: #333;
+  background: rgba(0, 0, 0, 0.5) !important;
+  /* Made darker and forced */
+  color: #fff !important;
 }
 
-.form-group input:focus {
+.auth-page .form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  opacity: 1;
+}
+
+.auth-page .form-group input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 1);
+  border-color: #B11226;
+  box-shadow: 0 0 0 3px rgba(177, 18, 38, 0.2);
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Password input wrapper */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  padding-right: 45px;
+}
+
+.auth-page .password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: #fff;
 }
 
 .error-message {
-  background: #fee;
+  background: rgba(254, 238, 238, 0.95);
   color: #c33;
   padding: 12px;
   border-radius: 8px;
@@ -124,6 +163,8 @@
   text-align: center;
   font-size: 14px;
   border: 1px solid #fcc;
+  backdrop-filter: blur(10px);
+  text-shadow: none;
 }
 
 .btn-full {
@@ -135,40 +176,23 @@
   margin-top: 10px;
 }
 
-.btn-primary {
+.auth-page .btn-primary {
   background: linear-gradient(135deg, #111111 0%, #B11226 100%);
   color: white;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.btn-primary:hover:not(:disabled) {
+.auth-page .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(177, 18, 38, 0.4);
+  box-shadow: 0 6px 20px rgba(177, 18, 38, 0.6);
 }
 
-.btn-primary:disabled {
+.auth-page .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.auth-switch {
-  text-align: center;
-  margin-top: 25px;
-  color: #666;
-  font-size: 14px;
-}
-
-.auth-switch span {
-  color: #667eea;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.auth-switch span:hover {
-  color: #764ba2;
 }
 
 .auth-links {
@@ -183,13 +207,14 @@
   color: white;
   text-decoration: none;
   font-size: 14px;
-  font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  transition: all 0.2s;
 }
 
 .auth-links a:hover {
   color: #B11226;
-  text-decoration: underline;
+  text-shadow: 0 2px 8px rgba(177, 18, 38, 0.8);
 }
 
 /* ===== RESPONSIVE ===== */

@@ -24,7 +24,7 @@ function ReviewTab() {
       console.error('Error fetching status:', err);
       setError('Failed to load review status');
       setLoading(false);
-      
+
       if (err.response?.status === 401) {
         setTimeout(() => {
           localStorage.clear();
@@ -37,7 +37,7 @@ function ReviewTab() {
   const handleStartReview = async () => {
     try {
       setError('');
-      
+
       if (status.hasPendingReview) {
         navigate('/review/product');
         return;
@@ -49,7 +49,7 @@ function ReviewTab() {
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Failed to start review';
       setError(errorMsg);
-      
+
       if (errorMsg.includes('balance') || errorMsg.includes('Insufficient')) {
         fetchStatus();
       }
@@ -85,8 +85,8 @@ function ReviewTab() {
       <div className="main-content">
         <div className="review-tab-container">
           <div className="review-tab-header">
-            <button 
-              onClick={() => navigate('/home')} 
+            <button
+              onClick={() => navigate('/home')}
               className="back-to-home-btn"
             >
               back to home
@@ -119,20 +119,20 @@ function ReviewTab() {
 
           <div className="review-action">
             {status?.accountBalance < 0 ? (
-              <div className="error-message" style={{textAlign: 'center', padding: '20px'}}>
+              <div className="error-message" style={{ textAlign: 'center', padding: '20px' }}>
                 <h2>⚠️ Negative Balance</h2>
                 <p>Your account balance is negative: ${status?.accountBalance?.toFixed(2) || '0.00'}</p>
-                <p>Please contact an administrator to add balance before you can continue reviewing.</p>
+                <p>Please contact customer support to add balance before you can continue reviewing.</p>
               </div>
             ) : status?.reviewsRemaining > 0 ? (
               <>
                 <p className="review-instruction">
-                  {status?.hasPendingReview 
-                    ? 'You have a pending review. Click below to continue.' 
+                  {status?.hasPendingReview
+                    ? 'You have a pending review. Click below to continue.'
                     : 'Click the button below to start reviewing a product.'}
                 </p>
-                <button 
-                  onClick={handleStartReview} 
+                <button
+                  onClick={handleStartReview}
                   className="btn btn-primary btn-large"
                   disabled={loading}
                 >

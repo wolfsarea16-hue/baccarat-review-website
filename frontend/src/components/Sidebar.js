@@ -18,6 +18,8 @@ function Sidebar() {
     { path: '/withdrawal', icon: '💰', label: 'Withdrawal' },
     { path: '/withdrawal-history', icon: '📋', label: 'Withdrawal History' },
     { path: '/certification', icon: '🎓', label: 'Certification' },
+    { path: '/terms', icon: '📝', label: 'T&C' },
+    { path: '/about', icon: '🤓', label: 'About Us' },
   ];
 
   const handleNavigate = (path) => {
@@ -44,10 +46,10 @@ function Sidebar() {
           ☰
         </button>
       )}
-      
+
       {isOpen && (
-        <div 
-          className="sidebar-overlay" 
+        <div
+          className="sidebar-overlay"
           onClick={() => setIsOpen(false)}
         />
       )}

@@ -34,6 +34,19 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  animation: fadeInPage 0.5s ease-in;
+}
+
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Header */
@@ -115,8 +128,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .cert-modal-content {
@@ -169,7 +187,8 @@
 /* Responsive */
 @media (max-width: 768px) {
   .certification-container {
-    padding-top: 20px !important; /* Don't overlap with sidebar button */
+    padding-top: 20px !important;
+    /* Don't overlap with sidebar button */
   }
 
   .certification-logo {

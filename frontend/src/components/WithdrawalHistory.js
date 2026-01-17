@@ -19,7 +19,7 @@ function WithdrawalHistory() {
     try {
       const response = await withdrawalAPI.getHistory();
       const data = response.data;
-      
+
       // Make sure we have an array
       if (Array.isArray(data)) {
         setWithdrawals(data);
@@ -28,14 +28,14 @@ function WithdrawalHistory() {
       } else {
         setWithdrawals([]);
       }
-      
+
       setLoading(false);
     } catch (err) {
       console.error('Error fetching withdrawal history:', err);
       setWithdrawals([]);
       setError('Failed to load withdrawal history');
       setLoading(false);
-      
+
       if (err.response?.status === 401) {
         setTimeout(() => {
           localStorage.clear();
@@ -120,7 +120,7 @@ function WithdrawalHistory() {
                     <div className="detail-row">
                       <label>Requested:</label>
                       <span>
-                        {withdrawal.requestedAt 
+                        {withdrawal.requestedAt
                           ? new Date(withdrawal.requestedAt).toLocaleString()
                           : 'N/A'
                         }
@@ -131,13 +131,6 @@ function WithdrawalHistory() {
                       <div className="detail-row">
                         <label>Processed:</label>
                         <span>{new Date(withdrawal.processedAt).toLocaleString()}</span>
-                      </div>
-                    )}
-
-                    {withdrawal.adminNotes && (
-                      <div className="detail-row notes">
-                        <label>Admin Notes:</label>
-                        <span>{withdrawal.adminNotes}</span>
                       </div>
                     )}
                   </div>

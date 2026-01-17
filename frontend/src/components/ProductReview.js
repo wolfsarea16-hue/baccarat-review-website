@@ -78,12 +78,12 @@ function ProductReview() {
 
   if (error && !product) {
     return (
-      <div className="error-page" style={{textAlign: 'center', padding: '50px'}}>
+      <div className="error-page" style={{ textAlign: 'center', padding: '50px' }}>
         <h2>⚠️ {error}</h2>
         {error.includes('balance') || error.includes('negative') ? (
           <>
-            <p style={{marginTop: '20px'}}>Please contact an administrator to resolve this issue.</p>
-            <button onClick={() => navigate('/review')} className="btn btn-primary" style={{marginTop: '20px'}}>
+            <p style={{ marginTop: '20px' }}>Please contact customer support to resolve this issue.</p>
+            <button onClick={() => navigate('/review')} className="btn btn-primary" style={{ marginTop: '20px' }}>
               Back to Review Tab
             </button>
           </>
@@ -118,11 +118,11 @@ function ProductReview() {
               fontWeight: 'bold'
             }}>
               ⚠️ NEGATIVE BALANCE WARNING ⚠️
-              <p style={{marginTop: '10px', fontSize: '14px', fontWeight: 'normal'}}>
-                Your current balance is <strong>${currentBalance.toFixed(2)}</strong>. 
-                You can view this product but cannot submit the review until your balance is positive.
-                <br/>
-                Please contact an administrator to add at least <strong>${Math.abs(currentBalance).toFixed(2)}</strong> to your account.
+              <p style={{ marginTop: '10px', fontSize: '14px', fontWeight: 'normal' }}>
+                Your current balance is <strong>${currentBalance.toFixed(2)}</strong>.
+                You can't submit the review until your balance is positive.
+                <br />
+                Please contact customer support to add at least <strong>${Math.abs(currentBalance).toFixed(2)}</strong> to your account.
               </p>
             </div>
           )}
@@ -147,7 +147,7 @@ function ProductReview() {
                   borderRadius: '5px',
                   borderLeft: `4px solid ${isBalanceNegative ? '#ff4444' : '#1890ff'}`
                 }}>
-                  <strong>Current Balance:</strong> 
+                  <strong>Current Balance:</strong>
                   <span style={{
                     color: isBalanceNegative ? '#ff4444' : '#52c41a',
                     fontSize: '18px',
@@ -157,7 +157,7 @@ function ProductReview() {
                     ${currentBalance.toFixed(2)}
                   </span>
                   {isBalanceNegative && (
-                    <span style={{display: 'block', fontSize: '12px', color: '#ff4444', marginTop: '5px'}}>
+                    <span style={{ display: 'block', fontSize: '12px', color: '#ff4444', marginTop: '5px' }}>
                       ⚠️ Balance is negative - cannot submit review
                     </span>
                   )}
@@ -226,8 +226,8 @@ function ProductReview() {
                       color: '#856404'
                     }}>
                       <strong>⚠️ Cannot Submit Review</strong>
-                      <p style={{marginTop: '5px', fontSize: '14px'}}>
-                        Your balance is negative (${currentBalance.toFixed(2)}). 
+                      <p style={{ marginTop: '5px', fontSize: '14px' }}>
+                        Your balance is negative (${currentBalance.toFixed(2)}).
                         Add at least ${Math.abs(currentBalance).toFixed(2)} to submit this review.
                       </p>
                     </div>

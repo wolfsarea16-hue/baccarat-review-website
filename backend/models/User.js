@@ -1,25 +1,33 @@
 // backend/models/User.js
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true,
+    lowercase: true
   },
   phoneNumber: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true
   },
   password: {
     type: String,
     required: true
+  },
+  profileImage: {
+    type: String, // Base64 encoded image
+    default: null
   },
   accountBalance: {
     type: Number,
@@ -37,12 +45,19 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  isFrozen: {
-    type: Boolean,
-    default: false
+  currentSessionCommission: {
+    type: Number,
+    default: 0
+  },
+  targetBalance: {
+    type: Number,
+    default: null // null means no target balance restriction
   },
   pendingReview: {
-    productId: mongoose.Schema.Types.ObjectId,
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product'
+    },
     productPrice: Number,
     commission: Number,
     uniqueCode: String,
@@ -50,37 +65,42 @@ const UserSchema = new mongoose.Schema({
   },
   specialReviews: [{
     position: Number,
-    productId: mongoose.Schema.Types.ObjectId,
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product'
+    },
     price: Number,
-    commission: Number
+    commission: Number // Stored as percentage (e.g., 20 for 20%)
   }],
-  currentSessionCommission: {
-    type: Number,
-    default: 0
-  },
-  canWithdraw: {
-    type: Boolean,
-    default: false
-  },
-  targetBalance: {
-    type: Number,
-    default: 0
-  },
   withdrawalInfo: {
     walletAddress: String,
-    walletAddressConfirm: String,
-    currency: String,
-    network: String,
+    currency: {
+      type: String,
+      default: 'USDT'
+    },
+    network: {
+      type: String,
+      default: 'TRC20'
+    },
     isLocked: {
       type: Boolean,
       default: false
-    },
-    lockedAt: Date
+    }
+  },
+  canWithdraw: {
+    type: Boolean,
+    default: true
+  },
+  isFrozen: {
+    type: Boolean,
+    default: false
   },
   createdAt: {
     type: Date,
     default: Date.now
   }
+}, {
+  timestamps: true
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', userSchema);

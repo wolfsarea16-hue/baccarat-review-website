@@ -7,7 +7,7 @@ const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': 'true'  // ← THIS BYPASSES THE NGROK WARNING!
+    'ngrok-skip-browser-warning': 'true'
   }
 });
 
@@ -30,13 +30,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token is invalid or expired
       const currentPath = window.location.pathname;
       
-      // Only clear storage and redirect if not already on login page
       if (!currentPath.includes('/login') && !currentPath.includes('/signup') && currentPath !== '/') {
         console.log('Token expired or invalid, but keeping user on page');
-        // Don't automatically logout - just let the component handle it
       }
     }
     return Promise.reject(error);
@@ -52,7 +49,8 @@ export const authAPI = {
 
 // User API
 export const userAPI = {
-  getProfile: () => api.get('/user/profile')
+  getProfile: () => api.get('/user/profile'),
+  updateProfileImage: (data) => api.post('/user/profile/image', data) // ← ADDED THIS
 };
 
 // Review API
@@ -73,6 +71,8 @@ export const adminAPI = {
   adjustBalance: (userId, amount, operation) => api.post(`/admin/users/${userId}/balance`, { amount, operation }),
   setTargetBalance: (userId, targetBalance) => api.post(`/admin/users/${userId}/target-balance`, { targetBalance }),
   clearTargetBalance: (userId) => api.post(`/admin/users/${userId}/clear-target-balance`),
+  updateTotalReviews: (userId, totalReviewsAssigned) => 
+    api.post(`/admin/users/${userId}/update-reviews`, { totalReviewsAssigned }),
   assignSpecialReview: (userId, data) => api.post(`/admin/users/${userId}/special-review`, data),
   toggleFreeze: (userId) => api.post(`/admin/users/${userId}/freeze`),
   resetAccount: (userId) => api.post(`/admin/users/${userId}/reset`),
@@ -83,7 +83,8 @@ export const adminAPI = {
   addProduct: (data) => api.post('/admin/products', data),
   getAllWithdrawals: () => api.get('/admin/withdrawals'),
   getUserWithdrawals: (userId) => api.get(`/admin/users/${userId}/withdrawals`),
-  updateWithdrawal: (withdrawalId, data) => api.put(`/admin/withdrawals/${withdrawalId}`, data)
+  updateWithdrawal: (withdrawalId, data) => api.put(`/admin/withdrawals/${withdrawalId}`, data),
+  getReviews: () => api.get('/admin/reviews') // ← ADDED THIS (for product price in reviews)
 };
 
 // Withdrawal API

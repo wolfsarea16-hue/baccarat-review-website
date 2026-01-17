@@ -14,7 +14,20 @@ function AdminDashboard() {
   const [selectedUserWithdrawals, setSelectedUserWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  
+  const [totalReviewsForm, setTotalReviewsForm] = useState({ totalReviews: '' });
+  const [allReviews, setAllReviews] = useState([]);
+
+  // Add fetchAllReviews function
+  const fetchAllReviews = async () => {
+  try {
+    const response = await adminAPI.getReviews();
+    setAllReviews(Array.isArray(response.data) ? response.data : []);
+  } catch (err) {
+    console.error('Error fetching all reviews:', err);
+    setAllReviews([]);
+  }
+  };
+
   // Edit forms state
   const [editingUser, setEditingUser] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -63,6 +76,7 @@ function AdminDashboard() {
     fetchUsers();
     fetchProducts();
     fetchWithdrawals();
+    fetchAllReviews();
   }, []);
 
   const fetchUsers = async () => {
@@ -99,6 +113,25 @@ function AdminDashboard() {
       setWithdrawals([]);
     }
   };
+
+  const handleUpdateTotalReviews = async () => {
+  if (!totalReviewsForm.totalReviews || parseInt(totalReviewsForm.totalReviews) < 1) {
+    alert('Please enter a valid number of reviews (minimum 1)');
+    return;
+  }
+
+  try {
+    await adminAPI.updateTotalReviews(selectedUser._id, parseInt(totalReviewsForm.totalReviews));
+    alert('Total reviews updated successfully! This will only affect future reviews.');
+    setTotalReviewsForm({ totalReviews: '' });
+    fetchUsers();
+    const updatedUser = users.find(u => u._id === selectedUser._id);
+    if (updatedUser) handleUserSelect(updatedUser);
+  } catch (err) {
+    console.error('Error updating total reviews:', err);
+    alert('Failed to update total reviews');
+  }
+};
 
   const handleUserSelect = async (user) => {
     setSelectedUser(user);
@@ -522,6 +555,37 @@ function AdminDashboard() {
                 </div>
               </div>
 
+{/* UPDATE TOTAL REVIEWS SECTION */}
+<div className="detail-section">
+  <h3>Update Total Reviews</h3>
+  <p>Current Total: {selectedUser.totalReviewsAssigned || 0}</p>
+  <p>Completed: {selectedUser.reviewsCompleted || 0}</p>
+  <p>
+    Remaining: {(selectedUser.totalReviewsAssigned || 0) - (selectedUser.reviewsCompleted || 0)}
+  </p>
+
+  <div className="balance-form">
+    <div className="form-group">
+      <label>New Total Reviews</label>
+      <input
+        type="number"
+        value={totalReviewsForm.totalReviews}
+        onChange={(e) => setTotalReviewsForm({ totalReviews: e.target.value })}
+        placeholder="Enter total reviews (e.g., 30)"
+      />
+    </div>
+
+    <button onClick={handleUpdateTotalReviews} className="btn btn-primary">
+      Update Total Reviews
+    </button>
+
+    <small style={{ display: 'block', marginTop: '10px', color: '#666' }}>
+      Note: This only affects future progress. Completed reviews are never changed.
+    </small>
+  </div>
+</div>
+
+
               {/* SPECIAL REVIEW SECTION */}
               <div className="detail-section">
                 <h3>Assign Special Review</h3>
@@ -668,22 +732,26 @@ function AdminDashboard() {
                         <p><strong>Network:</strong> {withdrawal.network}</p>
                         <p><strong>Wallet:</strong> {withdrawal.walletAddress}</p>
                         <p><strong>Date:</strong> {new Date(withdrawal.requestedAt).toLocaleString()}</p>
-                        {withdrawal.status === 'pending' && (
-                          <div className="button-group" style={{ marginTop: '10px' }}>
-                            <button
-                              onClick={() => handleUpdateWithdrawal(withdrawal._id, 'processed', 'Approved by admin')}
-                              className="btn btn-success"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleUpdateWithdrawal(withdrawal._id, 'cancelled', 'Rejected by admin')}
-                              className="btn btn-danger"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        )}
+                        {(withdrawal.status === 'pending' || withdrawal.status === 'processed') && (
+  <div style={{ marginTop: '10px' }}>
+    <select
+      defaultValue=""
+      onChange={(e) => {
+        const newStatus = e.target.value;
+        if (newStatus && window.confirm(`Change status to ${newStatus}?`)) {
+          handleUpdateWithdrawal(withdrawal._id, newStatus, `Changed to ${newStatus} by admin`);
+        }
+      }}
+      style={{ padding: '8px', borderRadius: '5px' }}
+    >
+      <option value="">Change Status...</option>
+      {withdrawal.status === 'pending' && <option value="processed">Processed</option>}
+      <option value="completed">Completed</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+  </div>
+)}
+
                       </div>
                     ))}
                   </div>
@@ -806,6 +874,46 @@ function AdminDashboard() {
           </div>
         )}
       </div>
+      {/* ALL USER REVIEWS SECTION */}
+<div style={{ marginTop: '40px', background: 'white', padding: '20px', borderRadius: '10px' }}>
+  <h2>All User Reviews ({allReviews.length})</h2>
+
+  {allReviews.length === 0 ? (
+    <p>No reviews yet.</p>
+  ) : (
+    <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr style={{ background: '#f5f5f5', borderBottom: '2px solid #ddd' }}>
+            <th>User</th>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Commission</th>
+            <th>Status</th>
+            <th>Special</th>
+            <th>Position</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {allReviews.map(review => (
+            <tr key={review._id} style={{ borderBottom: '1px solid #eee' }}>
+              <td>{review.username}</td>
+              <td>{review.productName}</td>
+              <td>${review.productPrice?.toFixed(2) || '0.00'}</td>
+              <td>${review.commission?.toFixed(2) || '0.00'}</td>
+              <td>{review.status}</td>
+              <td>{review.isSpecial ? '✓' : '—'}</td>
+              <td>{review.reviewPosition}</td>
+              <td>{new Date(review.createdAt).toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
+
     </div>
   );
 }

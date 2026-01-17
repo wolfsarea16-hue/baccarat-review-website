@@ -4,6 +4,7 @@
   position: relative;
   min-height: 100vh;
 }
+
 /* Ensure content is above background */
 .page-with-sidebar.withdrawal-history-page .main-content {
   position: relative;
@@ -13,6 +14,7 @@
 .page-with-sidebar.withdrawal-history-page .sidebar {
   z-index: 10;
 }
+
 /* Background that extends under sidebar */
 .page-with-sidebar.withdrawal-history-page::before {
   content: '';
@@ -28,9 +30,23 @@
 
 /* frontend/src/components/WithdrawalHistory.css */
 .withdrawal-history-container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 40px 20px;
+  min-height: 100vh;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .withdrawal-history-header {

@@ -58,20 +58,12 @@ router.post('/start', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'You have completed all assigned reviews' });
     }
 
-    // Check if user has sufficient balance
-    if (user.accountBalance <= 0) {
-      return res.status(400).json({ message: 'Insufficient account balance' });
-    }
-
-    // Check if user has sufficient balance
-    if (user.accountBalance <= 0) {
-      return res.status(400).json({ message: 'Insufficient account balance. Please contact admin to add balance.' });
-    }
-
-    // Check if admin has set target balance
-    if (!user.targetBalance || user.targetBalance <= 0) {
+    // MINIMUM BALANCE CHECK - Must have at least $50
+    if (user.accountBalance < 50) {
       return res.status(400).json({ 
-        message: 'Target balance not set by admin. Please contact administrator to configure your account.' 
+        message: 'Minimum balance of $50 required to start reviews. Please contact admin to add balance.',
+        currentBalance: user.accountBalance,
+        requiredBalance: 50
       });
     }
 
@@ -80,15 +72,21 @@ router.post('/start', authMiddleware, async (req, res) => {
     // Check if there's a special review at this position
     const specialReview = user.specialReviews.find(sr => sr.position === nextPosition);
 
-    let product, productPrice, commission;
+    let product, productPrice, commission, hasSpecialProduct = false;
 
     if (specialReview) {
+      hasSpecialProduct = true;
       product = await Product.findById(specialReview.productId);
       if (!product) {
         return res.status(404).json({ message: 'Special product not found' });
       }
       productPrice = specialReview.price;
-      commission = (specialReview.commission / 100) * productPrice; // Calculate commission from percentage
+      commission = (specialReview.commission / 100) * productPrice;
+
+      // IMPORTANT: Clear target balance when special product is encountered
+      if (user.targetBalance) {
+        user.targetBalance = null;
+      }
     } else {
       // Get random product
       const productCount = await Product.countDocuments();
@@ -99,32 +97,43 @@ router.post('/start', authMiddleware, async (req, res) => {
         return res.status(404).json({ message: 'No products available' });
       }
 
-      // Calculate product price based on target balance
-      const reviewsRemaining = user.totalReviewsAssigned - user.currentReviewPosition;
-      const targetProfit = user.targetBalance - user.accountBalance;
-      const commissionRate = product.baseCommissionRate / 100; // 0.6% = 0.006
-      
-      // Calculate average product price needed to reach target
-      // Formula: targetProfit = reviewsRemaining * (productPrice * commissionRate)
-      // Therefore: productPrice = targetProfit / (reviewsRemaining * commissionRate)
-      let calculatedPrice = targetProfit / (reviewsRemaining * commissionRate);
-      
-      // Add some randomness (±20%) to make it less predictable
-      const randomFactor = 0.8 + Math.random() * 0.4; // Between 0.8 and 1.2
-      calculatedPrice = calculatedPrice * randomFactor;
-      
-      // Ensure price doesn't exceed 90% of current balance
-      const maxPrice = user.accountBalance * 0.9;
-      productPrice = Math.min(Math.floor(calculatedPrice), maxPrice);
-      
-      // Ensure minimum price
-      productPrice = Math.max(productPrice, 10);
-      
-      commission = productPrice * commissionRate;
+      // Check if user had a special product previously
+      const hadSpecialProduct = user.specialReviews.some(
+        sr => sr.position <= user.currentReviewPosition
+      );
+
+      // If targetBalance exists AND user hasn't had special products, use target-based calculation
+      if (user.targetBalance && user.targetBalance > 0 && !hadSpecialProduct) {
+        const reviewsRemaining = user.totalReviewsAssigned - user.currentReviewPosition;
+        const targetProfit = user.targetBalance - user.accountBalance;
+        const commissionRate = product.baseCommissionRate / 100;
+        
+        let calculatedPrice = targetProfit / (reviewsRemaining * commissionRate);
+        
+        // Add randomness (±15%)
+        const randomFactor = 0.85 + Math.random() * 0.3;
+        calculatedPrice = calculatedPrice * randomFactor;
+        
+        // Ensure price doesn't exceed 90% of current balance
+        const maxPrice = user.accountBalance * 0.9;
+        productPrice = Math.min(Math.floor(calculatedPrice), maxPrice);
+        
+        // Ensure minimum price of 10
+        productPrice = Math.max(productPrice, 10);
+        
+        commission = productPrice * commissionRate;
+      } else {
+        // No target balance OR user had special products - use balance-based calculation
+        // After special products, products should scale with new balance
+        const minPrice = Math.max(10, user.accountBalance * 0.05); // At least 5% of balance
+        const maxPrice = user.accountBalance * 0.9; // Max 90% of balance
+        
+        productPrice = Math.floor(Math.random() * (maxPrice - minPrice) + minPrice);
+        commission = productPrice * (product.baseCommissionRate / 100);
+      }
     }
 
-    // Always deduct balance, even if it goes negative
-    // This allows users to see the product but not submit if balance is negative
+    // Deduct balance
     user.accountBalance -= productPrice;
 
     // Generate unique code
@@ -152,7 +161,7 @@ router.post('/start', authMiddleware, async (req, res) => {
       uniqueCode,
       status: 'pending',
       reviewPosition: nextPosition,
-      isSpecial: !!specialReview
+      isSpecial: hasSpecialProduct
     });
 
     await review.save();
@@ -231,7 +240,7 @@ router.post('/submit/:reviewId', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'No pending review' });
     }
 
-    // Check if balance is negative - user cannot submit
+    // Check if balance is negative
     if (user.accountBalance < 0) {
       return res.status(400).json({ 
         message: 'Cannot submit review with negative balance. Please contact admin to add balance.',

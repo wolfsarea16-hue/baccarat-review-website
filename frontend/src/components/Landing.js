@@ -43,15 +43,15 @@ function Landing() {
       {/* Content */}
       <div className="landing-container">
         <div className="landing-logo">
-          <img 
-            src="/baccarat-logo.svg" 
+          <img
+            src="/baccarat-logo.svg"
             alt="Logo"
             loading="lazy"
           />
         </div>
 
         <h1 className="landing-title">Welcome to Baccarat</h1>
-        <p className="landing-subtitle">Review products and earn rewards</p>
+        <p className="landing-subtitle">Because excellence deserves a verdict</p>
 
         <div className="landing-buttons">
           <button

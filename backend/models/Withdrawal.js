@@ -1,7 +1,7 @@
 // backend/models/Withdrawal.js
 const mongoose = require('mongoose');
 
-const WithdrawalSchema = new mongoose.Schema({
+const withdrawalSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -21,17 +21,15 @@ const WithdrawalSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    required: true,
-    enum: ['USDC', 'USDT', 'BTC', 'ETH']
+    default: 'USDT'
   },
   network: {
     type: String,
-    required: true,
-    enum: ['TRC20', 'ERC20', 'BTC']
+    default: 'TRC20'
   },
   status: {
     type: String,
-    enum: ['pending', 'processed', 'completed', 'cancelled'],
+    enum: ['pending', 'approved', 'rejected', 'completed'],
     default: 'pending'
   },
   requestedAt: {
@@ -42,9 +40,10 @@ const WithdrawalSchema = new mongoose.Schema({
     type: Date
   },
   adminNotes: {
-    type: String,
-    default: ''
+    type: String
   }
+}, {
+  timestamps: true
 });
 
-module.exports = mongoose.model('Withdrawal', WithdrawalSchema);
+module.exports = mongoose.model('Withdrawal', withdrawalSchema);

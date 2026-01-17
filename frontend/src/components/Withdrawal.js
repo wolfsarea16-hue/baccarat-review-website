@@ -29,7 +29,7 @@ function Withdrawal() {
     try {
       const profileRes = await userAPI.getProfile();
       setUser(profileRes.data);
-      
+
       try {
         const detailsRes = await withdrawalAPI.getDetails();
         setDetails(detailsRes.data);
@@ -37,13 +37,13 @@ function Withdrawal() {
         console.log('No withdrawal details yet:', detailsErr);
         setDetails({ isLocked: false, hasDetails: false });
       }
-      
+
       setLoading(false);
     } catch (err) {
       console.error('Error fetching data:', err);
       setError('Failed to load profile information');
       setLoading(false);
-      
+
       if (err.response?.status === 401) {
         setTimeout(() => {
           localStorage.clear();
@@ -174,7 +174,7 @@ function Withdrawal() {
             <div className="withdrawal-form-card">
               <h2>Set Withdrawal Details</h2>
               <p className="info-text">
-                ⚠️ Once saved, these details cannot be changed except by an administrator.
+                ⚠️ Once saved, these details cannot be changed, to make updates contact customer support.
               </p>
 
               <form onSubmit={handleSetDetails}>
@@ -253,7 +253,7 @@ function Withdrawal() {
           ) : (
             <div className="withdrawal-details-card">
               <h2>Your Withdrawal Details</h2>
-              <p className="locked-badge">🔒 Locked - Contact admin to change</p>
+              <p className="locked-badge">🔒 Locked - Contact customer support to change</p>
 
               <div className="details-display">
                 <div className="detail-item">
@@ -290,12 +290,12 @@ function Withdrawal() {
                 {submitting
                   ? 'Processing...'
                   : !user?.canWithdraw
-                  ? '🔒 Withdrawal Disabled (Contact Admin)'
-                  : (user?.reviewsCompleted || 0) < (user?.totalReviewsAssigned || 0)
-                  ? '🔒 Complete All Reviews First'
-                  : (user?.accountBalance || 0) <= 0
-                  ? '🔒 Insufficient Balance'
-                  : 'Submit Withdrawal Request'}
+                    ? '🔒 Withdrawal Disabled (Contact Admin)'
+                    : (user?.reviewsCompleted || 0) < (user?.totalReviewsAssigned || 0)
+                      ? '🔒 Complete All Reviews First'
+                      : (user?.accountBalance || 0) <= 0
+                        ? '🔒 Insufficient Balance'
+                        : 'Submit Withdrawal Request'}
               </button>
 
               <button

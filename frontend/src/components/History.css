@@ -13,7 +13,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #0F0F0F; /* Your black shade - change as needed */
+  background: #0F0F0F;
+  /* Your black shade - change as needed */
   z-index: 0;
 }
 
@@ -34,6 +35,19 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .history-header {
@@ -44,7 +58,8 @@
 }
 
 .history-header h1 {
-  color: #D4AF37; /* Gold color for heading */
+  color: #D4AF37;
+  /* Gold color for heading */
 }
 
 .reviews-list {

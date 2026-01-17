@@ -12,6 +12,8 @@ import History from './components/History';
 import Withdrawal from './components/Withdrawal';
 import WithdrawalHistory from './components/WithdrawalHistory';
 import Certification from './components/Certification';
+import TermsAndConditions from './components/TermsAndConditions';
+import AboutUs from './components/AboutUs';
 import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
 import './App.css';
@@ -20,11 +22,11 @@ import './App.css';
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role');
-  
+
   if (!token || role !== 'user') {
     return <Navigate to="/login" replace />;
   }
-  
+
   return children;
 };
 
@@ -32,11 +34,11 @@ const ProtectedRoute = ({ children }) => {
 const AdminProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role');
-  
+
   if (!token || role !== 'admin') {
     return <Navigate to="/admin/login" replace />;
   }
-  
+
   return children;
 };
 
@@ -45,7 +47,7 @@ function App() {
     // Check if user is logged in on app load
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
-    
+
     if (token && role) {
       console.log('User session restored:', role);
     }
@@ -59,7 +61,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
+
           {/* Protected User Routes */}
           <Route path="/home" element={
             <ProtectedRoute>
@@ -101,7 +103,17 @@ function App() {
               <Certification />
             </ProtectedRoute>
           } />
-          
+          <Route path="/terms" element={
+            <ProtectedRoute>
+              <TermsAndConditions />
+            </ProtectedRoute>
+          } />
+          <Route path="/about" element={
+            <ProtectedRoute>
+              <AboutUs />
+            </ProtectedRoute>
+          } />
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={
