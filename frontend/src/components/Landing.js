@@ -1,6 +1,6 @@
-// frontend/src/components/Landing.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import GlassSurface from './GlassSurface';
 import './Landing.css';
 
 function Landing() {
@@ -54,18 +54,41 @@ function Landing() {
         <p className="landing-subtitle">Because excellence deserves a verdict</p>
 
         <div className="landing-buttons">
-          <button
-            onClick={() => navigate('/login')}
-            className="btn btn-primary btn-large"
+          <GlassSurface
+            width={200}
+            height={60}
+            borderRadius={50}
+            brightness={60}
+            opacity={0.6}
+            blur={12}
+            borderWidth={0.1}
+            className="landing-glass-btn"
           >
-            Login
-          </button>
-          <button
-            onClick={() => navigate('/signup')}
-            className="btn btn-secondary btn-large"
+            <div
+              className="landing-glass-content login"
+              onClick={() => navigate('/login')}
+            >
+              Login
+            </div>
+          </GlassSurface>
+
+          <GlassSurface
+            width={200}
+            height={60}
+            borderRadius={50}
+            brightness={60}
+            opacity={0.4}
+            blur={12}
+            borderWidth={0.1}
+            className="landing-glass-btn"
           >
-            Sign Up
-          </button>
+            <div
+              className="landing-glass-content signup"
+              onClick={() => navigate('/signup')}
+            >
+              Sign Up
+            </div>
+          </GlassSurface>
         </div>
       </div>
     </div>
