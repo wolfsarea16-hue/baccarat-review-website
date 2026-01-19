@@ -91,7 +91,7 @@ function ReviewTab() {
               onClick={() => navigate('/home')}
               className="back-to-home-btn"
             >
-              back to home
+              Back to home
             </button>
             <h1>Review Dashboard</h1>
           </div>

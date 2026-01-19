@@ -139,7 +139,7 @@ function Profile() {
               onClick={() => navigate('/home')}
               className="back-to-home-btn"
             >
-              back to home
+              Back to home
             </button>
             <h1>My profile</h1>
             <div className="spacer"></div>
