@@ -94,44 +94,84 @@
 }
 
 .stat-card {
-  background: white;
+  background: #1A1A1A;
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.stat-card h3 {
+  color: #E0E0E0;
+  margin-top: 0;
 }
 
 .stat-value {
   font-size: 32px;
   font-weight: bold;
-  color: #667eea;
+  color: #D4AF37;
   margin-top: 10px;
 }
 
 .review-action {
-  background: white;
+  background: #1A1A1A;
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #E0E0E0;
 }
 
 .review-instruction {
   font-size: 18px;
   margin-bottom: 30px;
+  color: #E0E0E0;
 }
 
-.btn-large {
+.btn-primary {
+  background: linear-gradient(135deg, #111111 0%, #B11226 100%) !important;
+  color: white !important;
+  border: 1px solid rgba(212, 175, 55, 0.3) !important;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(177, 18, 38, 0.4);
+  border-color: #D4AF37 !important;
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.5) !important;
+}
+
+.review-tab-container .btn-large {
   padding: 15px 40px;
   font-size: 18px;
+  width: 100%;
+  max-width: 800px;
+  display: block;
+  margin: 20px auto 0;
+  /* Increased to span panel width effectively */
 }
 
 .completed-message {
   padding: 20px;
+  color: #E0E0E0;
 }
 
 .completed-message h2 {
   color: #28a745;
+  /* Keep green for success, or change to Gold if preferred? Green implies success better */
   margin-bottom: 10px;
 }
 

@@ -259,8 +259,9 @@
 .btn-success {
   background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
-  padding: 14px 20px;
+  padding: 12px 20px;
   box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  width: 100%;
 }
 
 .btn-success:hover:not(:disabled) {
@@ -288,10 +289,10 @@
 }
 
 .btn-large {
-  padding: 16px 40px;
-  font-size: 18px;
+  padding: 12px 20px;
+  font-size: 16px;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .error-message {

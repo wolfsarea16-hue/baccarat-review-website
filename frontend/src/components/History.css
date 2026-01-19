@@ -52,7 +52,7 @@
 
 .history-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 30px;
 }
@@ -161,4 +161,16 @@
 .luxury-back-btn:hover {
   background: rgba(212, 175, 55, 0.15);
   border-color: #D4AF37;
+}
+
+@media (max-width: 768px) {
+  .history-header {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .history-header h1 {
+    width: 100%;
+    font-size: 28px;
+  }
 }

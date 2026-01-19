@@ -195,6 +195,17 @@
   cursor: not-allowed;
 }
 
+.auth-page .btn-primary:focus,
+.auth-page .btn-primary:focus-visible,
+.auth-page .btn-primary:active,
+.auth-page .btn-primary:hover {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.5) !important;
+  border: 1px solid #D4AF37 !important;
+  background: linear-gradient(135deg, #111111 0%, #B11226 100%) !important;
+  color: white !important;
+}
+
 .auth-links {
   display: flex;
   flex-direction: column;

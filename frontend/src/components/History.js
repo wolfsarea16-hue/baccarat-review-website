@@ -66,15 +66,7 @@ function History() {
         <div className="history-container">
 
           <div className="history-header">
-            <button
-              onClick={() => navigate('/home')}
-              className="luxury-back-btn"
-            >
-              Back to Home
-            </button>
             <h1>Review History</h1>
-            <div></div> {/* Spacer for flex layout */}
-
           </div>
 
           {error && <div className="error-message">{error}</div>}
@@ -101,12 +93,12 @@ function History() {
                     </p>
 
                     <p>
-                      <strong>Commission:</strong> $
+                      <span style={{ color: "#D4AF37" }}><strong>Commission:</strong></span> $
                       {review.commission ? review.commission.toFixed(2) : '0.00'}
                     </p>
 
                     <p>
-                      <strong>Code:</strong> {review.uniqueCode || 'N/A'}
+                      <span style={{ color: "#D4AF37" }}><strong>Code:</strong></span> {review.uniqueCode || 'N/A'}
                     </p>
 
                     {review.isSpecial && (

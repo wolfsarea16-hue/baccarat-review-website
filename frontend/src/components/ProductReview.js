@@ -97,7 +97,7 @@ function ProductReview() {
   }
 
   return (
-    <div className="page-with-sidebar">
+    <div className="page-with-sidebar product-review-page">
       <Sidebar />
       <div className="main-content">
         <div className="product-review-container">
@@ -142,24 +142,13 @@ function ProductReview() {
                 <p><strong>Product Price:</strong> ${product.productPrice.toFixed(2)}</p>
                 <p><strong>Commission:</strong> ${product.commission.toFixed(2)}</p>
                 <p><strong>Unique Code:</strong> {product.uniqueCode}</p>
-                <p style={{
-                  marginTop: '15px',
-                  padding: '10px',
-                  background: isBalanceNegative ? '#ffe6e6' : '#e6f7ff',
-                  borderRadius: '5px',
-                  borderLeft: `4px solid ${isBalanceNegative ? '#ff4444' : '#1890ff'}`
-                }}>
+                <p className={`balance-box ${isBalanceNegative ? 'negative' : 'positive'}`}>
                   <strong>Current Balance:</strong>
-                  <span style={{
-                    color: isBalanceNegative ? '#ff4444' : '#52c41a',
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                    marginLeft: '10px'
-                  }}>
+                  <span className="balance-value">
                     ${currentBalance.toFixed(2)}
                   </span>
                   {isBalanceNegative && (
-                    <span style={{ display: 'block', fontSize: '12px', color: '#ff4444', marginTop: '5px' }}>
+                    <span className="balance-warning">
                       ⚠️ Balance is negative - cannot submit review
                     </span>
                   )}

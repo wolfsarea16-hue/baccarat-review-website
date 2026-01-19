@@ -40,7 +40,7 @@
   text-align: center;
   font-size: 32px;
   font-weight: 700;
-  color: #d6b46c;
+  color: #D4AF37;
   letter-spacing: 1px;
 }
 
@@ -161,15 +161,15 @@
 }
 
 .stat-label {
-  color: #aaa;
+  color: #B0B0B0;
   font-size: 14px;
   margin-bottom: 10px;
+  display: block;
 }
 
 .stat-value {
-  font-size: 26px;
-  color: #e6c97a;
-  /* soft gold */
+  font-size: 18px;
+  color: #E0E0E0;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -299,11 +299,10 @@
   }
 }
 
-/* Force Baccarat stat colors */
+/* Force Baccarat stat colors - Unified with application theme */
 .profile-page .stat-box .stat-value {
-  color: #e6c97a !important;
-  /* Baccarat gold */
-  font-size: 24px !important;
+  color: #E0E0E0 !important;
+  font-size: 18px !important;
   font-weight: 600 !important;
   letter-spacing: 0.6px;
 }

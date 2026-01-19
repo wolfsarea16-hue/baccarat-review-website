@@ -69,11 +69,12 @@
 }
 
 .no-withdrawals {
-  background: white;
+  background: rgba(26, 26, 26, 0.95);
   padding: 60px;
   border-radius: 15px;
   text-align: center;
-  color: #666;
+  color: #D4AF37;
+  border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 .withdrawals-list {
@@ -82,10 +83,11 @@
 }
 
 .withdrawal-card {
-  background: white;
+  background: #1A1A1A;
   border-radius: 15px;
   padding: 25px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .withdrawal-header {
@@ -94,12 +96,12 @@
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .withdrawal-header h3 {
   margin: 0;
-  color: #333;
+  color: #D4AF37;
 }
 
 .status-badge {
@@ -142,12 +144,12 @@
 
 .detail-row label {
   font-weight: 600;
-  color: #666;
+  color: #B0B0B0;
   min-width: 120px;
 }
 
 .detail-row span {
-  color: #333;
+  color: #E0E0E0;
   text-align: right;
   flex: 1;
 }
@@ -161,7 +163,8 @@
 .detail-row .wallet {
   font-family: monospace;
   font-size: 12px;
-  background: #f0f0f0;
+  background: rgba(255, 255, 255, 0.1);
+  color: #E0E0E0;
   padding: 4px 8px;
   border-radius: 4px;
   word-break: break-all;
@@ -169,7 +172,7 @@
 
 .detail-row.notes {
   flex-direction: column;
-  background: #f8f9fa;
+  background: rgba(255, 255, 255, 0.05);
   padding: 15px;
   border-radius: 8px;
   margin-top: 10px;

@@ -135,14 +135,7 @@ function Profile() {
         <div className="profile-container">
           {/* Profile Header */}
           <div className="profile-header">
-            <button
-              onClick={() => navigate('/home')}
-              className="back-to-home-btn"
-            >
-              Back to home
-            </button>
             <h1>My profile</h1>
-            <div className="spacer"></div>
           </div>
 
           {/* User Avatar and Name */}
