@@ -111,6 +111,11 @@ function Withdrawal() {
       return;
     }
 
+    if ((user?.reputationPoints !== undefined ? user.reputationPoints : 100) < 100) {
+      setError('Reputation points are less than 100, withdrawals are not allowed currently');
+      return;
+    }
+
     if (window.confirm(`Confirm withdrawal of $${user.accountBalance.toFixed(2)}? Your balance will be set to $0.`)) {
       try {
         setSubmitting(true);

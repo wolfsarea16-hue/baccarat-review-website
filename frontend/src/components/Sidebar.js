@@ -1,14 +1,33 @@
 // frontend/src/components/Sidebar.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/baccarat-logo.svg';
 import './Sidebar.css';
+
+import { userAPI } from '../services/api';
 
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
   const username = localStorage.getItem('username');
+
+  useEffect(() => {
+    // Fetch user profile to get reputation points
+    const fetchProfile = async () => {
+      try {
+        const response = await userAPI.getProfile();
+        setUserProfile(response.data);
+      } catch (err) {
+        console.error('Error fetching profile for sidebar:', err);
+      }
+    };
+
+    if (localStorage.getItem('token')) {
+      fetchProfile();
+    }
+  }, [isOpen]); // Refetch when sidebar opens to ensure fresh data
 
   const menuItems = [
     { path: '/home', icon: '🏠', label: 'Home' },
@@ -39,6 +58,15 @@ function Sidebar() {
     setIsOpen(!isOpen);
   };
 
+  // Calculate reputation slider position
+  // 100 points = 0% right (completely right)
+  // 0 points = 100% right (completely left of the bar, if bar width is reference)
+  // Let's assume the bar is 100% width of a container. 
+  // If points < 100, we want it to move left.
+  const reputationPoints = userProfile?.reputationPoints !== undefined ? userProfile.reputationPoints : 100;
+  // If 100, right: 0. If 50, right: 50%.
+  const sliderPosition = Math.max(0, Math.min(100, 100 - reputationPoints));
+
   return (
     <>
       {!isOpen && (
@@ -59,7 +87,20 @@ function Sidebar() {
           <div className="sidebar-logo">
             <img src={logo} alt="Logo" />
           </div>
-          {isOpen && <p className="sidebar-username">{username}</p>}
+          {isOpen && (
+            <div className="sidebar-user-info">
+              <p className="sidebar-username">{username}</p>
+              <div className="reputation-container">
+                <div className="reputation-line"></div>
+                <div
+                  className="reputation-badge"
+                  style={{ right: `${sliderPosition}%` }}
+                >
+                  {reputationPoints}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <nav className="sidebar-nav">

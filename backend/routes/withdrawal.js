@@ -48,8 +48,8 @@ router.post('/set-details', authMiddleware, async (req, res) => {
 
     // Check if already locked
     if (user.withdrawalInfo && user.withdrawalInfo.isLocked) {
-      return res.status(400).json({ 
-        message: 'Withdrawal details are locked. Contact admin to unlock.' 
+      return res.status(400).json({
+        message: 'Withdrawal details are locked. Contact admin to unlock.'
       });
     }
 
@@ -68,7 +68,7 @@ router.post('/set-details', authMiddleware, async (req, res) => {
 
     await user.save();
 
-    res.json({ 
+    res.json({
       message: 'Withdrawal details saved and locked successfully',
       withdrawalInfo: user.withdrawalInfo
     });
@@ -88,15 +88,15 @@ router.post('/request', authMiddleware, async (req, res) => {
 
     // Validate withdrawal permission
     if (!user.canWithdraw) {
-      return res.status(403).json({ 
-        message: 'Withdrawal is disabled for your account. Contact admin.' 
+      return res.status(403).json({
+        message: 'Withdrawal is disabled for your account. Contact admin.'
       });
     }
 
     // Validate reviews completed
     if (user.reviewsCompleted < user.totalReviewsAssigned) {
-      return res.status(400).json({ 
-        message: `You must complete all ${user.totalReviewsAssigned} reviews before withdrawing. Currently completed: ${user.reviewsCompleted}` 
+      return res.status(400).json({
+        message: `You must complete all ${user.totalReviewsAssigned} reviews before withdrawing. Currently completed: ${user.reviewsCompleted}`
       });
     }
 
@@ -105,10 +105,19 @@ router.post('/request', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'Insufficient balance to withdraw' });
     }
 
+    // Validate reputation points
+    // Default to 100 if undefined (legacy users)
+    const reputationPoints = user.reputationPoints !== undefined ? user.reputationPoints : 100;
+    if (reputationPoints < 100) {
+      return res.status(403).json({
+        message: 'Reputation points are less than 100, withdrawals are not allowed currently'
+      });
+    }
+
     // Validate withdrawal details are set
     if (!user.withdrawalInfo || !user.withdrawalInfo.walletAddress) {
-      return res.status(400).json({ 
-        message: 'Please set your withdrawal details first' 
+      return res.status(400).json({
+        message: 'Please set your withdrawal details first'
       });
     }
 
@@ -117,6 +126,7 @@ router.post('/request', authMiddleware, async (req, res) => {
       userId: user._id,
       username: user.username, // Add username field
       amount: user.accountBalance,
+      commissionSnapshot: user.currentSessionCommission || 0,
       walletAddress: user.withdrawalInfo.walletAddress,
       currency: user.withdrawalInfo.currency || 'USDT',
       network: user.withdrawalInfo.network || 'TRC20',
@@ -130,7 +140,7 @@ router.post('/request', authMiddleware, async (req, res) => {
     user.currentSessionCommission = 0;
     await user.save();
 
-    res.json({ 
+    res.json({
       message: 'Withdrawal request submitted successfully',
       withdrawal: {
         amount: withdrawal.amount,

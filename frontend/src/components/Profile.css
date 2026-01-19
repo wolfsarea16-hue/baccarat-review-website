@@ -96,6 +96,52 @@
   letter-spacing: 0.5px;
 }
 
+/* Reputation Slider */
+.profile-reputation-container {
+  width: 300px;
+  max-width: 90%;
+  margin-top: 20px;
+  position: relative;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.profile-reputation-line {
+  width: 100%;
+  height: 2px;
+  /* Match sidebar thickness */
+  background-color: #d4af37;
+  /* Match sidebar gold */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.profile-reputation-badge {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #0f0f0f;
+  /* approximate profile background */
+  color: #d4af37;
+  /* Match sidebar text color */
+  font-weight: bold;
+  font-size: 14px;
+  /* Match sidebar font size */
+  border: 2px solid #d4af37;
+  /* Match sidebar border */
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: right 0.3s ease-in-out;
+  z-index: 2;
+  /* Ensure it sits on top of line */
+}
+
 /* STAT CARDS */
 
 .stats-top-row {

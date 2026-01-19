@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  reputationPoints: {
+    type: Number,
+    default: 100
+  },
   currentReviewPosition: {
     type: Number,
     default: 0

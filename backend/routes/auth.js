@@ -51,7 +51,8 @@ router.post('/signup', async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        accountBalance: user.accountBalance
+        accountBalance: user.accountBalance,
+        reputationPoints: user.reputationPoints
       }
     });
   } catch (err) {
@@ -66,13 +67,13 @@ router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     // Find user by username OR phone number
-    const user = await User.findOne({ 
+    const user = await User.findOne({
       $or: [
         { username: username },
         { phoneNumber: username }
       ]
     });
-    
+
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -103,7 +104,8 @@ router.post('/login', async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        accountBalance: user.accountBalance
+        accountBalance: user.accountBalance,
+        reputationPoints: user.reputationPoints
       }
     });
   } catch (err) {

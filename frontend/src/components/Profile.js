@@ -79,13 +79,13 @@ function Profile() {
         const size = Math.min(img.width, img.height);
         canvas.width = size;
         canvas.height = size;
-        
+
         const ctx = canvas.getContext('2d');
         const offsetX = (img.width - size) / 2;
         const offsetY = (img.height - size) / 2;
-        
+
         ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
-        
+
         const croppedBase64 = canvas.toDataURL('image/jpeg', 0.9);
         setProfileImage(croppedBase64);
 
@@ -135,8 +135,8 @@ function Profile() {
         <div className="profile-container">
           {/* Profile Header */}
           <div className="profile-header">
-            <button 
-              onClick={() => navigate('/home')} 
+            <button
+              onClick={() => navigate('/home')}
               className="back-to-home-btn"
             >
               back to home
@@ -151,12 +151,12 @@ function Profile() {
               {profileImage ? (
                 <img src={profileImage} alt="Profile" className="profile-image" />
               ) : (
-                <img src={logo} alt="Default Profile" className="profile-image" style={{padding: '20px'}} />
+                <img src={logo} alt="Default Profile" className="profile-image" style={{ padding: '20px' }} />
               )}
               <div className="avatar-overlay">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
                 </svg>
               </div>
             </div>
@@ -168,6 +168,17 @@ function Profile() {
               style={{ display: 'none' }}
             />
             <h2 className="username">{user.username}</h2>
+
+            {/* Reputation Slider */}
+            <div className="profile-reputation-container">
+              <div className="profile-reputation-line"></div>
+              <div
+                className="profile-reputation-badge"
+                style={{ right: `${Math.max(0, Math.min(100, 100 - (user.reputationPoints || 100)))}%` }}
+              >
+                {user.reputationPoints || 100}
+              </div>
+            </div>
           </div>
 
           {/* Stats Grid */}
@@ -191,10 +202,10 @@ function Profile() {
             <div className="member-info-row">
               <span className="member-label">Member since :</span>
               <span className="member-date">
-                {new Date(user.createdAt).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
+                {new Date(user.createdAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
                 })}
               </span>
             </div>

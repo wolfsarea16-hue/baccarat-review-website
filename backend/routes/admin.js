@@ -31,7 +31,7 @@ router.post('/users/:userId/clear-target-balance', adminMiddleware, async (req, 
 
     await user.save();
 
-    res.json({ 
+    res.json({
       message: 'Target balance cleared successfully. User can now proceed normally.',
       user: {
         username: user.username,
@@ -49,7 +49,7 @@ router.post('/users/:userId/target-balance', adminMiddleware, async (req, res) =
   try {
     const { targetBalance } = req.body;
     const user = await User.findById(req.params.userId);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -57,7 +57,7 @@ router.post('/users/:userId/target-balance', adminMiddleware, async (req, res) =
     user.targetBalance = targetBalance;
     await user.save();
 
-    res.json({ 
+    res.json({
       message: 'Target balance set successfully',
       targetBalance: user.targetBalance
     });
@@ -77,7 +77,7 @@ router.get('/users/search', adminMiddleware, async (req, res) => {
         { email: { $regex: query, $options: 'i' } }
       ]
     }).select('-password');
-    
+
     res.json(users);
   } catch (err) {
     console.error('Error searching users:', err);
@@ -103,16 +103,17 @@ router.get('/users/:userId', adminMiddleware, async (req, res) => {
 router.put('/users/:userId', adminMiddleware, async (req, res) => {
   try {
     const updates = req.body;
+    console.log('Updating user', req.params.userId, 'with:', updates);
     const user = await User.findByIdAndUpdate(
       req.params.userId,
       updates,
       { new: true }
     ).select('-password');
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     res.json(user);
   } catch (err) {
     console.error('Error updating user:', err);
@@ -125,7 +126,7 @@ router.post('/users/:userId/balance', adminMiddleware, async (req, res) => {
   try {
     const { amount, operation } = req.body;
     const user = await User.findById(req.params.userId);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -138,7 +139,7 @@ router.post('/users/:userId/balance', adminMiddleware, async (req, res) => {
 
     await user.save();
 
-    res.json({ 
+    res.json({
       message: `Balance ${operation === 'add' ? 'added' : 'subtracted'} successfully`,
       newBalance: user.accountBalance
     });
@@ -191,7 +192,7 @@ router.post('/users/:userId/special-review', adminMiddleware, async (req, res) =
 
     await user.save();
 
-    res.json({ 
+    res.json({
       message: 'Special review added successfully',
       specialReview: {
         position,
@@ -218,7 +219,7 @@ router.post('/users/:userId/freeze', adminMiddleware, async (req, res) => {
     user.isFrozen = !user.isFrozen;
     await user.save();
 
-    res.json({ 
+    res.json({
       message: `User ${user.isFrozen ? 'frozen' : 'unfrozen'} successfully`,
       isFrozen: user.isFrozen
     });
@@ -264,7 +265,7 @@ router.post('/users/:userId/toggle-withdrawal', adminMiddleware, async (req, res
     user.canWithdraw = !user.canWithdraw;
     await user.save();
 
-    res.json({ 
+    res.json({
       message: `Withdrawal ${user.canWithdraw ? 'enabled' : 'disabled'} successfully`,
       canWithdraw: user.canWithdraw
     });
@@ -300,7 +301,7 @@ router.post('/users/:userId/change-password', adminMiddleware, async (req, res) 
   try {
     const { newPassword } = req.body;
     const user = await User.findById(req.params.userId);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -371,13 +372,31 @@ router.put('/withdrawals/:withdrawalId', adminMiddleware, async (req, res) => {
     const { status, adminNotes } = req.body;
     const withdrawal = await Withdrawal.findByIdAndUpdate(
       req.params.withdrawalId,
-      { 
-        status, 
+      {
+        status,
         adminNotes,
         processedAt: status !== 'pending' ? new Date() : null
       },
       { new: true }
     );
+
+    if (!withdrawal) {
+      return res.status(404).json({ message: 'Withdrawal not found' });
+    }
+
+    // If cancelled, refund the user
+    if (status === 'cancelled' || status === 'rejected') {
+      const user = await User.findById(withdrawal.userId);
+      if (user) {
+        user.accountBalance += withdrawal.amount;
+        // Restore commission if available
+        if (withdrawal.commissionSnapshot) {
+          user.currentSessionCommission = withdrawal.commissionSnapshot;
+        }
+        await user.save();
+        console.log(`Refunded ${withdrawal.amount} to user ${user.username} (cancelled withdrawal)`);
+      }
+    }
 
     if (!withdrawal) {
       return res.status(404).json({ message: 'Withdrawal not found' });
@@ -423,7 +442,7 @@ router.post('/users/:userId/update-reviews', adminMiddleware, async (req, res) =
   try {
     const { totalReviewsAssigned } = req.body;
     const user = await User.findById(req.params.userId);
-    
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -436,7 +455,7 @@ router.post('/users/:userId/update-reviews', adminMiddleware, async (req, res) =
     user.totalReviewsAssigned = parseInt(totalReviewsAssigned);
     await user.save();
 
-    res.json({ 
+    res.json({
       message: 'Total reviews updated successfully. This will affect future reviews only.',
       totalReviewsAssigned: user.totalReviewsAssigned,
       reviewsCompleted: user.reviewsCompleted,
