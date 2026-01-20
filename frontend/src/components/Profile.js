@@ -1,13 +1,11 @@
 // frontend/src/components/Profile.js
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../services/api';
 import Sidebar from './Sidebar';
 import logo from '../assets/baccarat-logo.svg';
 import './Profile.css';
 
 function Profile() {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
