@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import './AboutUs.css';
 
 const AboutUs = () => {
+    const navigate = useNavigate();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const images = ['/about2.png', '/about3.png', '/about4.png'];
 
@@ -228,6 +230,17 @@ const AboutUs = () => {
                             <p>
                                 Salvador Dali, Ettore Sottsass, Philippe Starck, Jaime Hayon, Marcel Wanders, and Virgil Abloh – the world’s iconic artists and designers have also succumbed to the temptation of Baccarat. Through unprecedented collaborations, each has imparted a unique artistic vision, constantly pushing the limits of technique, often defying the laws of matter. The absolute complicity between the artists and craftsmen has resulted in original, soulful creations rich in imagination.
                             </p>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="about-footer">
+                        <p className="copyright">Copyright ©2026 Baccarat. All rights reserved</p>
+                        <div className="footer-links">
+                            <button onClick={() => navigate('/home')}>Home</button>
+                            <button onClick={() => navigate('/about')}>About Us</button>
+                            <button onClick={() => navigate('/terms')}>T&C</button>
+                            <button onClick={() => navigate('/faq')}>FAQ</button>
                         </div>
                     </div>
                 </div>

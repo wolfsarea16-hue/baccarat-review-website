@@ -3,7 +3,7 @@
 .forum-page {
     display: flex;
     min-height: 100vh;
-    background: #1a1a1a;
+    background: #0F0F0F;
 }
 
 .forum-container {
@@ -147,14 +147,26 @@
 
 /* Footer */
 .forum-footer {
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.3);
+    padding: 30px 20px 20px;
+    background: #0F0F0F;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+    position: relative;
+}
+
+.forum-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.15);
 }
 
 .copyright {

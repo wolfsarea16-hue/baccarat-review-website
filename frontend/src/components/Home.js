@@ -155,6 +155,17 @@ function Home() {
               </GlassSurface>
             )}
           </div>
+
+          {/* Footer */}
+          <div className="home-footer">
+            <p className="copyright">Copyright ©2026 Baccarat. All rights reserved</p>
+            <div className="footer-links">
+              <button onClick={() => navigate('/home')}>Home</button>
+              <button onClick={() => navigate('/about')}>About Us</button>
+              <button onClick={() => navigate('/terms')}>T&C</button>
+              <button onClick={() => navigate('/faq')}>FAQ</button>
+            </div>
+          </div>
         </div>
 
       </div>

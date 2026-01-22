@@ -1,12 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import logo from '../assets/baccarat-logo.svg';
 import './TermsAndConditions.css';
 
 const TermsAndConditions = () => {
+    const navigate = useNavigate();
     const terms = [
         "The Platform will keep all member's information confidential in accordance with the Privacy Policy and Applicable Data Protection Law, and strictly comply with local personal information protection laws.",
-        "Every new member needs to add $30 to authenticate their account.",
+        "Every new member needs to add $23 to validate their account.",
         "Please do not disclose your account password to others. Our platform will not be held responsible for any losses caused.",
         "Special reviews are randomly allocated by the system and once a review has been accepted and allocated by the system, any changes, cancellations or abandonment of reviewing are strictly not allowed.",
         "Any attempt to disrupt the operation of the platform and it's peaceful working environment will not be tolerated. We will pursue legal responsibility, claim compensation for all losses and defend the reputation and interests of the platform to eliminate any potential dangers on the platform.",
@@ -57,6 +59,17 @@ const TermsAndConditions = () => {
                                 Dear Member, Kindly read our rules declaration carefully and thank you for your cooperation.
                                 If you do not understand anything, please contact Customer Support for information.
                             </p>
+                        </div>
+                    </div>
+
+                    {/* Footer - Copyright Part matching FAQ */}
+                    <div className="terms-page-footer">
+                        <p className="copyright">Copyright ©2026 Baccarat. All rights reserved</p>
+                        <div className="footer-links">
+                            <button onClick={() => navigate('/home')}>Home</button>
+                            <button onClick={() => navigate('/about')}>About Us</button>
+                            <button onClick={() => navigate('/terms')}>T&C</button>
+                            <button onClick={() => navigate('/faq')}>FAQ</button>
                         </div>
                     </div>
                 </div>
