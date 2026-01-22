@@ -99,6 +99,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  groupLink: {
+    type: String,
+    default: ''
+  },
   createdAt: {
     type: Date,
     default: Date.now

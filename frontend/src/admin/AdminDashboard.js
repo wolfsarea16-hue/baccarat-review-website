@@ -35,7 +35,8 @@ function AdminDashboard() {
     email: '',
     phoneNumber: '',
     accountBalance: 0,
-    totalReviewsAssigned: 0
+    totalReviewsAssigned: 0,
+    groupLink: ''
   });
 
   // Balance adjustment state
@@ -141,7 +142,8 @@ function AdminDashboard() {
       phoneNumber: user.phoneNumber,
       accountBalance: user.accountBalance,
       totalReviewsAssigned: user.totalReviewsAssigned,
-      reputationPoints: user.reputationPoints || 100
+      reputationPoints: user.reputationPoints || 100,
+      groupLink: user.groupLink || ''
     });
     setTargetBalanceForm({
       targetBalance: user.targetBalance || 0
@@ -460,6 +462,7 @@ function AdminDashboard() {
                     <p><strong>Current Position:</strong> {selectedUser.currentReviewPosition || 0}</p>
                     <p><strong>Frozen:</strong> {selectedUser.isFrozen ? 'Yes' : 'No'}</p>
                     <p><strong>Can Withdraw:</strong> {selectedUser.canWithdraw ? 'Yes' : 'No'}</p>
+                    <p><strong>Group Link:</strong> {selectedUser.groupLink || 'Not set'}</p>
                     <button onClick={() => setEditingUser(true)} className="btn btn-primary">
                       Edit User
                     </button>
@@ -496,6 +499,15 @@ function AdminDashboard() {
                         type="number"
                         value={editForm.reputationPoints}
                         onChange={(e) => setEditForm({ ...editForm, reputationPoints: parseInt(e.target.value) || 0 })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Group Link (Telegram/Other)</label>
+                      <input
+                        type="text"
+                        value={editForm.groupLink}
+                        onChange={(e) => setEditForm({ ...editForm, groupLink: e.target.value })}
+                        placeholder="https://t.me/your-group or any other link"
                       />
                     </div>
                     <div className="button-group">

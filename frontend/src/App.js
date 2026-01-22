@@ -14,6 +14,8 @@ import WithdrawalHistory from './components/WithdrawalHistory';
 import Certification from './components/Certification';
 import TermsAndConditions from './components/TermsAndConditions';
 import AboutUs from './components/AboutUs';
+import Forum from './components/Forum';
+import FAQ from './components/FAQ';
 import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
 import './App.css';
@@ -111,6 +113,16 @@ function App() {
           <Route path="/about" element={
             <ProtectedRoute>
               <AboutUs />
+            </ProtectedRoute>
+          } />
+          <Route path="/forum" element={
+            <ProtectedRoute>
+              <Forum />
+            </ProtectedRoute>
+          } />
+          <Route path="/faq" element={
+            <ProtectedRoute>
+              <FAQ />
             </ProtectedRoute>
           } />
 

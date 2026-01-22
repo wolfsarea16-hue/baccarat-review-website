@@ -37,6 +37,8 @@ function Sidebar() {
     { path: '/withdrawal', icon: '💰', label: 'Withdrawal' },
     { path: '/withdrawal-history', icon: '📋', label: 'Withdrawal History' },
     { path: '/certification', icon: '🎓', label: 'Certification' },
+    { path: '/forum', icon: '💬', label: 'Forum' },
+    { path: '/faq', icon: '❓', label: 'FAQ' },
     { path: '/terms', icon: '📝', label: 'T&C' },
     { path: '/about', icon: '🤓', label: 'About Us' },
   ];

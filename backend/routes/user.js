@@ -22,7 +22,7 @@ router.get('/profile', authMiddleware, async (req, res) => {
 router.post('/profile/image', authMiddleware, async (req, res) => {
   try {
     const { profileImage } = req.body;
-    
+
     if (!profileImage) {
       return res.status(400).json({ message: 'No image provided' });
     }
@@ -35,12 +35,26 @@ router.post('/profile/image', authMiddleware, async (req, res) => {
     user.profileImage = profileImage;
     await user.save();
 
-    res.json({ 
+    res.json({
       message: 'Profile image updated successfully',
       profileImage: user.profileImage
     });
   } catch (err) {
     console.error('Error updating profile image:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get user's group link
+router.get('/group-link', authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select('groupLink');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ groupLink: user.groupLink || '' });
+  } catch (err) {
+    console.error('Error fetching group link:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });

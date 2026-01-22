@@ -1,0 +1,231 @@
+/* frontend/src/components/Forum.css */
+
+.forum-page {
+    display: flex;
+    min-height: 100vh;
+    background: #1a1a1a;
+}
+
+.forum-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 60px;
+    position: relative;
+}
+
+.forum-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    position: relative;
+}
+
+/* Header */
+.forum-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.forum-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #d4af37;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+/* Logo */
+.forum-logo-container {
+    margin-bottom: 40px;
+}
+
+.forum-logo {
+    width: 280px;
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.3));
+}
+
+/* Main Content */
+.forum-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    width: 100%;
+    padding: 60px 40px;
+}
+
+/* Ghosted 01 Background */
+.ghosted-number {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.03);
+    z-index: 0;
+    user-select: none;
+    pointer-events: none;
+    line-height: 1;
+}
+
+/* Baccarat Elites Section */
+.forum-elites {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.elites-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    font-style: italic;
+    letter-spacing: 1px;
+}
+
+.elites-subtitle {
+    font-size: 1.1rem;
+    color: #cccccc;
+    margin: 0;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+/* Join Button */
+.forum-join-btn {
+    position: relative;
+    z-index: 1;
+    padding: 16px 80px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: linear-gradient(135deg, #8b0000 0%, #dc143c 100%);
+    border: 2px solid rgba(220, 20, 60, 0.5);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
+}
+
+.forum-join-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #a00000 0%, #ff1744 100%);
+    border-color: rgba(255, 23, 68, 0.8);
+    box-shadow: 0 6px 25px rgba(220, 20, 60, 0.5);
+    transform: translateY(-2px);
+}
+
+.forum-join-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Description */
+.forum-description {
+    position: relative;
+    z-index: 1;
+    font-size: 1.1rem;
+    color: #d4af37;
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 300;
+}
+
+/* Footer */
+.forum-footer {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.copyright {
+    color: #888888;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.footer-links {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.footer-links button {
+    background: none;
+    border: none;
+    color: #d4af37;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0;
+    font-family: inherit;
+}
+
+.footer-links button:hover {
+    color: #ffffff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .forum-container {
+        margin-left: 0;
+    }
+
+    .forum-title {
+        font-size: 2rem;
+    }
+
+    .forum-logo {
+        width: 200px;
+    }
+
+    .ghosted-number {
+        font-size: 10rem;
+        top: 0;
+    }
+
+    .elites-title {
+        font-size: 2rem;
+    }
+
+    .elites-subtitle {
+        font-size: 1rem;
+    }
+
+    .forum-join-btn {
+        padding: 14px 60px;
+        font-size: 1rem;
+    }
+
+    .forum-description {
+        font-size: 1rem;
+    }
+
+    .forum-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-links {
+        justify-content: center;
+    }
+}
