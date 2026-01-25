@@ -77,6 +77,9 @@
 
 .home-header h1 {
   font-size: 32px;
+  margin: 0;
+  padding-right: 40px;
+  /* Make space for the bell icon */
 }
 
 /* Grid */
@@ -185,6 +188,7 @@
 
   .home-header h1 {
     font-size: 24px;
+    padding-right: 40px;
   }
 
   .home-content {
@@ -208,6 +212,7 @@
 
   .home-header h1 {
     font-size: 20px;
+    padding-right: 35px;
   }
 }
 
@@ -264,5 +269,137 @@
 
   .home-footer .footer-links {
     justify-content: center;
+  }
+}
+
+/* ===== BELL ICON ===== */
+.bell-icon-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  z-index: 11;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.bell-icon-btn:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.bell-icon {
+  width: 30px;
+  height: 30px;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+/* ===== HOW-TO MODAL ===== */
+.how-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInModal 0.3s ease;
+  overflow: auto;
+  /* Changed from overflow-y to overflow */
+  padding: 20px;
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.how-modal-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  margin: auto;
+  /* Centering for flex items larger than container */
+}
+
+.how-modal-close {
+  position: absolute;
+  top: -45px;
+  right: 0;
+  background: #B11226;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10001;
+}
+
+.how-modal-close:hover {
+  background: #D4AF37;
+  transform: rotate(90deg);
+}
+
+.how-modal-image {
+  max-width: 95vw;
+  max-height: 95vh;
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  pointer-events: auto;
+  /* Allow interaction for zoom */
+  cursor: zoom-in;
+  transition: transform 0.3s ease, max-width 0.3s ease, max-height 0.3s ease;
+}
+
+.how-modal-image.zoomed {
+  max-width: none;
+  max-height: none;
+  width: 200%;
+  /* Force a larger size for "closer look" */
+  height: auto;
+  cursor: zoom-out;
+  border-radius: 0;
+  /* Remove radius when zoomed for better edge viewing */
+}
+
+@media (max-width: 768px) {
+  .how-modal-close {
+    top: 20px;
+    /* Moves inside the viewport more clearly on mobile */
+    right: 20px;
+    position: fixed;
+    /* Keep it visible even when scrolled */
+  }
+
+  .how-modal-image.zoomed {
+    width: 300%;
+    /* Even larger on mobile for better detail */
   }
 }

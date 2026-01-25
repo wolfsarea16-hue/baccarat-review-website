@@ -73,21 +73,47 @@
 .avatar-circle {
   width: 110px;
   height: 110px;
+  min-width: 110px;
+  min-height: 110px;
   border-radius: 50%;
   background: radial-gradient(circle at top, #5f5fff, #3a3ad6);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: hidden !important;
+  /* Reinforce clipping */
   cursor: pointer;
   box-shadow: 0 0 25px rgba(140, 140, 255, 0.5);
   margin-bottom: 15px;
+  flex-shrink: 0;
+  /* Prevent squishing */
+  position: relative;
+  /* Contain absolute children if any */
+}
+
+.avatar-circle.no-image {
+  background: rgba(212, 175, 55, 0.05);
+  /* Very light gold tint */
+  box-shadow: none;
+  border: 2px dashed rgba(212, 175, 55, 0.4);
+  transition: all 0.3s ease;
+}
+
+.avatar-circle.no-image:hover {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.8);
 }
 
 .profile-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.profile-image.default-logo {
+  object-fit: contain;
+  padding: 15px;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
 }
 
 .username {
@@ -134,12 +160,16 @@
   border-radius: 50%;
   width: 30px;
   height: 30px;
+  min-width: 30px;
+  min-height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: right 0.3s ease-in-out;
   z-index: 2;
   /* Ensure it sits on top of line */
+  flex-shrink: 0;
+  /* Prevent squishing */
 }
 
 /* STAT CARDS */
@@ -186,6 +216,20 @@
   text-align: center;
   width: 100%;
   max-width: 1200px;
+}
+
+.levels-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.levels-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
 }
 
 .member-info-row {
@@ -246,58 +290,7 @@
 
 /* MOBILE */
 
-@media (max-width: 768px) {
-  .stats-top-row {
-    grid-template-columns: 1fr;
-  }
-}
 
-@media (max-width: 768px) {
-
-  .profile-page .main-content {
-    display: flex;
-    justify-content: center;
-    padding-top: 20px;
-  }
-
-  .profile-container {
-    width: 100%;
-    padding-top: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .profile-header {
-    width: 100%;
-    justify-content: center;
-    position: relative;
-    margin-bottom: 30px;
-  }
-
-  .back-to-home-btn {
-    position: absolute;
-    left: 10px;
-    top: 0;
-  }
-
-  .profile-avatar {
-    margin-top: 10px;
-  }
-
-  .stats-top-row {
-    grid-template-columns: 1fr;
-    width: 100%;
-  }
-
-  .stat-box {
-    width: 100%;
-  }
-
-  .member-since-section {
-    width: 100%;
-  }
-}
 
 /* Force Baccarat stat colors - Unified with application theme */
 .profile-page .stat-box .stat-value {
@@ -305,59 +298,6 @@
   font-size: 18px !important;
   font-weight: 600 !important;
   letter-spacing: 0.6px;
-}
-
-/* Mobile layout fix */
-@media (max-width: 768px) {
-
-  .profile-page {
-    display: flex;
-    justify-content: center;
-  }
-
-  .profile-page .main-content {
-    margin-left: 0 !important;
-    width: 100% !important;
-    display: flex;
-    justify-content: center;
-  }
-
-  .profile-container {
-    max-width: 100%;
-    align-items: center;
-    text-align: center;
-    padding-top: 30px;
-  }
-
-  .profile-header {
-    display: flex;
-    justify-content: center;
-    position: relative;
-  }
-
-  .back-to-home-btn {
-    position: absolute;
-    left: 10px;
-    top: 0;
-  }
-
-  .profile-avatar {
-    margin-top: 25px;
-  }
-
-  .stats-top-row {
-    width: 100%;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .stat-box {
-    width: 100%;
-  }
-
-  .member-since-section {
-    width: 100%;
-  }
 }
 
 /* ================================
@@ -415,38 +355,72 @@
    ================================ */
 
 @media (max-width: 768px) {
-
   .profile-page {
+    display: flex;
     justify-content: center;
   }
 
   .profile-page .main-content {
     padding-top: 70px;
     /* pushes content below back-to-home */
+    width: 100% !important;
+    margin-left: 0 !important;
   }
 
-  .profile-page .profile-header {
+  .profile-container {
+    width: 100%;
+    padding: 30px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .profile-header {
+    width: 100%;
     justify-content: center;
     position: relative;
     margin-bottom: 25px;
+    display: flex;
   }
 
-  .profile-page .back-to-home-btn {
+  .back-to-home-btn {
     position: absolute;
     left: 10px;
     top: -50px;
   }
 
-  .profile-page .profile-avatar {
-    margin-top: 10px;
-  }
-
-  .profile-page .stats-top-row {
-    grid-template-columns: 1fr;
-  }
-
-  .profile-page .stat-box,
-  .profile-page .member-since-section {
+  .profile-avatar {
     width: 100%;
+    /* Allow children to use full width */
+    margin-top: 20px;
+    margin-bottom: 120px;
+    /* Even more space */
+    /* Large space to prevent slider overlap */
+  }
+
+  .profile-reputation-container {
+    width: 280px;
+    /* Use a fixed width similar to desktop to avoid squeezing */
+    max-width: 90%;
+    margin-bottom: 30px;
+  }
+
+  .stats-top-row {
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: 15px;
+    margin-top: 20px;
+    /* Additional push down */
+  }
+
+  .stat-box {
+    width: 100%;
+  }
+
+  .member-since-section {
+    width: 100%;
+    margin-top: 40px;
   }
 }

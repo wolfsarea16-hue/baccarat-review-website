@@ -11,6 +11,28 @@ function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isHowModalOpen, setIsHowModalOpen] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  const openHowModal = () => {
+    setIsHowModalOpen(true);
+    setIsZoomed(false); // Reset zoom when opening
+  };
+  const closeHowModal = () => {
+    setIsHowModalOpen(false);
+    setIsZoomed(false);
+  };
+
+  const toggleZoom = (e) => {
+    e.stopPropagation();
+    setIsZoomed(!isZoomed);
+  };
+
+  // Prevent right-click on image
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+    return false;
+  };
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -91,6 +113,20 @@ function Home() {
             }}>
               Welcome, {user.username}!
             </h1>
+            <button className="bell-icon-btn" onClick={openHowModal} title="How it works">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="bell-icon"
+              >
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </button>
           </div>
 
           <div className="home-content">
@@ -166,6 +202,23 @@ function Home() {
               <button onClick={() => navigate('/faq')}>FAQ</button>
             </div>
           </div>
+
+          {/* How-To Modal */}
+          {isHowModalOpen && (
+            <div className="how-modal" onClick={closeHowModal}>
+              <div className="how-modal-content" onClick={(e) => e.stopPropagation()}>
+                <button className="how-modal-close" onClick={closeHowModal}>✕</button>
+                <img
+                  src="/how.png"
+                  alt="How it works"
+                  className={`how-modal-image ${isZoomed ? 'zoomed' : ''}`}
+                  onClick={toggleZoom}
+                  onContextMenu={handleContextMenu}
+                  draggable="false"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
       </div>
