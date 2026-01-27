@@ -3,7 +3,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reviewAPI } from '../services/api';
 import Sidebar from './Sidebar';
+import Modal from './Modal';
 import confetti from 'canvas-confetti';
+import logo from '../assets/baccarat-logo.svg';
 import './ProductReview.css';
 
 function ProductReview() {
@@ -16,6 +18,16 @@ function ProductReview() {
   const [error, setError] = useState('');
   const [currentBalance, setCurrentBalance] = useState(0);
   const [isBalanceNegative, setIsBalanceNegative] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  useEffect(() => {
+    if (showSuccessModal) {
+      const timer = setTimeout(() => {
+        navigate('/review');
+      }, 1500); // 1.5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessModal, navigate]);
 
   const fetchPendingReview = useCallback(async () => {
     try {
@@ -35,14 +47,14 @@ function ProductReview() {
         });
       }
     } catch (err) {
-      console.error('Error fetching pending review:', err);
+      console.error('Error fetching pending audit:', err);
       if (err.response?.status === 401) {
         setTimeout(() => {
           localStorage.clear();
           navigate('/login');
         }, 1000);
       } else {
-        const errorMsg = err.response?.data?.message || 'No pending review found';
+        const errorMsg = err.response?.data?.message || 'No pending audit found';
         setError(errorMsg);
         setLoading(false);
         setTimeout(() => navigate('/review'), 2000);
@@ -63,7 +75,7 @@ function ProductReview() {
     }
 
     if (isBalanceNegative) {
-      setError(`Cannot submit review with negative balance. Your current balance is $${currentBalance.toFixed(2)}. Please contact admin to add at least $${Math.abs(currentBalance).toFixed(2)} to continue.`);
+      setError(`Cannot submit audit with negative balance. Your current balance is $${currentBalance.toFixed(2)}. Please contact admin to add at least $${Math.abs(currentBalance).toFixed(2)} to continue.`);
       return;
     }
 
@@ -71,14 +83,13 @@ function ProductReview() {
       setSubmitting(true);
       setError('');
       await reviewAPI.submitReview(product.reviewId, reviewText);
-      alert('Review submitted successfully!');
-      navigate('/review');
+      setShowSuccessModal(true);
     } catch (err) {
       const errorData = err.response?.data;
       if (errorData?.currentBalance < 0) {
         setError(`Cannot submit: Your balance is $${errorData.currentBalance.toFixed(2)}. You need at least $${errorData.requiredAmount.toFixed(2)} added to your account to proceed.`);
       } else {
-        setError(errorData?.message || 'Failed to submit review');
+        setError(errorData?.message || 'Failed to submit audit');
       }
       setSubmitting(false);
     }
@@ -115,7 +126,7 @@ function ProductReview() {
             <button onClick={() => navigate('/review')} className="btn btn-secondary">
               Back
             </button>
-            <h1>Product Review</h1>
+            <h1>Product Audit</h1>
           </div>
 
           {isBalanceNegative && (
@@ -132,7 +143,7 @@ function ProductReview() {
               ⚠️ NEGATIVE BALANCE WARNING ⚠️
               <p style={{ marginTop: '10px', fontSize: '14px', fontWeight: 'normal' }}>
                 Your current balance is <strong>${currentBalance.toFixed(2)}</strong>.
-                You can't submit the review until your balance is positive.
+                You can't submit the audit until your balance is positive.
                 <br />
                 Please contact customer support to add at least <strong>${Math.abs(currentBalance).toFixed(2)}</strong> to your account.
               </p>
@@ -159,7 +170,7 @@ function ProductReview() {
                   </span>
                   {isBalanceNegative && (
                     <span className="balance-warning">
-                      ⚠️ Balance is negative - cannot submit review
+                      ⚠️ Balance is negative - cannot submit audit
                     </span>
                   )}
                 </p>
@@ -226,10 +237,10 @@ function ProductReview() {
                       marginBottom: '15px',
                       color: '#856404'
                     }}>
-                      <strong>⚠️ Cannot Submit Review</strong>
+                      <strong>⚠️ Cannot Submit Audit</strong>
                       <p style={{ marginTop: '5px', fontSize: '14px' }}>
                         Your balance is negative (${currentBalance.toFixed(2)}).
-                        Add at least ${Math.abs(currentBalance).toFixed(2)} to submit this review.
+                        Add at least ${Math.abs(currentBalance).toFixed(2)} to submit this audit.
                       </p>
                     </div>
                   )}
@@ -242,7 +253,7 @@ function ProductReview() {
                       cursor: isBalanceNegative ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    {submitting ? 'Submitting...' : isBalanceNegative ? '🔒 Submit Blocked (Negative Balance)' : 'Submit Review'}
+                    {submitting ? 'Submitting...' : isBalanceNegative ? '🔒 Submit Blocked (Negative Balance)' : 'Submit Audit'}
                   </button>
                 </div>
               )}
@@ -250,7 +261,19 @@ function ProductReview() {
           </div>
         </div>
       </div>
-    </div>
+
+      <Modal
+        isOpen={showSuccessModal}
+        onClose={() => navigate('/review')}
+        title="AUDIT SUBMITTED!"
+        message="Your audit has been successfully processed and your commission added to your balance."
+        type="alert"
+        cancelText="Return to Dashboard"
+        image={logo}
+        isLogo={true}
+        logoOnly={true}
+      />
+    </div >
   );
 }
 

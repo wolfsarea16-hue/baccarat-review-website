@@ -66,14 +66,14 @@ function History() {
         <div className="history-container">
 
           <div className="history-header">
-            <h1>Review History</h1>
+            <h1>Audit History</h1>
           </div>
 
           {error && <div className="error-message">{error}</div>}
 
           {reviews.length === 0 ? (
             <div className="no-reviews">
-              <p>No reviews yet. Start reviewing products to see your history!</p>
+              <p>No audits yet. Start auditing products to see your history!</p>
             </div>
           ) : (
             <div className="reviews-list">
@@ -102,7 +102,7 @@ function History() {
                     </p>
 
                     {review.isSpecial && (
-                      <span className="special-badge">Special Review</span>
+                      <span className="special-badge">Exclusive Audit</span>
                     )}
 
                     {review.reviewText && (

@@ -1,6 +1,7 @@
 // frontend/src/components/Sidebar.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Modal from './Modal';
 import logo from '../assets/baccarat-logo.svg';
 import './Sidebar.css';
 
@@ -11,6 +12,7 @@ function Sidebar() {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const username = localStorage.getItem('username');
 
   useEffect(() => {
@@ -32,8 +34,8 @@ function Sidebar() {
   const menuItems = [
     { path: '/home', icon: '🏠', label: 'Home' },
     { path: '/profile', icon: '👤', label: 'Profile' },
-    { path: '/review', icon: '⭐', label: 'Reviews' },
-    { path: '/history', icon: '📜', label: 'Review History' },
+    { path: '/review', icon: '⭐', label: 'Audits' },
+    { path: '/history', icon: '📜', label: 'Audit History' },
     { path: '/withdrawal', icon: '💰', label: 'Withdrawal' },
     { path: '/withdrawal-history', icon: '📋', label: 'Withdrawal History' },
     { path: '/certification', icon: '🎓', label: 'Certification' },
@@ -49,11 +51,14 @@ function Sidebar() {
   };
 
   const handleLogoutClick = () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      localStorage.clear();
-      setIsOpen(false);
-      navigate('/');
-    }
+    setShowLogoutModal(true);
+  };
+
+  const handleConfirmLogout = () => {
+    localStorage.clear();
+    setShowLogoutModal(false);
+    setIsOpen(false);
+    navigate('/');
   };
 
   const toggleSidebar = () => {
@@ -126,6 +131,18 @@ function Sidebar() {
           </button>
         </div>
       </div>
+
+      <Modal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleConfirmLogout}
+        title="READY TO LOGOUT?"
+        message="Are you sure you want to end your session? We hope to see you soon."
+        type="confirm"
+        confirmText="Logout"
+        cancelText="Cancel"
+        image="/logout-luxury.png"
+      />
     </>
   );
 }

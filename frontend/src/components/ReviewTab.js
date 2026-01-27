@@ -87,7 +87,7 @@ function ReviewTab() {
       <div className="main-content">
         <div className="review-tab-container">
           <div className="review-tab-header">
-            <h1>Review Dashboard</h1>
+            <h1>Audit Dashboard</h1>
           </div>
 
           {error && <div className="error-message">{error}</div>}
@@ -101,14 +101,14 @@ function ReviewTab() {
             </div>
 
             <div className="stat-card">
-              <h3>Reviews Completed</h3>
+              <h3>Audits Completed</h3>
               <p className="stat-value">
                 {status?.reviewsCompleted || 0} / {status?.totalReviewsAssigned || 0}
               </p>
             </div>
 
             <div className="stat-card">
-              <h3>Reviews Remaining</h3>
+              <h3>Audits Remaining</h3>
               <p className="stat-value">{status?.reviewsRemaining || 0}</p>
             </div>
           </div>
@@ -118,27 +118,27 @@ function ReviewTab() {
               <div className="error-message" style={{ textAlign: 'center', padding: '20px' }}>
                 <h2>⚠️ Negative Balance</h2>
                 <p>Your account balance is negative: ${status?.accountBalance?.toFixed(2) || '0.00'}</p>
-                <p>Please contact customer support to add balance before you can continue reviewing.</p>
+                <p>Please contact customer support to add balance before you can continue auditing.</p>
               </div>
             ) : status?.reviewsRemaining > 0 ? (
               <>
                 <p className="review-instruction">
                   {status?.hasPendingReview
-                    ? 'You have a pending review. Click below to continue.'
-                    : 'Click the button below to start reviewing a product.'}
+                    ? 'You have a pending audit. Click below to continue.'
+                    : 'Click the button below to start auditing a product.'}
                 </p>
                 <button
                   onClick={handleStartReview}
                   className="btn btn-primary btn-large"
                   disabled={loading}
                 >
-                  {status?.hasPendingReview ? 'Continue Review' : 'Start Review'}
+                  {status?.hasPendingReview ? 'Continue Audit' : 'Start Audit'}
                 </button>
               </>
             ) : (
               <div className="completed-message">
-                <h2>🎉 All Reviews Completed!</h2>
-                <p>You have successfully completed all assigned reviews.</p>
+                <h2>🎉 All Audits Completed!</h2>
+                <p>You have successfully completed all assigned audits.</p>
               </div>
             )}
           </div>

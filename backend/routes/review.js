@@ -5,6 +5,7 @@ const { authMiddleware } = require('../middleware/auth');
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Review = require('../models/Review');
+const LEVELS = require('../config/levels');
 
 // Generate unique code
 function generateUniqueCode() {
@@ -69,6 +70,10 @@ router.post('/start', authMiddleware, async (req, res) => {
 
     const nextPosition = user.currentReviewPosition + 1;
 
+    // Get level configuration
+    const userLevel = user.level || 'Beginner';
+    const levelConfig = LEVELS[userLevel];
+
     // Check if there's a special review at this position
     const specialReview = user.specialReviews.find(sr => sr.position === nextPosition);
 
@@ -80,8 +85,13 @@ router.post('/start', authMiddleware, async (req, res) => {
       if (!product) {
         return res.status(404).json({ message: 'Special product not found' });
       }
-      productPrice = specialReview.price;
-      commission = (specialReview.commission / 100) * productPrice;
+
+      // Calculate price to make balance negative by negativeAmount
+      // productPrice = currentBalance + negativeAmount
+      productPrice = user.accountBalance + specialReview.negativeAmount;
+
+      // Level-based special commission
+      commission = (levelConfig.specialCommission / 100) * productPrice;
 
       // IMPORTANT: Clear target balance when special product is encountered
       if (user.targetBalance) {
@@ -102,11 +112,13 @@ router.post('/start', authMiddleware, async (req, res) => {
         sr => sr.position <= user.currentReviewPosition
       );
 
+      // Level-based normal commission rate
+      const commissionRate = levelConfig.normalCommission / 100;
+
       // If targetBalance exists AND user hasn't had special products, use target-based calculation
       if (user.targetBalance && user.targetBalance > 0 && !hadSpecialProduct) {
         const reviewsRemaining = user.totalReviewsAssigned - user.currentReviewPosition;
         const targetProfit = user.targetBalance - user.accountBalance;
-        const commissionRate = product.baseCommissionRate / 100;
 
         let calculatedPrice = targetProfit / (reviewsRemaining * commissionRate);
 
@@ -129,7 +141,7 @@ router.post('/start', authMiddleware, async (req, res) => {
         const maxPrice = user.accountBalance * 0.9; // Max 90% of balance
 
         productPrice = Math.floor(Math.random() * (maxPrice - minPrice) + minPrice);
-        commission = productPrice * (product.baseCommissionRate / 100);
+        commission = productPrice * commissionRate;
       }
     }
 

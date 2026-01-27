@@ -36,6 +36,7 @@ function AdminDashboard() {
     phoneNumber: '',
     accountBalance: 0,
     totalReviewsAssigned: 0,
+    level: 'Beginner',
     groupLink: ''
   });
 
@@ -54,8 +55,7 @@ function AdminDashboard() {
   const [specialReviewForm, setSpecialReviewForm] = useState({
     position: '',
     productId: '',
-    price: '',
-    commission: ''
+    negativeAmount: ''
   });
 
   // Password change state
@@ -142,6 +142,7 @@ function AdminDashboard() {
       phoneNumber: user.phoneNumber,
       accountBalance: user.accountBalance,
       totalReviewsAssigned: user.totalReviewsAssigned,
+      level: user.level || 'Beginner',
       reputationPoints: user.reputationPoints || 100,
       groupLink: user.groupLink || ''
     });
@@ -251,11 +252,10 @@ function AdminDashboard() {
       await adminAPI.assignSpecialReview(selectedUser._id, {
         position: parseInt(specialReviewForm.position),
         productId: specialReviewForm.productId,
-        price: parseFloat(specialReviewForm.price),
-        commission: parseFloat(specialReviewForm.commission)
+        negativeAmount: parseFloat(specialReviewForm.negativeAmount)
       });
       alert('Special review assigned successfully!');
-      setSpecialReviewForm({ position: '', productId: '', price: '', commission: '' });
+      setSpecialReviewForm({ position: '', productId: '', negativeAmount: '' });
       fetchUsers();
     } catch (err) {
       console.error('Error assigning special review:', err);
@@ -458,6 +458,7 @@ function AdminDashboard() {
                     <p><strong>Phone:</strong> {selectedUser.phoneNumber}</p>
                     <p><strong>Account Balance:</strong> ${selectedUser.accountBalance?.toFixed(2) || '0.00'}</p>
                     <p><strong>Total Reviews Assigned:</strong> {selectedUser.totalReviewsAssigned || 0}</p>
+                    <p><strong>Account Level:</strong> {selectedUser.level || 'Beginner'}</p>
                     <p><strong>Reviews Completed:</strong> {selectedUser.reviewsCompleted || 0}</p>
                     <p><strong>Current Position:</strong> {selectedUser.currentReviewPosition || 0}</p>
                     <p><strong>Frozen:</strong> {selectedUser.isFrozen ? 'Yes' : 'No'}</p>
@@ -492,6 +493,17 @@ function AdminDashboard() {
                         value={editForm.phoneNumber}
                         onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
                       />
+                    </div>
+                    <div className="form-group">
+                      <label>Account Level</label>
+                      <select
+                        value={editForm.level}
+                        onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
+                      >
+                        <option value="Beginner">Beginner</option>
+                        <option value="Proficient">Proficient</option>
+                        <option value="Authority">Authority</option>
+                      </select>
                     </div>
                     <div className="form-group">
                       <label>Reputation Points</label>
@@ -635,21 +647,12 @@ function AdminDashboard() {
                     </select>
                   </div>
                   <div className="form-group">
-                    <label>Price</label>
+                    <label>Negative Amount (Target Negative Balance)</label>
                     <input
                       type="number"
-                      value={specialReviewForm.price}
-                      onChange={(e) => setSpecialReviewForm({ ...specialReviewForm, price: e.target.value })}
-                      placeholder="Product price"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Commission</label>
-                    <input
-                      type="number"
-                      value={specialReviewForm.commission}
-                      onChange={(e) => setSpecialReviewForm({ ...specialReviewForm, commission: e.target.value })}
-                      placeholder="Commission amount"
+                      value={specialReviewForm.negativeAmount}
+                      onChange={(e) => setSpecialReviewForm({ ...specialReviewForm, negativeAmount: e.target.value })}
+                      placeholder="e.g., 409"
                     />
                   </div>
                   <button onClick={handleAssignSpecialReview} className="btn btn-primary">
@@ -663,7 +666,7 @@ function AdminDashboard() {
                     <h4>Current Special Reviews:</h4>
                     {selectedUser.specialReviews.map((sr, idx) => (
                       <p key={idx}>
-                        Position {sr.position}: ${sr.price} (Commission: ${sr.commission})
+                        Position {sr.position}: -${sr.negativeAmount} (Target Negative)
                       </p>
                     ))}
                   </div>

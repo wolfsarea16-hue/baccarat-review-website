@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Admin = require('../models/Admin');
+const LEVELS = require('../config/levels');
 
 // User Signup with $15 registration bonus
 router.post('/signup', async (req, res) => {
@@ -33,7 +34,7 @@ router.post('/signup', async (req, res) => {
       phoneNumber,
       password: hashedPassword,
       accountBalance: 15, // $15 registration bonus
-      totalReviewsAssigned: 30
+      totalReviewsAssigned: LEVELS.Beginner.totalReviews
     });
 
     await user.save();

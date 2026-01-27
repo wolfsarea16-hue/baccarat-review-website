@@ -145,8 +145,8 @@ function Home() {
                 className="menu-card-content"
                 onClick={() => navigate('/review')}
               >
-                <h2>Start Reviewing</h2>
-                <p>Review products and earn commissions</p>
+                <h2>Start Auditing</h2>
+                <p>Audit products for commission</p>
               </div>
             </GlassSurface>
 
@@ -165,8 +165,8 @@ function Home() {
                 className="menu-card-content"
                 onClick={() => navigate('/history')}
               >
-                <h2>Review History</h2>
-                <p>View all your completed and pending reviews</p>
+                <h2>Audit History</h2>
+                <p>View all your completed and pending audits</p>
               </div>
             </GlassSurface>
 

@@ -1,6 +1,26 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, useRef, useId } from 'react';
+import { useState, useRef, useId, useLayoutEffect } from 'react';
 import './GlassSurface.css';
+
+// 1. Global Singleton for browser support check - run once
+let isSVGFilterSupported = null;
+const checkSVGSupport = (filterId) => {
+    if (isSVGFilterSupported !== null) return isSVGFilterSupported;
+    if (typeof window === 'undefined' || typeof document === 'undefined') return false;
+
+    // Check for Chromium based browsers as they have the best support for SVG filters in backdrop-filter
+    const isWebkit = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    const isFirefox = /Firefox/.test(navigator.userAgent);
+
+    if (isWebkit || isFirefox) {
+        isSVGFilterSupported = false;
+        return false;
+    }
+
+    const div = document.createElement('div');
+    div.style.backdropFilter = `url(#${filterId})`;
+    isSVGFilterSupported = div.style.backdropFilter !== '';
+    return isSVGFilterSupported;
+};
 
 const GlassSurface = ({
     children,
@@ -24,12 +44,13 @@ const GlassSurface = ({
     className = '',
     style = {}
 }) => {
-    const uniqueId = useId().replace(/:/g, '-');
+    // 2. Ensure IDs are TRULY unique even during rapid navigation/cross-fades
+    const uniqueId = useId().replace(/:/g, '-') + '-' + Math.random().toString(36).substring(2, 9);
     const filterId = `glass-filter-${uniqueId}`;
     const redGradId = `red-grad-${uniqueId}`;
     const blueGradId = `blue-grad-${uniqueId}`;
 
-    const [svgSupported, setSvgSupported] = useState(false);
+    const [svgSupported] = useState(() => checkSVGSupport(filterId));
 
     const containerRef = useRef(null);
     const feImageRef = useRef(null);
@@ -39,9 +60,15 @@ const GlassSurface = ({
     const gaussianBlurRef = useRef(null);
 
     const generateDisplacementMap = () => {
-        const rect = containerRef.current?.getBoundingClientRect();
-        const actualWidth = rect?.width || 400;
-        const actualHeight = rect?.height || 200;
+        if (!containerRef.current) return '';
+
+        const rect = containerRef.current.getBoundingClientRect();
+
+        // 3. Fallback logic: if dimensions are 0 (layout not ready), return empty and we'll retry via RAF
+        if (rect.width === 0 || rect.height === 0) return '';
+
+        const actualWidth = rect.width;
+        const actualHeight = rect.height;
         const edgeSize = Math.min(actualWidth, actualHeight) * (borderWidth * 0.5);
 
         const svgContent = `
@@ -67,11 +94,21 @@ const GlassSurface = ({
     };
 
     const updateDisplacementMap = () => {
-        feImageRef.current?.setAttribute('href', generateDisplacementMap());
+        if (!feImageRef.current || !containerRef.current) return;
+
+        const map = generateDisplacementMap();
+        if (map) {
+            feImageRef.current.setAttribute('href', map);
+        } else {
+            // Layout likely not ready, retry in next frame
+            requestAnimationFrame(updateDisplacementMap);
+        }
     };
 
-    useEffect(() => {
-        updateDisplacementMap();
+    useLayoutEffect(() => {
+        // Initial mount: give layout a frame to settle
+        const timer = requestAnimationFrame(updateDisplacementMap);
+
         [
             { ref: redChannelRef, offset: redOffset },
             { ref: greenChannelRef, offset: greenOffset },
@@ -84,7 +121,11 @@ const GlassSurface = ({
             }
         });
 
-        gaussianBlurRef.current?.setAttribute('stdDeviation', displace.toString());
+        if (gaussianBlurRef.current) {
+            gaussianBlurRef.current.setAttribute('stdDeviation', displace.toString());
+        }
+
+        return () => cancelAnimationFrame(timer);
     }, [
         width,
         height,
@@ -103,45 +144,23 @@ const GlassSurface = ({
         mixBlendMode
     ]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!containerRef.current) return;
 
         const resizeObserver = new ResizeObserver(() => {
-            setTimeout(updateDisplacementMap, 0);
+            updateDisplacementMap();
         });
 
         resizeObserver.observe(containerRef.current);
 
+        // Ensure we catch the initial layout
+        const timer = requestAnimationFrame(updateDisplacementMap);
+
         return () => {
             resizeObserver.disconnect();
+            cancelAnimationFrame(timer);
         };
     }, []);
-
-    useEffect(() => {
-        setTimeout(updateDisplacementMap, 0);
-    }, [width, height]);
-
-    useEffect(() => {
-        setSvgSupported(supportsSVGFilters());
-    }, []);
-
-    const supportsSVGFilters = () => {
-        if (typeof window === 'undefined' || typeof document === 'undefined') {
-            return false;
-        }
-
-        const isWebkit = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-        const isFirefox = /Firefox/.test(navigator.userAgent);
-
-        if (isWebkit || isFirefox) {
-            return false;
-        }
-
-        const div = document.createElement('div');
-        div.style.backdropFilter = `url(#${filterId})`;
-
-        return div.style.backdropFilter !== '';
-    };
 
     const containerStyle = {
         ...style,

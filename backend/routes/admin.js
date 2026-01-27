@@ -6,6 +6,7 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 const Withdrawal = require('../models/Withdrawal');
 const Review = require('../models/Review');
+const LEVELS = require('../config/levels');
 
 // Get all users
 router.get('/users', adminMiddleware, async (req, res) => {
@@ -104,6 +105,20 @@ router.put('/users/:userId', adminMiddleware, async (req, res) => {
   try {
     const updates = req.body;
     console.log('Updating user', req.params.userId, 'with:', updates);
+
+    // Check if level is being updated
+    if (updates.level && LEVELS[updates.level]) {
+      const existingUser = await User.findById(req.params.userId);
+      if (existingUser && existingUser.level !== updates.level) {
+        // Only update totalReviewsAssigned if it matches the current level's default
+        // This preserves manual overrides if the user was already at a custom count
+        const currentLevelDefault = LEVELS[existingUser.level].totalReviews;
+        if (existingUser.totalReviewsAssigned === currentLevelDefault) {
+          updates.totalReviewsAssigned = LEVELS[updates.level].totalReviews;
+        }
+      }
+    }
+
     const user = await User.findByIdAndUpdate(
       req.params.userId,
       updates,
@@ -149,22 +164,14 @@ router.post('/users/:userId/balance', adminMiddleware, async (req, res) => {
   }
 });
 
-// Assign special review with corrected commission handling
+// Assign special review with negative balance logic
 router.post('/users/:userId/special-review', adminMiddleware, async (req, res) => {
   try {
-    const { position, productId, price, commission } = req.body;
+    const { position, productId, negativeAmount } = req.body;
 
     // Validate inputs
-    if (!position || !productId || !price || commission === undefined) {
+    if (!position || !productId || negativeAmount === undefined) {
       return res.status(400).json({ message: 'Missing required fields' });
-    }
-
-    if (price <= 0) {
-      return res.status(400).json({ message: 'Price must be greater than 0' });
-    }
-
-    if (commission < 0 || commission > 100) {
-      return res.status(400).json({ message: 'Commission must be between 0 and 100 percent' });
     }
 
     const user = await User.findById(req.params.userId);
@@ -182,12 +189,10 @@ router.post('/users/:userId/special-review', adminMiddleware, async (req, res) =
     user.specialReviews = user.specialReviews.filter(sr => sr.position !== parseInt(position));
 
     // Add new special review
-    // NOTE: commission is stored as percentage (e.g., 20 for 20%)
     user.specialReviews.push({
       position: parseInt(position),
       productId,
-      price: parseFloat(price),
-      commission: parseFloat(commission) // Store as percentage
+      negativeAmount: parseFloat(negativeAmount)
     });
 
     await user.save();
@@ -197,9 +202,7 @@ router.post('/users/:userId/special-review', adminMiddleware, async (req, res) =
       specialReview: {
         position,
         productId,
-        price,
-        commission,
-        calculatedCommissionAmount: (parseFloat(commission) / 100) * parseFloat(price)
+        negativeAmount: parseFloat(negativeAmount)
       }
     });
   } catch (err) {

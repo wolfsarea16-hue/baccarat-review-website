@@ -12,7 +12,7 @@ const FAQ = () => {
         {
             title: "REGISTRATION",
             icon: "📝",
-            content: "Members must register an account to browse and start reviewing. Members must provide accurate, complete and current information. To make amends or update your information, please contact the customer support."
+            content: "Members must register an account to browse and start auditing. Members must provide accurate, complete and current information. To make amends or update your information, please contact the customer support."
         },
         {
             title: "ACCOUNT SECURITY",
@@ -32,11 +32,11 @@ const FAQ = () => {
             ]
         },
         {
-            title: "PRODUCT REVIEWING",
+            title: "AUDITS",
             icon: "⭐",
             content: [
-                "Once recharged, you may start reviewing, click 'Start Reviewing' or 'Reviews' on the sidebar to redirect to the relevant page to start.",
-                "Wait for the system to assign a review, complete the review and submit the review. Once the member receives a review, the system automatically confirms it and cannot cancel any pending review."
+                "Once recharged, you may start auditing, click 'Start Auditing' or 'Audits' on the sidebar to redirect to the relevant page to start.",
+                "Wait for the system to assign an audit, complete the audit and submit the audit. Once the member receives an audit, the system automatically confirms it and cannot cancel any pending audit."
             ]
         },
         {

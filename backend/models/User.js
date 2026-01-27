@@ -35,11 +35,16 @@ const userSchema = new mongoose.Schema({
   },
   totalReviewsAssigned: {
     type: Number,
-    default: 30
+    default: 33
   },
   reviewsCompleted: {
     type: Number,
     default: 0
+  },
+  level: {
+    type: String,
+    enum: ['Beginner', 'Proficient', 'Authority'],
+    default: 'Beginner'
   },
   reputationPoints: {
     type: Number,
@@ -73,8 +78,7 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Product'
     },
-    price: Number,
-    commission: Number // Stored as percentage (e.g., 20 for 20%)
+    negativeAmount: Number // Target negative balance amount
   }],
   withdrawalInfo: {
     walletAddress: String,

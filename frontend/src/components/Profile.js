@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { userAPI } from '../services/api';
 import Sidebar from './Sidebar';
+import Modal from './Modal';
 import logo from '../assets/baccarat-logo.svg';
 import './Profile.css';
 
@@ -11,6 +12,12 @@ function Profile() {
   const [error, setError] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'alert'
+  });
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -90,11 +97,21 @@ function Profile() {
         // Upload to server
         try {
           await userAPI.updateProfileImage({ profileImage: croppedBase64 });
-          alert('Profile picture updated successfully!');
+          setModalConfig({
+            isOpen: true,
+            title: 'SUCCESS!',
+            message: 'Your profile picture has been updated successfully.',
+            type: 'alert'
+          });
           fetchProfile();
         } catch (err) {
           console.error('Error uploading profile image:', err);
-          alert('Failed to update profile picture');
+          setModalConfig({
+            isOpen: true,
+            title: 'ERROR!',
+            message: 'Failed to update profile picture. Please try again.',
+            type: 'alert'
+          });
           setProfileImage(user.profileImage || null);
         }
       };
@@ -173,7 +190,7 @@ function Profile() {
               <span className="stat-value">${user.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}</span>
             </div>
             <div className="stat-box">
-              <span className="stat-label">Reviews Completed</span>
+              <span className="stat-label">Audits Completed</span>
               <span className="stat-value">{user.reviewsCompleted || 0}</span>
             </div>
             <div className="stat-box">
@@ -223,6 +240,15 @@ function Profile() {
           </div>
         </div>
       )}
+
+      <Modal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        type={modalConfig.type}
+        image="/profile-success.png"
+      />
     </div>
   );
 }

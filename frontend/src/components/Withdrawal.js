@@ -102,7 +102,7 @@ function Withdrawal() {
     }
 
     if ((user?.reviewsCompleted || 0) < (user?.totalReviewsAssigned || 0)) {
-      setError(`You must complete all ${user.totalReviewsAssigned} reviews before withdrawing. Currently completed: ${user.reviewsCompleted}`);
+      setError(`You must complete all ${user.totalReviewsAssigned} audits before withdrawing. Currently completed: ${user.reviewsCompleted}`);
       return;
     }
 
@@ -168,11 +168,11 @@ function Withdrawal() {
               ${user?.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}
             </p>
             <p className="review-progress">
-              Reviews Completed: {user?.reviewsCompleted || 0} / {user?.totalReviewsAssigned || 0}
+              Audits Completed: {user?.reviewsCompleted || 0} / {user?.totalReviewsAssigned || 0}
             </p>
             {user && (user.reviewsCompleted || 0) < (user.totalReviewsAssigned || 0) && (
               <p className="warning-text">
-                ⚠️ Complete all reviews before withdrawing
+                ⚠️ Complete all audits before withdrawing
               </p>
             )}
           </div>
@@ -297,9 +297,9 @@ function Withdrawal() {
                 {submitting
                   ? 'Processing...'
                   : !user?.canWithdraw
-                    ? '🔒 Withdrawal Disabled (Contact Admin)'
+                    ? '🔒 Withdrawal Not Allowed'
                     : (user?.reviewsCompleted || 0) < (user?.totalReviewsAssigned || 0)
-                      ? '🔒 Complete All Reviews First'
+                      ? '🔒 Complete All Audits First'
                       : (user?.accountBalance || 0) <= 0
                         ? '🔒 Insufficient Balance'
                         : 'Submit Withdrawal Request'}
