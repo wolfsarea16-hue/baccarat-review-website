@@ -1,4 +1,4 @@
-import { useState, useRef, useId, useLayoutEffect } from 'react';
+import { useState, useRef, useId, useLayoutEffect, useCallback } from 'react';
 import './GlassSurface.css';
 
 // 1. Global Singleton for browser support check - run once
@@ -59,7 +59,7 @@ const GlassSurface = ({
     const blueChannelRef = useRef(null);
     const gaussianBlurRef = useRef(null);
 
-    const generateDisplacementMap = () => {
+    const generateDisplacementMap = useCallback(() => {
         if (!containerRef.current) return '';
 
         const rect = containerRef.current.getBoundingClientRect();
@@ -91,9 +91,9 @@ const GlassSurface = ({
     `;
 
         return `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
-    };
+    }, [borderRadius, borderWidth, brightness, opacity, blur, mixBlendMode, redGradId, blueGradId]);
 
-    const updateDisplacementMap = () => {
+    const updateDisplacementMap = useCallback(() => {
         if (!feImageRef.current || !containerRef.current) return;
 
         const map = generateDisplacementMap();
@@ -103,7 +103,7 @@ const GlassSurface = ({
             // Layout likely not ready, retry in next frame
             requestAnimationFrame(updateDisplacementMap);
         }
-    };
+    }, [generateDisplacementMap]);
 
     useLayoutEffect(() => {
         // Initial mount: give layout a frame to settle
@@ -141,7 +141,8 @@ const GlassSurface = ({
         blueOffset,
         xChannel,
         yChannel,
-        mixBlendMode
+        mixBlendMode,
+        updateDisplacementMap
     ]);
 
     useLayoutEffect(() => {
@@ -160,7 +161,7 @@ const GlassSurface = ({
             resizeObserver.disconnect();
             cancelAnimationFrame(timer);
         };
-    }, []);
+    }, [updateDisplacementMap]);
 
     const containerStyle = {
         ...style,
