@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { reviewAPI } from '../services/api';
 import Sidebar from './Sidebar';
+import confetti from 'canvas-confetti';
 import './ProductReview.css';
 
 function ProductReview() {
@@ -24,6 +25,15 @@ function ProductReview() {
       setIsBalanceNegative(response.data.isBalanceNegative);
       setLoading(false);
       setError('');
+
+      if (response.data.isSpecial) {
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff']
+        });
+      }
     } catch (err) {
       console.error('Error fetching pending review:', err);
       if (err.response?.status === 401) {

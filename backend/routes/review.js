@@ -60,7 +60,7 @@ router.post('/start', authMiddleware, async (req, res) => {
 
     // MINIMUM BALANCE CHECK - Must have at least $50
     if (user.accountBalance < 50) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Minimum balance of $50 required to start reviews. Please contact admin to add balance.',
         currentBalance: user.accountBalance,
         requiredBalance: 50
@@ -107,27 +107,27 @@ router.post('/start', authMiddleware, async (req, res) => {
         const reviewsRemaining = user.totalReviewsAssigned - user.currentReviewPosition;
         const targetProfit = user.targetBalance - user.accountBalance;
         const commissionRate = product.baseCommissionRate / 100;
-        
+
         let calculatedPrice = targetProfit / (reviewsRemaining * commissionRate);
-        
+
         // Add randomness (±15%)
         const randomFactor = 0.85 + Math.random() * 0.3;
         calculatedPrice = calculatedPrice * randomFactor;
-        
+
         // Ensure price doesn't exceed 90% of current balance
         const maxPrice = user.accountBalance * 0.9;
         productPrice = Math.min(Math.floor(calculatedPrice), maxPrice);
-        
+
         // Ensure minimum price of 10
         productPrice = Math.max(productPrice, 10);
-        
+
         commission = productPrice * commissionRate;
       } else {
         // No target balance OR user had special products - use balance-based calculation
         // After special products, products should scale with new balance
         const minPrice = Math.max(10, user.accountBalance * 0.05); // At least 5% of balance
         const maxPrice = user.accountBalance * 0.9; // Max 90% of balance
-        
+
         productPrice = Math.floor(Math.random() * (maxPrice - minPrice) + minPrice);
         commission = productPrice * (product.baseCommissionRate / 100);
       }
@@ -178,7 +178,8 @@ router.post('/start', authMiddleware, async (req, res) => {
       commission,
       uniqueCode,
       reviewId: review._id,
-      newBalance: user.accountBalance
+      newBalance: user.accountBalance,
+      isSpecial: hasSpecialProduct
     });
   } catch (err) {
     console.error(err);
@@ -218,7 +219,8 @@ router.get('/pending', authMiddleware, async (req, res) => {
       uniqueCode: user.pendingReview.uniqueCode,
       reviewId: review._id,
       currentBalance: user.accountBalance,
-      isBalanceNegative: user.accountBalance < 0
+      isBalanceNegative: user.accountBalance < 0,
+      isSpecial: review.isSpecial
     });
   } catch (err) {
     console.error(err);
@@ -242,7 +244,7 @@ router.post('/submit/:reviewId', authMiddleware, async (req, res) => {
 
     // Check if balance is negative
     if (user.accountBalance < 0) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Cannot submit review with negative balance. Please contact admin to add balance.',
         currentBalance: user.accountBalance,
         requiredAmount: Math.abs(user.accountBalance),
