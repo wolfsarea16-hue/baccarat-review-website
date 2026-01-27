@@ -3,6 +3,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { withdrawalAPI, userAPI } from '../services/api';
 import Sidebar from './Sidebar';
+import Modal from './Modal';
+import logo from '../assets/baccarat-logo.svg';
 import './Withdrawal.css';
 
 function Withdrawal() {
@@ -20,6 +22,8 @@ function Withdrawal() {
     currency: 'USDT',
     network: 'TRC20'
   });
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -97,7 +101,7 @@ function Withdrawal() {
 
   const handleSubmitWithdrawal = async () => {
     if (!user?.canWithdraw) {
-      setError('Withdrawal is not enabled for your account. Please contact admin.');
+      setError('Withdrawal is not enabled for your account. Please contact customer support.');
       return;
     }
 
@@ -116,17 +120,20 @@ function Withdrawal() {
       return;
     }
 
-    if (window.confirm(`Confirm withdrawal of $${user.accountBalance.toFixed(2)}? Your balance will be set to $0.`)) {
-      try {
-        setSubmitting(true);
-        setError('');
-        await withdrawalAPI.submitRequest();
-        setSuccess('Withdrawal request submitted successfully! Your balance is now $0.');
-        setTimeout(() => navigate('/withdrawal-history'), 2000);
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to submit withdrawal request');
-        setSubmitting(false);
-      }
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmWithdrawal = async () => {
+    setShowConfirmModal(false);
+    try {
+      setSubmitting(true);
+      setError('');
+      await withdrawalAPI.submitRequest();
+      setSuccess('Withdrawal request submitted successfully!');
+      setTimeout(() => navigate('/withdrawal-history'), 2000);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to submit withdrawal request');
+      setSubmitting(false);
     }
   };
 
@@ -316,6 +323,18 @@ function Withdrawal() {
           )}
         </div>
       </div>
+      <Modal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirmWithdrawal}
+        title="CONFIRM WITHDRAWAL"
+        message={`Are you ready to transfer $${user?.accountBalance?.toFixed(2)} to your wallet? This action will set your current balance to $0.00.`}
+        type="confirm"
+        confirmText="Confirm & Withdraw"
+        cancelText="Cancel"
+        image={logo}
+        isLogo={true}
+      />
     </div>
   );
 }
