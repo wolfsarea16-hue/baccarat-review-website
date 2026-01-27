@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { withdrawalAPI, userAPI } from '../services/api';
 import Sidebar from './Sidebar';
 import Modal from './Modal';
-import logo from '../assets/baccarat-logo.svg';
 import './Withdrawal.css';
 
 function Withdrawal() {

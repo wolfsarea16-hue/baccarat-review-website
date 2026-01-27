@@ -5,7 +5,6 @@ import { reviewAPI } from '../services/api';
 import Sidebar from './Sidebar';
 import Modal from './Modal';
 import confetti from 'canvas-confetti';
-import logo from '../assets/baccarat-logo.svg';
 import './ProductReview.css';
 
 function ProductReview() {
