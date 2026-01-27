@@ -332,7 +332,7 @@ function Withdrawal() {
         type="confirm"
         confirmText="Confirm & Withdraw"
         cancelText="Cancel"
-        image={logo}
+        image="/baccarat-logo.svg"
         isLogo={true}
       />
     </div>

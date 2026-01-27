@@ -269,7 +269,7 @@ function ProductReview() {
         message="Your audit has been successfully processed and your commission added to your balance."
         type="alert"
         cancelText="Return to Dashboard"
-        image={logo}
+        image="/baccarat-logo.svg"
         isLogo={true}
         logoOnly={true}
       />
