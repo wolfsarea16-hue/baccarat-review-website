@@ -10,27 +10,27 @@ const app = express();
 
 // CORS - Allow your Netlify site and localhost
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, Postman)
     if (!origin) return callback(null, true);
-    
+
     const allowedOrigins = [
       'http://localhost:3000',
       'http://localhost:5000',
       // ADD YOUR NETLIFY URL HERE after you deploy
       // Example: 'https://your-site-name.netlify.app'
     ];
-    
+
     // Allow any netlify.app domain
     if (origin.includes('netlify.app')) {
       return callback(null, true);
     }
-    
+
     // Allow any back4app.io domain
     if (origin.includes('back4app.io')) {
       return callback(null, true);
     }
-    
+
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -52,14 +52,15 @@ mongoose.connect(MONGODB_URI)
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/subadmin', require('./routes/subadmin'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/review', require('./routes/review'));
 app.use('/api/withdrawal', require('./routes/withdrawal'));
 
 // Health check - to test if backend is working
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
+  res.json({
+    status: 'ok',
     message: '✅ Backend is working!',
     timestamp: new Date().toISOString()
   });
@@ -67,7 +68,7 @@ app.get('/api/health', (req, res) => {
 
 // Root route
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'Baccarat Review API',
     version: '1.0.0',
     status: 'running'

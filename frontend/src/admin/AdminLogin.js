@@ -1,7 +1,7 @@
 // frontend/src/admin/AdminLogin.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authAPI } from '../services/api';
+import { authAPI, subAdminAPI } from '../services/api';
 import './Admin.css';
 
 function AdminLogin() {
@@ -23,14 +23,26 @@ function AdminLogin() {
     setLoading(true);
 
     try {
+      // Try super admin login first
       const response = await authAPI.adminLogin(formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('role', 'admin');
       localStorage.setItem('username', response.data.username || 'admin');
+      localStorage.removeItem('permissions');
       navigate('/admin/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
-      setLoading(false);
+    } catch (adminErr) {
+      // If super admin login fails, try sub-admin login
+      try {
+        const response = await subAdminAPI.login(formData);
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('role', 'subadmin');
+        localStorage.setItem('username', response.data.username || 'subadmin');
+        localStorage.setItem('permissions', JSON.stringify(response.data.permissions || {}));
+        navigate('/admin/dashboard');
+      } catch (subAdminErr) {
+        setError('Invalid username or password');
+        setLoading(false);
+      }
     }
   };
 

@@ -1,7 +1,8 @@
 // backend/routes/admin.js
 const express = require('express');
 const router = express.Router();
-const { adminMiddleware } = require('../middleware/auth'); // ← FIXED: Use adminMiddleware not adminAuth
+const { adminMiddleware, superAdminMiddleware } = require('../middleware/auth');
+const { logActivity } = require('../middleware/activityLogger');
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Withdrawal = require('../models/Withdrawal');
@@ -46,14 +47,22 @@ router.post('/users/:userId/clear-target-balance', adminMiddleware, async (req, 
 });
 
 // Set target balance for a user
-router.post('/users/:userId/target-balance', adminMiddleware, async (req, res) => {
+router.post('/users/:userId/target-balance', adminMiddleware, logActivity('target_balance'), async (req, res) => {
   try {
+    // Check permission for sub-admins
+    if (req.admin.role === 'subadmin' && !req.admin.permissions?.canSetTargetBalance) {
+      return res.status(403).json({ message: 'Access denied. You do not have permission to set target balance.' });
+    }
+
     const { targetBalance } = req.body;
     const user = await User.findById(req.params.userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    // Store username for activity logging
+    req.body.targetUsername = user.username;
 
     user.targetBalance = targetBalance;
     await user.save();
@@ -101,12 +110,31 @@ router.get('/users/:userId', adminMiddleware, async (req, res) => {
 });
 
 // Update user
-router.put('/users/:userId', adminMiddleware, async (req, res) => {
+router.put('/users/:userId', adminMiddleware, logActivity('group_link'), async (req, res) => {
   try {
     const updates = req.body;
     console.log('Updating user', req.params.userId, 'with:', updates);
 
-    // Check if level is being updated
+    // For sub-admins, only allow groupLink updates if they have permission
+    if (req.admin.role === 'subadmin') {
+      // Check if trying to update groupLink
+      if (updates.groupLink !== undefined) {
+        if (!req.admin.permissions?.canEditGroupLinks) {
+          return res.status(403).json({ message: 'Access denied. You do not have permission to edit group links.' });
+        }
+        // Only allow groupLink update for sub-admins
+        const allowedUpdates = { groupLink: updates.groupLink };
+        Object.keys(updates).forEach(key => {
+          if (key !== 'groupLink') {
+            delete updates[key];
+          }
+        });
+      } else {
+        return res.status(403).json({ message: 'Access denied. Sub-admins can only update group links.' });
+      }
+    }
+
+    // Check if level is being updated (super admin only)
     if (updates.level && LEVELS[updates.level]) {
       const existingUser = await User.findById(req.params.userId);
       if (existingUser && existingUser.level !== updates.level) {
@@ -129,6 +157,9 @@ router.put('/users/:userId', adminMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Store username for activity logging
+    req.body.targetUsername = user.username;
+
     res.json(user);
   } catch (err) {
     console.error('Error updating user:', err);
@@ -137,14 +168,22 @@ router.put('/users/:userId', adminMiddleware, async (req, res) => {
 });
 
 // Adjust balance
-router.post('/users/:userId/balance', adminMiddleware, async (req, res) => {
+router.post('/users/:userId/balance', adminMiddleware, logActivity('balance_adjust'), async (req, res) => {
   try {
+    // Check permission for sub-admins
+    if (req.admin.role === 'subadmin' && !req.admin.permissions?.canAdjustBalance) {
+      return res.status(403).json({ message: 'Access denied. You do not have permission to adjust balance.' });
+    }
+
     const { amount, operation } = req.body;
     const user = await User.findById(req.params.userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    // Store username for activity logging
+    req.body.targetUsername = user.username;
 
     if (operation === 'add') {
       user.accountBalance += parseFloat(amount);
@@ -165,8 +204,13 @@ router.post('/users/:userId/balance', adminMiddleware, async (req, res) => {
 });
 
 // Assign special review with negative balance logic
-router.post('/users/:userId/special-review', adminMiddleware, async (req, res) => {
+router.post('/users/:userId/special-review', adminMiddleware, logActivity('special_review'), async (req, res) => {
   try {
+    // Check permission for sub-admins
+    if (req.admin.role === 'subadmin' && !req.admin.permissions?.canAssignSpecialReviews) {
+      return res.status(403).json({ message: 'Access denied. You do not have permission to assign special reviews.' });
+    }
+
     const { position, productId, negativeAmount } = req.body;
 
     // Validate inputs
@@ -178,6 +222,9 @@ router.post('/users/:userId/special-review', adminMiddleware, async (req, res) =
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    // Store username for activity logging
+    req.body.targetUsername = user.username;
 
     // Check if product exists
     const product = await Product.findById(productId);
@@ -206,13 +253,13 @@ router.post('/users/:userId/special-review', adminMiddleware, async (req, res) =
       }
     });
   } catch (err) {
-    console.error('Error adding special review:', err);
+    console.error('Error assigning special review:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Toggle freeze
-router.post('/users/:userId/freeze', adminMiddleware, async (req, res) => {
+// Toggle freeze (super admin only)
+router.post('/users/:userId/freeze', superAdminMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     if (!user) {
@@ -232,8 +279,8 @@ router.post('/users/:userId/freeze', adminMiddleware, async (req, res) => {
   }
 });
 
-// Reset account (does NOT give $15 bonus)
-router.post('/users/:userId/reset', adminMiddleware, async (req, res) => {
+// Reset account (super admin only - does NOT give $15 bonus)
+router.post('/users/:userId/reset', superAdminMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     if (!user) {
@@ -257,8 +304,8 @@ router.post('/users/:userId/reset', adminMiddleware, async (req, res) => {
   }
 });
 
-// Toggle withdrawal
-router.post('/users/:userId/toggle-withdrawal', adminMiddleware, async (req, res) => {
+// Toggle withdrawal (super admin only)
+router.post('/users/:userId/toggle-withdrawal', superAdminMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     if (!user) {
@@ -278,8 +325,8 @@ router.post('/users/:userId/toggle-withdrawal', adminMiddleware, async (req, res
   }
 });
 
-// Unlock withdrawal details
-router.post('/users/:userId/unlock-withdrawal', adminMiddleware, async (req, res) => {
+// Unlock withdrawal details (super admin only)
+router.post('/users/:userId/unlock-withdrawal', superAdminMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     if (!user) {
@@ -299,8 +346,8 @@ router.post('/users/:userId/unlock-withdrawal', adminMiddleware, async (req, res
   }
 });
 
-// Change user password
-router.post('/users/:userId/change-password', adminMiddleware, async (req, res) => {
+// Change user password (super admin only)
+router.post('/users/:userId/change-password', superAdminMiddleware, async (req, res) => {
   try {
     const { newPassword } = req.body;
     const user = await User.findById(req.params.userId);
@@ -321,8 +368,8 @@ router.post('/users/:userId/change-password', adminMiddleware, async (req, res) 
   }
 });
 
-// Get all products
-router.get('/products', adminMiddleware, async (req, res) => {
+// Get all products (super admin only)
+router.get('/products', superAdminMiddleware, async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
@@ -332,8 +379,8 @@ router.get('/products', adminMiddleware, async (req, res) => {
   }
 });
 
-// Add product
-router.post('/products', adminMiddleware, async (req, res) => {
+// Add product (super admin only)
+router.post('/products', superAdminMiddleware, async (req, res) => {
   try {
     const product = new Product(req.body);
     await product.save();
@@ -344,8 +391,40 @@ router.post('/products', adminMiddleware, async (req, res) => {
   }
 });
 
-// Get all withdrawals
-router.get('/withdrawals', adminMiddleware, async (req, res) => {
+// Update product (super admin only)
+router.put('/products/:productId', superAdminMiddleware, async (req, res) => {
+  try {
+    const product = await Product.findByIdAndUpdate(
+      req.params.productId,
+      req.body,
+      { new: true }
+    );
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(product);
+  } catch (err) {
+    console.error('Error updating product:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Delete product (super admin only)
+router.delete('/products/:productId', superAdminMiddleware, async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json({ message: 'Product deleted successfully', productId: req.params.productId });
+  } catch (err) {
+    console.error('Error deleting product:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get all withdrawals (super admin only)
+router.get('/withdrawals', superAdminMiddleware, async (req, res) => {
   try {
     const withdrawals = await Withdrawal.find()
       .populate('userId', 'username email')
@@ -357,9 +436,14 @@ router.get('/withdrawals', adminMiddleware, async (req, res) => {
   }
 });
 
-// Get user withdrawals
+// Get user withdrawals (read-only for sub-admins with permission)
 router.get('/users/:userId/withdrawals', adminMiddleware, async (req, res) => {
   try {
+    // Check permission for sub-admins
+    if (req.admin.role === 'subadmin' && !req.admin.permissions?.canViewWithdrawalHistory) {
+      return res.status(403).json({ message: 'Access denied. You do not have permission to view withdrawal history.' });
+    }
+
     const withdrawals = await Withdrawal.find({ userId: req.params.userId })
       .sort({ requestedAt: -1 });
     res.json(withdrawals);
@@ -369,8 +453,8 @@ router.get('/users/:userId/withdrawals', adminMiddleware, async (req, res) => {
   }
 });
 
-// Update withdrawal
-router.put('/withdrawals/:withdrawalId', adminMiddleware, async (req, res) => {
+// Update withdrawal (super admin only)
+router.put('/withdrawals/:withdrawalId', superAdminMiddleware, async (req, res) => {
   try {
     const { status, adminNotes } = req.body;
     const withdrawal = await Withdrawal.findByIdAndUpdate(

@@ -17,6 +17,9 @@ function AdminDashboard() {
   const [totalReviewsForm, setTotalReviewsForm] = useState({ totalReviews: '' });
   const [allReviews, setAllReviews] = useState([]);
 
+  // Get permissions from localStorage
+  const permissions = JSON.parse(localStorage.getItem('permissions') || '{}');
+
   // Add fetchAllReviews function
   const fetchAllReviews = async () => {
     try {
@@ -72,6 +75,7 @@ function AdminDashboard() {
     mainImage: '',
     additionalImages: ''
   });
+  const [editingProduct, setEditingProduct] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -349,20 +353,61 @@ function AdminDashboard() {
         .map(url => url.trim())
         .filter(url => url);
 
-      await adminAPI.addProduct({
+      const productData = {
         name: productForm.name,
         description: productForm.description,
         mainImage: productForm.mainImage,
         additionalImages: additionalImagesArray
-      });
+      };
 
-      alert('Product added successfully!');
+      if (editingProduct) {
+        await adminAPI.updateProduct(editingProduct, productData);
+        alert('Product updated successfully!');
+      } else {
+        await adminAPI.addProduct(productData);
+        alert('Product added successfully!');
+      }
+
       setProductForm({ name: '', description: '', mainImage: '', additionalImages: '' });
+      setEditingProduct(null);
       setShowProductForm(false);
       fetchProducts();
     } catch (err) {
-      console.error('Error adding product:', err);
-      alert('Failed to add product');
+      console.error('Error saving product:', err);
+      alert('Failed to save product');
+    }
+  };
+
+  const handleEditProduct = (product) => {
+    setEditingProduct(product._id);
+    setProductForm({
+      name: product.name,
+      description: product.description || '',
+      mainImage: product.mainImage || '',
+      additionalImages: product.additionalImages ? product.additionalImages.join(', ') : ''
+    });
+    setShowProductForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProduct(null);
+    setProductForm({ name: '', description: '', mainImage: '', additionalImages: '' });
+    setShowProductForm(false);
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    try {
+      await adminAPI.deleteProduct(productId);
+      fetchProducts();
+      // If we were editing this product, clear the form
+      if (editingProduct === productId) {
+        handleCancelEdit();
+      }
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      alert('Failed to delete product');
     }
   };
 
@@ -457,13 +502,21 @@ function AdminDashboard() {
                     <p><strong>Email:</strong> {selectedUser.email}</p>
                     <p><strong>Phone:</strong> {selectedUser.phoneNumber}</p>
                     <p><strong>Account Balance:</strong> ${selectedUser.accountBalance?.toFixed(2) || '0.00'}</p>
-                    <p><strong>Total Reviews Assigned:</strong> {selectedUser.totalReviewsAssigned || 0}</p>
-                    <p><strong>Account Level:</strong> {selectedUser.level || 'Beginner'}</p>
+                    {localStorage.getItem('role') === 'admin' && (
+                      <>
+                        <p><strong>Total Reviews Assigned:</strong> {selectedUser.totalReviewsAssigned || 0}</p>
+                        <p><strong>Account Level:</strong> {selectedUser.level || 'Beginner'}</p>
+                      </>
+                    )}
                     <p><strong>Reviews Completed:</strong> {selectedUser.reviewsCompleted || 0}</p>
                     <p><strong>Current Position:</strong> {selectedUser.currentReviewPosition || 0}</p>
                     <p><strong>Frozen:</strong> {selectedUser.isFrozen ? 'Yes' : 'No'}</p>
                     <p><strong>Can Withdraw:</strong> {selectedUser.canWithdraw ? 'Yes' : 'No'}</p>
-                    <p><strong>Group Link:</strong> {selectedUser.groupLink || 'Not set'}</p>
+
+                    {(localStorage.getItem('role') === 'admin' || permissions.canEditGroupLinks) && (
+                      <p><strong>Group Link:</strong> {selectedUser.groupLink || 'Not set'}</p>
+                    )}
+
                     <button onClick={() => setEditingUser(true)} className="btn btn-primary">
                       Edit User
                     </button>
@@ -476,6 +529,7 @@ function AdminDashboard() {
                         type="text"
                         value={editForm.username}
                         onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
+                        disabled={localStorage.getItem('role') !== 'admin'}
                       />
                     </div>
                     <div className="form-group">
@@ -484,6 +538,7 @@ function AdminDashboard() {
                         type="email"
                         value={editForm.email}
                         onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                        disabled={localStorage.getItem('role') !== 'admin'}
                       />
                     </div>
                     <div className="form-group">
@@ -492,36 +547,46 @@ function AdminDashboard() {
                         type="text"
                         value={editForm.phoneNumber}
                         onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
+                        disabled={localStorage.getItem('role') !== 'admin'}
                       />
                     </div>
-                    <div className="form-group">
-                      <label>Account Level</label>
-                      <select
-                        value={editForm.level}
-                        onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
-                      >
-                        <option value="Beginner">Beginner</option>
-                        <option value="Proficient">Proficient</option>
-                        <option value="Authority">Authority</option>
-                      </select>
-                    </div>
-                    <div className="form-group">
-                      <label>Reputation Points</label>
-                      <input
-                        type="number"
-                        value={editForm.reputationPoints}
-                        onChange={(e) => setEditForm({ ...editForm, reputationPoints: parseInt(e.target.value) || 0 })}
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label>Group Link (Telegram/Other)</label>
-                      <input
-                        type="text"
-                        value={editForm.groupLink}
-                        onChange={(e) => setEditForm({ ...editForm, groupLink: e.target.value })}
-                        placeholder="https://t.me/your-group or any other link"
-                      />
-                    </div>
+
+                    {localStorage.getItem('role') === 'admin' && (
+                      <>
+                        <div className="form-group">
+                          <label>Account Level</label>
+                          <select
+                            value={editForm.level}
+                            onChange={(e) => setEditForm({ ...editForm, level: e.target.value })}
+                          >
+                            <option value="Beginner">Beginner</option>
+                            <option value="Proficient">Proficient</option>
+                            <option value="Authority">Authority</option>
+                          </select>
+                        </div>
+                        <div className="form-group">
+                          <label>Reputation Points</label>
+                          <input
+                            type="number"
+                            value={editForm.reputationPoints}
+                            onChange={(e) => setEditForm({ ...editForm, reputationPoints: parseInt(e.target.value) || 0 })}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {(localStorage.getItem('role') === 'admin' || permissions.canEditGroupLinks) && (
+                      <div className="form-group">
+                        <label>Group Link (Telegram/Other)</label>
+                        <input
+                          type="text"
+                          value={editForm.groupLink}
+                          onChange={(e) => setEditForm({ ...editForm, groupLink: e.target.value })}
+                          placeholder="https://t.me/your-group or any other link"
+                        />
+                      </div>
+                    )}
+
                     <div className="button-group">
                       <button onClick={handleUpdateUser} className="btn btn-success">
                         Save Changes
@@ -534,193 +599,205 @@ function AdminDashboard() {
                 )}
               </div>
 
-              {/* BALANCE ADJUSTMENT SECTION */}
-              <div className="detail-section">
-                <h3>Adjust Balance</h3>
-                <div className="balance-form">
-                  <div className="form-group">
-                    <label>Amount</label>
-                    <input
-                      type="number"
-                      value={balanceForm.amount}
-                      onChange={(e) => setBalanceForm({ ...balanceForm, amount: e.target.value })}
-                      placeholder="Enter amount"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Operation</label>
-                    <select
-                      value={balanceForm.operation}
-                      onChange={(e) => setBalanceForm({ ...balanceForm, operation: e.target.value })}
-                    >
-                      <option value="add">Add</option>
-                      <option value="deduct">Deduct</option>
-                    </select>
-                  </div>
-                  <button onClick={handleAdjustBalance} className="btn btn-primary">
-                    Adjust Balance
-                  </button>
-                </div>
-              </div>
-
-              {/* TARGET BALANCE SECTION */}
-              <div className="detail-section">
-                <h3>Target Balance</h3>
-                <p>Current Target: ${selectedUser.targetBalance?.toFixed(2) || '0.00'}</p>
-                <div className="target-balance-form">
-                  <div className="form-group">
-                    <label>New Target Balance</label>
-                    <input
-                      type="number"
-                      value={targetBalanceForm.targetBalance}
-                      onChange={(e) => setTargetBalanceForm({ targetBalance: e.target.value })}
-                      placeholder="Enter target balance"
-                    />
-                  </div>
-                  <div className="button-group">
-                    <button onClick={handleSetTargetBalance} className="btn btn-primary">
-                      Set Target Balance
-                    </button>
-                    <button onClick={handleClearTargetBalance} className="btn btn-danger">
-                      Clear Target Balance
+              {/* BALANCE ADJUSTMENT SECTION - Permission Based */}
+              {(localStorage.getItem('role') === 'admin' || permissions.canAdjustBalance) && (
+                <div className="detail-section">
+                  <h3>Adjust Balance</h3>
+                  <div className="balance-form">
+                    <div className="form-group">
+                      <label>Amount</label>
+                      <input
+                        type="number"
+                        value={balanceForm.amount}
+                        onChange={(e) => setBalanceForm({ ...balanceForm, amount: e.target.value })}
+                        placeholder="Enter amount"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Operation</label>
+                      <select
+                        value={balanceForm.operation}
+                        onChange={(e) => setBalanceForm({ ...balanceForm, operation: e.target.value })}
+                      >
+                        <option value="add">Add</option>
+                        <option value="deduct">Deduct</option>
+                      </select>
+                    </div>
+                    <button onClick={handleAdjustBalance} className="btn btn-primary">
+                      Adjust Balance
                     </button>
                   </div>
                 </div>
-              </div>
+              )}
 
-              {/* UPDATE TOTAL REVIEWS SECTION */}
-              <div className="detail-section">
-                <h3>Update Total Reviews</h3>
-                <p>Current Total: {selectedUser.totalReviewsAssigned || 0}</p>
-                <p>Completed: {selectedUser.reviewsCompleted || 0}</p>
-                <p>
-                  Remaining: {(selectedUser.totalReviewsAssigned || 0) - (selectedUser.reviewsCompleted || 0)}
-                </p>
-
-                <div className="balance-form">
-                  <div className="form-group">
-                    <label>New Total Reviews</label>
-                    <input
-                      type="number"
-                      value={totalReviewsForm.totalReviews}
-                      onChange={(e) => setTotalReviewsForm({ totalReviews: e.target.value })}
-                      placeholder="Enter total reviews (e.g., 30)"
-                    />
+              {/* TARGET BALANCE SECTION - Permission Based */}
+              {(localStorage.getItem('role') === 'admin' || permissions.canSetTargetBalance) && (
+                <div className="detail-section">
+                  <h3>Target Balance</h3>
+                  <p>Current Target: ${selectedUser.targetBalance?.toFixed(2) || '0.00'}</p>
+                  <div className="target-balance-form">
+                    <div className="form-group">
+                      <label>New Target Balance</label>
+                      <input
+                        type="number"
+                        value={targetBalanceForm.targetBalance}
+                        onChange={(e) => setTargetBalanceForm({ targetBalance: e.target.value })}
+                        placeholder="Enter target balance"
+                      />
+                    </div>
+                    <div className="button-group">
+                      <button onClick={handleSetTargetBalance} className="btn btn-primary">
+                        Set Target Balance
+                      </button>
+                      <button onClick={handleClearTargetBalance} className="btn btn-danger">
+                        Clear Target Balance
+                      </button>
+                    </div>
                   </div>
-
-                  <button onClick={handleUpdateTotalReviews} className="btn btn-primary">
-                    Update Total Reviews
-                  </button>
-
-                  <small style={{ display: 'block', marginTop: '10px', color: '#666' }}>
-                    Note: This only affects future progress. Completed reviews are never changed.
-                  </small>
                 </div>
-              </div>
+              )}
 
+              {/* UPDATE TOTAL REVIEWS SECTION - Super Admin Only */}
+              {localStorage.getItem('role') === 'admin' && (
+                <div className="detail-section">
+                  <h3>Update Total Reviews</h3>
+                  <p>Current Total: {selectedUser.totalReviewsAssigned || 0}</p>
+                  <p>Completed: {selectedUser.reviewsCompleted || 0}</p>
+                  <p>
+                    Remaining: {(selectedUser.totalReviewsAssigned || 0) - (selectedUser.reviewsCompleted || 0)}
+                  </p>
 
-              {/* SPECIAL REVIEW SECTION */}
-              <div className="detail-section">
-                <h3>Assign Special Review</h3>
-                <div className="special-review-form">
-                  <div className="form-group">
-                    <label>Position (1-40)</label>
-                    <input
-                      type="number"
-                      value={specialReviewForm.position}
-                      onChange={(e) => setSpecialReviewForm({ ...specialReviewForm, position: e.target.value })}
-                      placeholder="Position number"
-                    />
+                  <div className="balance-form">
+                    <div className="form-group">
+                      <label>New Total Reviews</label>
+                      <input
+                        type="number"
+                        value={totalReviewsForm.totalReviews}
+                        onChange={(e) => setTotalReviewsForm({ totalReviews: e.target.value })}
+                        placeholder="Enter total reviews (e.g., 30)"
+                      />
+                    </div>
+
+                    <button onClick={handleUpdateTotalReviews} className="btn btn-primary">
+                      Update Total Reviews
+                    </button>
+
+                    <small style={{ display: 'block', marginTop: '10px', color: '#666' }}>
+                      Note: This only affects future progress. Completed reviews are never changed.
+                    </small>
                   </div>
-                  <div className="form-group">
-                    <label>Product</label>
-                    <select
-                      value={specialReviewForm.productId}
-                      onChange={(e) => setSpecialReviewForm({ ...specialReviewForm, productId: e.target.value })}
-                    >
-                      <option value="">Select Product</option>
-                      {products.map(product => (
-                        <option key={product._id} value={product._id}>
-                          {product.name}
-                        </option>
+                </div>
+              )}
+
+
+              {/* SPECIAL REVIEW SECTION - Permission Based */}
+              {(localStorage.getItem('role') === 'admin' || permissions.canAssignSpecialReviews) && (
+                <div className="detail-section">
+                  <h3>Assign Special Review</h3>
+                  <div className="special-review-form">
+                    <div className="form-group">
+                      <label>Position (1-40)</label>
+                      <input
+                        type="number"
+                        value={specialReviewForm.position}
+                        onChange={(e) => setSpecialReviewForm({ ...specialReviewForm, position: e.target.value })}
+                        placeholder="Position number"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Product</label>
+                      <select
+                        value={specialReviewForm.productId}
+                        onChange={(e) => setSpecialReviewForm({ ...specialReviewForm, productId: e.target.value })}
+                      >
+                        <option value="">Select Product</option>
+                        {products.map(product => (
+                          <option key={product._id} value={product._id}>
+                            {product.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Negative Amount (Target Negative Balance)</label>
+                      <input
+                        type="number"
+                        value={specialReviewForm.negativeAmount}
+                        onChange={(e) => setSpecialReviewForm({ ...specialReviewForm, negativeAmount: e.target.value })}
+                        placeholder="e.g., 409"
+                      />
+                    </div>
+                    <button onClick={handleAssignSpecialReview} className="btn btn-primary">
+                      Assign Special Review
+                    </button>
+                  </div>
+
+                  {/* Display current special reviews */}
+                  {selectedUser.specialReviews && selectedUser.specialReviews.length > 0 && (
+                    <div style={{ marginTop: '20px' }}>
+                      <h4>Current Special Reviews:</h4>
+                      {selectedUser.specialReviews.map((sr, idx) => (
+                        <p key={idx}>
+                          Position {sr.position}: -${sr.negativeAmount} (Target Negative)
+                        </p>
                       ))}
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Negative Amount (Target Negative Balance)</label>
-                    <input
-                      type="number"
-                      value={specialReviewForm.negativeAmount}
-                      onChange={(e) => setSpecialReviewForm({ ...specialReviewForm, negativeAmount: e.target.value })}
-                      placeholder="e.g., 409"
-                    />
-                  </div>
-                  <button onClick={handleAssignSpecialReview} className="btn btn-primary">
-                    Assign Special Review
-                  </button>
+                    </div>
+                  )}
                 </div>
+              )}
 
-                {/* Display current special reviews */}
-                {selectedUser.specialReviews && selectedUser.specialReviews.length > 0 && (
-                  <div style={{ marginTop: '20px' }}>
-                    <h4>Current Special Reviews:</h4>
-                    {selectedUser.specialReviews.map((sr, idx) => (
-                      <p key={idx}>
-                        Position {sr.position}: -${sr.negativeAmount} (Target Negative)
-                      </p>
-                    ))}
+              {/* ACCOUNT ACTIONS SECTION - Super Admin Only */}
+              {localStorage.getItem('role') === 'admin' && (
+                <div className="detail-section">
+                  <h3>Account Actions</h3>
+                  <div className="button-group">
+                    <button onClick={handleToggleFreeze} className={`btn ${selectedUser.isFrozen ? 'btn-success' : 'btn-danger'}`}>
+                      {selectedUser.isFrozen ? 'Unfreeze Account' : 'Freeze Account'}
+                    </button>
+                    <button onClick={handleToggleWithdrawal} className={`btn ${selectedUser.canWithdraw ? 'btn-danger' : 'btn-success'}`}>
+                      {selectedUser.canWithdraw ? 'Disable Withdrawal' : 'Enable Withdrawal'}
+                    </button>
+                    <button onClick={handleUnlockWithdrawal} className="btn btn-primary">
+                      Unlock Withdrawal Details
+                    </button>
+                    <button onClick={handleResetAccount} className="btn btn-danger">
+                      Reset Account
+                    </button>
                   </div>
-                )}
-              </div>
-
-              {/* ACCOUNT ACTIONS SECTION */}
-              <div className="detail-section">
-                <h3>Account Actions</h3>
-                <div className="button-group">
-                  <button onClick={handleToggleFreeze} className={`btn ${selectedUser.isFrozen ? 'btn-success' : 'btn-danger'}`}>
-                    {selectedUser.isFrozen ? 'Unfreeze Account' : 'Freeze Account'}
-                  </button>
-                  <button onClick={handleToggleWithdrawal} className={`btn ${selectedUser.canWithdraw ? 'btn-danger' : 'btn-success'}`}>
-                    {selectedUser.canWithdraw ? 'Disable Withdrawal' : 'Enable Withdrawal'}
-                  </button>
-                  <button onClick={handleUnlockWithdrawal} className="btn btn-primary">
-                    Unlock Withdrawal Details
-                  </button>
-                  <button onClick={handleResetAccount} className="btn btn-danger">
-                    Reset Account
-                  </button>
                 </div>
-              </div>
+              )}
 
-              {/* CHANGE PASSWORD SECTION */}
-              <div className="detail-section">
-                <h3>Change User Password</h3>
-                <div className="balance-form">
-                  <div className="form-group">
-                    <label>New Password</label>
-                    <input
-                      type="password"
-                      value={passwordForm.newPassword}
-                      onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                      placeholder="Enter new password (min 6 characters)"
-                      autoComplete="new-password"
-                    />
+              {/* CHANGE PASSWORD SECTION - Super Admin Only */}
+              {localStorage.getItem('role') === 'admin' && (
+                <div className="detail-section">
+                  <h3>Change User Password</h3>
+                  <div className="balance-form">
+                    <div className="form-group">
+                      <label>New Password</label>
+                      <input
+                        type="password"
+                        value={passwordForm.newPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                        placeholder="Enter new password (min 6 characters)"
+                        autoComplete="new-password"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Confirm Password</label>
+                      <input
+                        type="password"
+                        value={passwordForm.confirmPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
+                        placeholder="Confirm new password"
+                        autoComplete="new-password"
+                      />
+                    </div>
+                    <button onClick={handleChangePassword} className="btn btn-primary">
+                      Change Password
+                    </button>
                   </div>
-                  <div className="form-group">
-                    <label>Confirm Password</label>
-                    <input
-                      type="password"
-                      value={passwordForm.confirmPassword}
-                      onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                      placeholder="Confirm new password"
-                      autoComplete="new-password"
-                    />
-                  </div>
-                  <button onClick={handleChangePassword} className="btn btn-primary">
-                    Change Password
-                  </button>
                 </div>
-              </div>
+              )}
 
               {/* USER REVIEWS SECTION */}
               <div className="detail-section">
@@ -788,157 +865,187 @@ function AdminDashboard() {
 
       {/* PRODUCTS SECTION */}
       <div style={{ marginTop: '40px', background: 'white', padding: '20px', borderRadius: '10px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2>Products ({products.length})</h2>
-          <button onClick={() => setShowProductForm(!showProductForm)} className="btn btn-primary">
-            {showProductForm ? 'Hide Form' : 'Add Product'}
-          </button>
-        </div>
+        {/* Products Section - Super Admin Only */}
+        {localStorage.getItem('role') === 'admin' ? (
+          <>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2>Products ({products.length})</h2>
+              <button onClick={() => setShowProductForm(!showProductForm)} className="btn btn-primary">
+                {showProductForm ? 'Hide Form' : 'Add Product'}
+              </button>
+            </div>
 
-        {showProductForm && (
-          <div className="product-form" style={{ marginBottom: '20px', padding: '20px', background: '#f5f5f5', borderRadius: '10px' }}>
-            <div className="form-group">
-              <label>Product Name</label>
-              <input
-                type="text"
-                value={productForm.name}
-                onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                placeholder="Enter product name"
-              />
-            </div>
-            <div className="form-group">
-              <label>Description</label>
-              <textarea
-                value={productForm.description}
-                onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-                placeholder="Enter product description"
-                rows="3"
-              />
-            </div>
-            <div className="form-group">
-              <label>Main Image URL</label>
-              <input
-                type="text"
-                value={productForm.mainImage}
-                onChange={(e) => setProductForm({ ...productForm, mainImage: e.target.value })}
-                placeholder="https://example.com/image.jpg"
-              />
-            </div>
-            <div className="form-group">
-              <label>Additional Images (comma-separated URLs)</label>
-              <input
-                type="text"
-                value={productForm.additionalImages}
-                onChange={(e) => setProductForm({ ...productForm, additionalImages: e.target.value })}
-                placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"
-              />
-            </div>
-            <button onClick={handleAddProduct} className="btn btn-success">
-              Add Product
-            </button>
-          </div>
-        )}
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
-          {products.map(product => (
-            <div key={product._id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
-              {product.mainImage && (
-                <img
-                  src={product.mainImage}
-                  alt={product.name}
-                  style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '5px', marginBottom: '10px' }}
-                />
-              )}
-              <h4>{product.name}</h4>
-              <p style={{ fontSize: '14px', color: '#666' }}>{product.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ALL WITHDRAWALS SECTION */}
-      <div style={{ marginTop: '40px', background: 'white', padding: '20px', borderRadius: '10px' }}>
-        <h2>All Withdrawal Requests ({withdrawals.length})</h2>
-        {withdrawals.length === 0 ? (
-          <p>No withdrawal requests.</p>
-        ) : (
-          <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-            {withdrawals.map(withdrawal => (
-              <div key={withdrawal._id} style={{ padding: '15px', borderBottom: '1px solid #eee', marginBottom: '10px' }}>
-                <p><strong>User:</strong> {withdrawal.userId?.username || 'N/A'} ({withdrawal.userId?.email || 'N/A'})</p>
-                <p><strong>Amount:</strong> ${withdrawal.amount?.toFixed(2) || '0.00'}</p>
-                <p><strong>Status:</strong> <span style={{
-                  padding: '3px 10px',
-                  borderRadius: '5px',
-                  background: withdrawal.status === 'pending' ? '#fff3cd' : withdrawal.status === 'processed' ? '#d4edda' : '#f8d7da',
-                  color: withdrawal.status === 'pending' ? '#856404' : withdrawal.status === 'processed' ? '#155724' : '#721c24'
-                }}>{withdrawal.status}</span></p>
-                <p><strong>Currency:</strong> {withdrawal.currency} ({withdrawal.network})</p>
-                <p><strong>Wallet:</strong> {withdrawal.walletAddress}</p>
-                <p><strong>Date:</strong> {new Date(withdrawal.requestedAt).toLocaleString()}</p>
-                {withdrawal.adminNotes && <p><strong>Admin Notes:</strong> {withdrawal.adminNotes}</p>}
-                {withdrawal.status === 'pending' && (
-                  <div className="button-group" style={{ marginTop: '10px' }}>
+            {showProductForm && (
+              <div className="product-form" style={{ marginBottom: '20px', padding: '20px', background: '#f5f5f5', borderRadius: '10px' }}>
+                {/* ... (product form content remains same, just wrapped) ... */}
+                <div className="form-group">
+                  <label>Product Name</label>
+                  <input
+                    type="text"
+                    value={productForm.name}
+                    onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Description</label>
+                  <textarea
+                    value={productForm.description}
+                    onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Main Image URL</label>
+                  <input
+                    type="text"
+                    value={productForm.mainImage}
+                    onChange={(e) => setProductForm({ ...productForm, mainImage: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Additional Images (comma separated URLs)</label>
+                  <input
+                    type="text"
+                    value={productForm.additionalImages}
+                    onChange={(e) => setProductForm({ ...productForm, additionalImages: e.target.value })}
+                  />
+                </div>
+                <div className="button-group">
+                  <button onClick={handleAddProduct} className="btn btn-primary">
+                    {editingProduct ? 'Update Product' : 'Add Product'}
+                  </button>
+                  {editingProduct && (
+                    <button onClick={handleCancelEdit} className="btn btn-secondary">
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+            {/* Product List */}
+            <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '20px' }}>
+              {products.map(product => (
+                <div key={product._id} className="product-card" style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
+                  <img src={product.mainImage} alt={product.name} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '4px' }} />
+                  <h3 style={{ fontSize: '16px', margin: '10px 0' }}>{product.name}</h3>
+                  <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
                     <button
-                      onClick={() => handleUpdateWithdrawal(withdrawal._id, 'processed', 'Approved by admin')}
-                      className="btn btn-success"
+                      onClick={() => handleEditProduct(product)}
+                      className="btn btn-secondary"
+                      style={{ flex: 1, fontSize: '12px' }}
                     >
-                      Approve
+                      Edit
                     </button>
                     <button
-                      onClick={() => handleUpdateWithdrawal(withdrawal._id, 'cancelled', 'Rejected by admin')}
+                      onClick={() => handleDeleteProduct(product._id)}
                       className="btn btn-danger"
+                      style={{ flex: 1, fontSize: '12px' }}
                     >
-                      Reject
+                      Delete
                     </button>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      {/* ALL USER REVIEWS SECTION */}
-      <div style={{ marginTop: '40px', background: 'white', padding: '20px', borderRadius: '10px' }}>
-        <h2>All User Reviews ({allReviews.length})</h2>
-
-        {allReviews.length === 0 ? (
-          <p>No reviews yet.</p>
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
-          <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ background: '#f5f5f5', borderBottom: '2px solid #ddd' }}>
-                  <th>User</th>
-                  <th>Product</th>
-                  <th>Price</th>
-                  <th>Commission</th>
-                  <th>Status</th>
-                  <th>Special</th>
-                  <th>Position</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allReviews.map(review => (
-                  <tr key={review._id} style={{ borderBottom: '1px solid #eee' }}>
-                    <td>{review.username}</td>
-                    <td>{review.productName}</td>
-                    <td>${review.productPrice?.toFixed(2) || '0.00'}</td>
-                    <td>${review.commission?.toFixed(2) || '0.00'}</td>
-                    <td>{review.status}</td>
-                    <td>{review.isSpecial ? '✓' : '—'}</td>
-                    <td>{review.reviewPosition}</td>
-                    <td>{new Date(review.createdAt).toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          /* If not super admin, show nothing or a restricted view if needed. User asked to NOT show products. */
+          null
         )}
       </div>
 
-    </div>
+
+      {/* ALL WITHDRAWALS SECTION - Super Admin & Permission Based */}
+      {
+        (localStorage.getItem('role') === 'admin' || permissions.canViewWithdrawalHistory) && (
+          <div style={{ marginTop: '40px', background: 'white', padding: '20px', borderRadius: '10px' }}>
+            <h2>All Withdrawal Requests ({withdrawals.length})</h2>
+            {withdrawals.length === 0 ? (
+              <p>No withdrawal requests.</p>
+            ) : (
+              <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                {withdrawals.map(withdrawal => (
+                  <div key={withdrawal._id} style={{ padding: '15px', borderBottom: '1px solid #eee', marginBottom: '10px' }}>
+                    <p><strong>User:</strong> {withdrawal.userId?.username || 'N/A'} ({withdrawal.userId?.email || 'N/A'})</p>
+                    <p><strong>Amount:</strong> ${withdrawal.amount?.toFixed(2) || '0.00'}</p>
+                    <p><strong>Status:</strong> <span style={{
+                      padding: '3px 10px',
+                      borderRadius: '5px',
+                      background: withdrawal.status === 'pending' ? '#fff3cd' : withdrawal.status === 'processed' ? '#d4edda' : '#f8d7da',
+                      color: withdrawal.status === 'pending' ? '#856404' : withdrawal.status === 'processed' ? '#155724' : '#721c24'
+                    }}>{withdrawal.status}</span></p>
+                    <p><strong>Currency:</strong> {withdrawal.currency} ({withdrawal.network})</p>
+                    <p><strong>Wallet:</strong> {withdrawal.walletAddress}</p>
+                    <p><strong>Date:</strong> {new Date(withdrawal.requestedAt).toLocaleString()}</p>
+                    {withdrawal.adminNotes && <p><strong>Admin Notes:</strong> {withdrawal.adminNotes}</p>}
+
+                    {/* Status Change - Only if allowed */}
+                    {localStorage.getItem('role') === 'admin' && withdrawal.status === 'pending' && (
+                      <div className="button-group" style={{ marginTop: '10px' }}>
+                        <button
+                          onClick={() => handleUpdateWithdrawal(withdrawal._id, 'processed', 'Approved by admin')}
+                          className="btn btn-success"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleUpdateWithdrawal(withdrawal._id, 'cancelled', 'Rejected by admin')}
+                          className="btn btn-danger"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      }
+
+      {/* ALL USER REVIEWS SECTION - Super Admin Only for now */}
+      {
+        localStorage.getItem('role') === 'admin' && (
+          <div style={{ marginTop: '40px', background: 'white', padding: '20px', borderRadius: '10px' }}>
+            <h2>All User Reviews ({allReviews.length})</h2>
+            {allReviews.length === 0 ? (
+              <p>No reviews yet.</p>
+            ) : (
+              <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ background: '#f5f5f5', borderBottom: '2px solid #ddd' }}>
+                      <th>User</th>
+                      <th>Product</th>
+                      <th>Price</th>
+                      <th>Commission</th>
+                      <th>Status</th>
+                      <th>Special</th>
+                      <th>Position</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allReviews.map(review => (
+                      <tr key={review._id} style={{ borderBottom: '1px solid #eee' }}>
+                        <td>{review.username}</td>
+                        <td>{review.productName}</td>
+                        <td>${review.productPrice?.toFixed(2) || '0.00'}</td>
+                        <td>${review.commission?.toFixed(2) || '0.00'}</td>
+                        <td>{review.status}</td>
+                        <td>{review.isSpecial ? '✓' : '—'}</td>
+                        <td>{review.reviewPosition}</td>
+                        <td>{new Date(review.createdAt).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )
+      }
+    </div >
   );
 }
 

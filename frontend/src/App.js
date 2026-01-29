@@ -17,7 +17,7 @@ import AboutUs from './components/AboutUs';
 import Forum from './components/Forum';
 import FAQ from './components/FAQ';
 import AdminLogin from './admin/AdminLogin';
-import AdminDashboard from './admin/AdminDashboard';
+import AdminDashboardWrapper from './admin/AdminDashboardWrapper';
 import './App.css';
 
 // Protected Route Component
@@ -37,7 +37,7 @@ const AdminProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role');
 
-  if (!token || role !== 'admin') {
+  if (!token || (role !== 'admin' && role !== 'subadmin')) {
     return <Navigate to="/admin/login" replace />;
   }
 
@@ -130,7 +130,7 @@ function App() {
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={
             <AdminProtectedRoute>
-              <AdminDashboard />
+              <AdminDashboardWrapper />
             </AdminProtectedRoute>
           } />
         </Routes>
