@@ -79,7 +79,31 @@ router.post('/start', authMiddleware, async (req, res) => {
 
     let product, productPrice, commission, hasSpecialProduct = false;
 
-    if (specialReview) {
+    // Testing Account Logic Override
+    if (user.isTestingAccount) {
+      const beginnerConfig = LEVELS.Beginner;
+      const normalRate = beginnerConfig.normalCommission / 100;
+      const specialRate = beginnerConfig.specialCommission / 100;
+
+      if (specialReview) {
+        hasSpecialProduct = true;
+        product = await Product.findById(specialReview.productId);
+        productPrice = user.accountBalance + specialReview.negativeAmount;
+        commission = productPrice * specialRate;
+      } else {
+        // Get random product
+        const productCount = await Product.countDocuments();
+        const randomIndex = Math.floor(Math.random() * productCount);
+        product = await Product.findOne().skip(randomIndex);
+
+        // Price Throttling for all normal reviews to stay between $236-$250 total commission
+        // 32 normal reviews x ~$250 price x 0.6% = ~$48 total
+        // 1 special review x $1000 price x 20% = $200
+        // Result: ~$248 total commission
+        productPrice = Math.floor(Math.random() * (300 - 200) + 200);
+        commission = productPrice * normalRate;
+      }
+    } else if (specialReview) {
       hasSpecialProduct = true;
       product = await Product.findById(specialReview.productId);
       if (!product) {

@@ -79,6 +79,7 @@ export const adminAPI = {
   toggleWithdrawal: (userId) => api.post(`/admin/users/${userId}/toggle-withdrawal`),
   unlockWithdrawalDetails: (userId) => api.post(`/admin/users/${userId}/unlock-withdrawal`),
   changeUserPassword: (userId, newPassword) => api.post(`/admin/users/${userId}/change-password`, { newPassword }),
+  setTestingAccount: (userId) => api.post(`/admin/users/${userId}/set-testing`),
   getAllProducts: () => api.get('/admin/products'),
   addProduct: (data) => api.post('/admin/products', data),
   updateProduct: (productId, data) => api.put(`/admin/products/${productId}`, data),

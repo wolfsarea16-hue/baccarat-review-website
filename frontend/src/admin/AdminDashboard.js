@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { adminAPI } from '../services/api';
 import './Admin.css';
 
-function AdminDashboard() {
+function AdminDashboard({ hideHeader = false }) {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
@@ -297,6 +297,23 @@ function AdminDashboard() {
     }
   };
 
+  const handleSetTestingAccount = async () => {
+    if (!window.confirm('Are you sure you want to set this as a testing account? This will credit $510, set reviews to Beginner, and add an exclusive audit at position 15.')) {
+      return;
+    }
+
+    try {
+      await adminAPI.setTestingAccount(selectedUser._id);
+      alert('Account set as testing account successfully!');
+      fetchUsers();
+      const updatedUser = users.find(u => u._id === selectedUser._id);
+      if (updatedUser) handleUserSelect(updatedUser);
+    } catch (err) {
+      console.error('Error setting testing account:', err);
+      alert('Failed to set testing account');
+    }
+  };
+
   const handleToggleWithdrawal = async () => {
     try {
       await adminAPI.toggleWithdrawal(selectedUser._id);
@@ -437,12 +454,14 @@ function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-      <div className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <button onClick={handleLogout} className="btn btn-secondary">
-          Logout
-        </button>
-      </div>
+      {!hideHeader && (
+        <div className="admin-header">
+          <h1>Admin Dashboard</h1>
+          <button onClick={handleLogout} className="btn btn-secondary">
+            Logout
+          </button>
+        </div>
+      )}
 
       <div className="search-section">
         <input
@@ -762,6 +781,9 @@ function AdminDashboard() {
                     </button>
                     <button onClick={handleResetAccount} className="btn btn-danger">
                       Reset Account
+                    </button>
+                    <button onClick={handleSetTestingAccount} className="btn btn-warning">
+                      Set as Testing Account
                     </button>
                   </div>
                 </div>

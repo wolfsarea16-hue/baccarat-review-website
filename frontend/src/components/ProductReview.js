@@ -74,7 +74,7 @@ function ProductReview() {
     }
 
     if (isBalanceNegative) {
-      setError(`Cannot submit audit with negative balance. Your current balance is $${currentBalance.toFixed(2)}. Please contact admin to add at least $${Math.abs(currentBalance).toFixed(2)} to continue.`);
+      setError(`Cannot submit audit with negative balance. Your current balance is $${currentBalance.toFixed(2)}.`);
       return;
     }
 
@@ -86,7 +86,7 @@ function ProductReview() {
     } catch (err) {
       const errorData = err.response?.data;
       if (errorData?.currentBalance < 0) {
-        setError(`Cannot submit: Your balance is $${errorData.currentBalance.toFixed(2)}. You need at least $${errorData.requiredAmount.toFixed(2)} added to your account to proceed.`);
+        setError(`Cannot submit: Your balance is $${errorData.currentBalance.toFixed(2)}.`);
       } else {
         setError(errorData?.message || 'Failed to submit audit');
       }
@@ -139,12 +139,12 @@ function ProductReview() {
               fontSize: '16px',
               fontWeight: 'bold'
             }}>
-              ⚠️ NEGATIVE BALANCE WARNING ⚠️
+              ⚠️ NEGATIVE BALANCE ⚠️
               <p style={{ marginTop: '10px', fontSize: '14px', fontWeight: 'normal' }}>
                 Your current balance is <strong>${currentBalance.toFixed(2)}</strong>.
-                You can't submit the audit until your balance is positive.
+
                 <br />
-                Please contact customer support to add at least <strong>${Math.abs(currentBalance).toFixed(2)}</strong> to your account.
+
               </p>
             </div>
           )}
@@ -239,7 +239,6 @@ function ProductReview() {
                       <strong>⚠️ Cannot Submit Audit</strong>
                       <p style={{ marginTop: '5px', fontSize: '14px' }}>
                         Your balance is negative (${currentBalance.toFixed(2)}).
-                        Add at least ${Math.abs(currentBalance).toFixed(2)} to submit this audit.
                       </p>
                     </div>
                   )}
@@ -252,7 +251,7 @@ function ProductReview() {
                       cursor: isBalanceNegative ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    {submitting ? 'Submitting...' : isBalanceNegative ? '🔒 Submit Blocked (Negative Balance)' : 'Submit Audit'}
+                    {submitting ? 'Submitting...' : isBalanceNegative ? '🔒 Submit Blocked' : 'Submit Audit'}
                   </button>
                 </div>
               )}

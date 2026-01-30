@@ -101,9 +101,6 @@ function History() {
                       <span style={{ color: "#D4AF37" }}><strong>Code:</strong></span> {review.uniqueCode || 'N/A'}
                     </p>
 
-                    {review.isSpecial && (
-                      <span className="special-badge">Exclusive Audit</span>
-                    )}
 
                     {review.reviewText && (
                       <div className="review-text">

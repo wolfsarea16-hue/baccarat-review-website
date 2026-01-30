@@ -116,9 +116,9 @@ function ReviewTab() {
           <div className="review-action">
             {status?.accountBalance < 0 ? (
               <div className="error-message" style={{ textAlign: 'center', padding: '20px' }}>
-                <h2>⚠️ Negative Balance</h2>
+                <h2>⚠️ Negative Balance ⚠️</h2>
                 <p>Your account balance is negative: ${status?.accountBalance?.toFixed(2) || '0.00'}</p>
-                <p>Please contact customer support to add balance before you can continue auditing.</p>
+
               </div>
             ) : status?.reviewsRemaining > 0 ? (
               <>

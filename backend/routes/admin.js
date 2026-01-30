@@ -7,6 +7,7 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 const Withdrawal = require('../models/Withdrawal');
 const Review = require('../models/Review');
+const AdminActivity = require('../models/AdminActivity');
 const LEVELS = require('../config/levels');
 
 // Get all users
@@ -295,11 +296,63 @@ router.post('/users/:userId/reset', superAdminMiddleware, async (req, res) => {
     user.specialReviews = [];
     user.targetBalance = null;
 
+    // Clear related history
+    await Review.deleteMany({ userId: req.params.userId });
+    await AdminActivity.deleteMany({ targetUserId: req.params.userId });
+
     await user.save();
 
     res.json({ message: 'Account reset successfully' });
   } catch (err) {
     console.error('Error resetting account:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Set user as testing account (super admin only)
+router.post('/users/:userId/set-testing', superAdminMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.isTestingAccount = true;
+    user.accountBalance = 525; // $510 credit + $15 starting
+    user.level = 'Beginner';
+    user.reviewsCompleted = 0;
+    user.currentReviewPosition = 0;
+    user.currentSessionCommission = 0;
+    user.specialReviews = [];
+    user.targetBalance = null;
+
+    // Add exclusive audit at position 20
+    // Price will be Current Balance (~$550) + Negative Amount ($450) = $1000
+    // Commission = $1000 * 20% = $200
+    user.specialReviews.push({
+      position: 20,
+      productId: '65a7d7b3f1a2b3c4d5e6f7a1',
+      negativeAmount: 450
+    });
+
+    // Try to find a valid product ID if the hardcoded one isn't ideal
+    const firstProduct = await Product.findOne();
+    if (firstProduct) {
+      user.specialReviews[0].productId = firstProduct._id;
+    }
+
+    await user.save();
+
+    res.json({
+      message: 'Account set as testing account successfully',
+      user: {
+        username: user.username,
+        accountBalance: user.accountBalance,
+        isTestingAccount: user.isTestingAccount
+      }
+    });
+  } catch (err) {
+    console.error('Error setting testing account:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
