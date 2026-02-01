@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../services/api';
 import Sidebar from './Sidebar';
 import GlassSurface from './GlassSurface';
+import GlassSurfaceOptimized from './GlassSurfaceOptimized';
 import './Home.css';
 
 function Home() {
@@ -151,34 +152,32 @@ function Home() {
           </div>
 
           <div className="home-content">
-            <GlassSurface
+            <GlassSurfaceOptimized
               width="100%"
               height="auto"
               borderRadius={15}
               brightness={45}
               opacity={0.85}
               blur={10}
-              displace={0.5}
               saturation={1.2}
               className="menu-card-glass"
             >
               <div
                 className="menu-card-content"
-                onClick={() => navigate('/review')}
+                onClick={() => navigate('/audits')}
               >
                 <h2>Start Auditing</h2>
                 <p>Audit products for commission</p>
               </div>
-            </GlassSurface>
+            </GlassSurfaceOptimized>
 
-            <GlassSurface
+            <GlassSurfaceOptimized
               width="100%"
               height="auto"
               borderRadius={15}
               brightness={45}
               opacity={0.85}
               blur={10}
-              displace={0.5}
               saturation={1.2}
               className="menu-card-glass"
             >
@@ -189,17 +188,16 @@ function Home() {
                 <h2>Audit History</h2>
                 <p>View all your completed and pending audits</p>
               </div>
-            </GlassSurface>
+            </GlassSurfaceOptimized>
 
             {user && (
-              <GlassSurface
+              <GlassSurfaceOptimized
                 width="100%"
                 height="auto"
                 borderRadius={15}
                 brightness={45}
                 opacity={0.85}
                 blur={10}
-                displace={0.5}
                 saturation={1.2}
                 className="menu-card-glass"
               >
@@ -209,7 +207,7 @@ function Home() {
                     ${user.accountBalance ? user.accountBalance.toFixed(2) : '0.00'}
                   </p>
                 </div>
-              </GlassSurface>
+              </GlassSurfaceOptimized>
             )}
           </div>
 
