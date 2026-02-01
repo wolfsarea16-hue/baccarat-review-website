@@ -21,7 +21,7 @@ const GlassSurfaceOptimized = ({
     blur = 11,
     saturation = 1,
     backgroundOpacity = 0,
-    distortionScale = -180,
+    distortionScale = -80, // Reduced from -180 to prevent "flipping" on small cards
     className = '',
     style = {}
 }) => {
@@ -29,23 +29,30 @@ const GlassSurfaceOptimized = ({
     const filterId = `glass-opt-filter-${uniqueId}`;
     const [svgSupported] = useState(checkSupport);
 
-    // Static Displacement Map - 1:1 REPLICA OF ORIGINAL
+    // Static Displacement Map - Opaque neutral center prevents mirroring
     const displacementMap = `data:image/svg+xml,${encodeURIComponent(`
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <linearGradient id="g-red" x1="1" y1="0" x2="0" y2="0">
-                    <stop offset="0%" stop-color="#0000"/>
+                <linearGradient id="g-red" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="black"/>
+                    <stop offset="15%" stop-color="rgb(128,0,128)"/>
+                    <stop offset="85%" stop-color="rgb(128,0,128)"/>
                     <stop offset="100%" stop-color="red"/>
                 </linearGradient>
                 <linearGradient id="g-blue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#0000"/>
+                    <stop offset="0%" stop-color="black"/>
+                    <stop offset="15%" stop-color="rgb(128,0,128)"/>
+                    <stop offset="85%" stop-color="rgb(128,0,128)"/>
                     <stop offset="100%" stop-color="blue"/>
                 </linearGradient>
             </defs>
-            <rect width="100" height="100" fill="black"></rect>
-            <rect width="100" height="100" fill="url(#g-red)" />
-            <rect width="100" height="100" fill="url(#g-blue)" style="mix-blend-mode: difference" />
-            <rect x="5" y="5" width="90" height="90" rx="5" fill="hsl(0 0% ${brightness}% / ${opacity})" style="filter:blur(5px)" />
+            {/* Base layer displacement - zero at 128 */}
+            <rect width="100" height="100" fill="rgb(128,0,128)"></rect>
+            <rect width="100" height="100" fill="url(#g-red)" style="mix-blend-mode: screen" />
+            <rect width="100" height="100" fill="url(#g-blue)" style="mix-blend-mode: screen" />
+            
+            {/* The Solid Center - MUST BE OPAQUE to stop mirroring */}
+            <rect x="15" y="15" width="70" height="70" rx="10" fill="rgb(128,0,128)" style="filter:blur(4px)" />
         </svg>
     `)}`;
 
@@ -62,9 +69,10 @@ const GlassSurfaceOptimized = ({
     return (
         <>
             <svg className="glass-surface-opt__filter-svg" xmlns="http://www.w3.org/2000/svg">
-                <filter id={filterId} colorInterpolationFilters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+                <filter id={filterId} colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
                     <feImage href={displacementMap} x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
 
+                    {/* Sequential displacement mapping with centered neutral point */}
                     <feDisplacementMap in="SourceGraphic" in2="map" scale={distortionScale} xChannelSelector="R" yChannelSelector="B" result="dispRed" />
                     <feColorMatrix in="dispRed" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="red" />
 
