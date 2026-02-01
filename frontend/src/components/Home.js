@@ -91,13 +91,16 @@ function Home() {
         {/* 🎥 BACKGROUND VIDEO */}
         <video
           className="home-bg-video"
-          src="/bcc.mp4"
           autoPlay
           loop
           muted
           playsInline
           preload="metadata"
-        />
+        >
+          <source src="/bcc.webm" type="video/webm" />
+          <source src="/bcc.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
 
         {/* Overlay */}
         <div className="home-bg-overlay" />
