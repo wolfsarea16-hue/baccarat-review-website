@@ -3,7 +3,6 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../services/api';
 import Sidebar from './Sidebar';
-import GlassSurface from './GlassSurface';
 import GlassSurfaceOptimized from './GlassSurfaceOptimized';
 import './Home.css';
 
