@@ -1,5 +1,5 @@
 // frontend/src/components/Home.js
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../services/api';
 import Sidebar from './Sidebar';
@@ -13,6 +13,23 @@ function Home() {
   const [error, setError] = useState('');
   const [isHowModalOpen, setIsHowModalOpen] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const videoRef = useRef(null);
+
+  // Sync video playback with sidebar state (mobile optimization)
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      if (isSidebarOpen) {
+        videoRef.current.pause();
+      } else {
+        // Only resume if it was playing/supposed to play
+        videoRef.current.play().catch(err => console.log("Video play interrupted:", err));
+      }
+    }
+  }, [isSidebarOpen]);
 
   const openHowModal = () => {
     setIsHowModalOpen(true);
@@ -83,13 +100,14 @@ function Home() {
 
   return (
     <div className="page-with-sidebar home-page">
-      <Sidebar />
+      <Sidebar onToggle={(isOpen) => setIsSidebarOpen(isOpen)} />
 
       {/* MAIN CONTENT */}
       <div className="main-content home-content-wrapper">
 
         {/* 🎥 BACKGROUND VIDEO */}
         <video
+          ref={videoRef}
           className="home-bg-video"
           autoPlay
           loop

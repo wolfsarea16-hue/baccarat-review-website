@@ -93,6 +93,7 @@
 .menu-card-glass {
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
+  will-change: transform;
 }
 
 .menu-card-glass:hover {
@@ -283,6 +284,7 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.2s ease, opacity 0.2s ease;
+  will-change: transform;
   z-index: 11;
   position: absolute;
   top: 20px;

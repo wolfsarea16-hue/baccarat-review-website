@@ -7,7 +7,7 @@ import './Sidebar.css';
 
 import { userAPI } from '../services/api';
 
-function Sidebar() {
+function Sidebar({ onToggle }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -62,7 +62,9 @@ function Sidebar() {
   };
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+    const newState = !isOpen;
+    setIsOpen(newState);
+    if (onToggle) onToggle(newState);
   };
 
   // Calculate reputation slider position
@@ -85,7 +87,10 @@ function Sidebar() {
       {isOpen && (
         <div
           className="sidebar-overlay"
-          onClick={() => setIsOpen(false)}
+          onClick={() => {
+            setIsOpen(false);
+            if (onToggle) onToggle(false);
+          }}
         />
       )}
 
