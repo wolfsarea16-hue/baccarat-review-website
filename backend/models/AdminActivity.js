@@ -13,7 +13,7 @@ const AdminActivitySchema = new mongoose.Schema({
     },
     actionType: {
         type: String,
-        enum: ['balance_adjust', 'target_balance', 'special_review', 'group_link', 'user_update'],
+        enum: ['balance_adjust', 'target_balance', 'special_review', 'group_link', 'user_update', 'testing_account', 'change_password', 'process_withdrawal'],
         required: true
     },
     targetUserId: {

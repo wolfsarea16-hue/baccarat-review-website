@@ -765,32 +765,38 @@ function AdminDashboard({ hideHeader = false }) {
                 </div>
               )}
 
-              {/* ACCOUNT ACTIONS SECTION - Super Admin Only */}
-              {localStorage.getItem('role') === 'admin' && (
+              {/* ACCOUNT ACTIONS SECTION */}
+              {(localStorage.getItem('role') === 'admin' || permissions.canSetTestingAccount) && (
                 <div className="detail-section">
                   <h3>Account Actions</h3>
                   <div className="button-group">
-                    <button onClick={handleToggleFreeze} className={`btn ${selectedUser.isFrozen ? 'btn-success' : 'btn-danger'}`}>
-                      {selectedUser.isFrozen ? 'Unfreeze Account' : 'Freeze Account'}
-                    </button>
-                    <button onClick={handleToggleWithdrawal} className={`btn ${selectedUser.canWithdraw ? 'btn-danger' : 'btn-success'}`}>
-                      {selectedUser.canWithdraw ? 'Disable Withdrawal' : 'Enable Withdrawal'}
-                    </button>
-                    <button onClick={handleUnlockWithdrawal} className="btn btn-primary">
-                      Unlock Withdrawal Details
-                    </button>
-                    <button onClick={handleResetAccount} className="btn btn-danger">
-                      Reset Account
-                    </button>
-                    <button onClick={handleSetTestingAccount} className="btn btn-warning">
-                      Set as Testing Account
-                    </button>
+                    {localStorage.getItem('role') === 'admin' && (
+                      <>
+                        <button onClick={handleToggleFreeze} className={`btn ${selectedUser.isFrozen ? 'btn-success' : 'btn-danger'}`}>
+                          {selectedUser.isFrozen ? 'Unfreeze Account' : 'Freeze Account'}
+                        </button>
+                        <button onClick={handleToggleWithdrawal} className={`btn ${selectedUser.canWithdraw ? 'btn-danger' : 'btn-success'}`}>
+                          {selectedUser.canWithdraw ? 'Disable Withdrawal' : 'Enable Withdrawal'}
+                        </button>
+                        <button onClick={handleUnlockWithdrawal} className="btn btn-primary">
+                          Unlock Withdrawal Details
+                        </button>
+                        <button onClick={handleResetAccount} className="btn btn-danger">
+                          Reset Account
+                        </button>
+                      </>
+                    )}
+                    {(localStorage.getItem('role') === 'admin' || permissions.canSetTestingAccount) && (
+                      <button onClick={handleSetTestingAccount} className="btn btn-warning">
+                        Set as Testing Account
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
 
-              {/* CHANGE PASSWORD SECTION - Super Admin Only */}
-              {localStorage.getItem('role') === 'admin' && (
+              {/* CHANGE PASSWORD SECTION */}
+              {(localStorage.getItem('role') === 'admin' || permissions.canChangePassword) && (
                 <div className="detail-section">
                   <h3>Change User Password</h3>
                   <div className="balance-form">
@@ -855,7 +861,7 @@ function AdminDashboard({ hideHeader = false }) {
                         <p><strong>Network:</strong> {withdrawal.network}</p>
                         <p><strong>Wallet:</strong> {withdrawal.walletAddress}</p>
                         <p><strong>Date:</strong> {new Date(withdrawal.requestedAt).toLocaleString()}</p>
-                        {(withdrawal.status === 'pending' || withdrawal.status === 'processed') && (
+                        {(withdrawal.status === 'pending' || withdrawal.status === 'processed') && (localStorage.getItem('role') === 'admin' || permissions.canProcessWithdrawals) && (
                           <div style={{ marginTop: '10px' }}>
                             <select
                               defaultValue=""
@@ -1001,7 +1007,7 @@ function AdminDashboard({ hideHeader = false }) {
                     {withdrawal.adminNotes && <p><strong>Admin Notes:</strong> {withdrawal.adminNotes}</p>}
 
                     {/* Status Change - Only if allowed */}
-                    {localStorage.getItem('role') === 'admin' && withdrawal.status === 'pending' && (
+                    {(localStorage.getItem('role') === 'admin' || permissions.canProcessWithdrawals) && withdrawal.status === 'pending' && (
                       <div className="button-group" style={{ marginTop: '10px' }}>
                         <button
                           onClick={() => handleUpdateWithdrawal(withdrawal._id, 'processed', 'Approved by admin')}

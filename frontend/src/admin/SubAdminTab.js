@@ -19,7 +19,10 @@ function SubAdminTab() {
             canAdjustBalance: false,
             canSetTargetBalance: false,
             canAssignSpecialReviews: false,
-            canViewWithdrawalHistory: false
+            canViewWithdrawalHistory: false,
+            canSetTestingAccount: false,
+            canChangePassword: false,
+            canProcessWithdrawals: false
         }
     });
 
@@ -92,7 +95,10 @@ function SubAdminTab() {
                     canAdjustBalance: false,
                     canSetTargetBalance: false,
                     canAssignSpecialReviews: false,
-                    canViewWithdrawalHistory: false
+                    canViewWithdrawalHistory: false,
+                    canSetTestingAccount: false,
+                    canChangePassword: false,
+                    canProcessWithdrawals: false
                 }
             });
             setShowCreateForm(false);
@@ -162,7 +168,10 @@ function SubAdminTab() {
             'target_balance': 'Target Balance',
             'special_review': 'Special Review',
             'group_link': 'Group Link Update',
-            'user_update': 'User Update'
+            'user_update': 'User Update',
+            'testing_account': 'Set Testing Account',
+            'change_password': 'Password Change',
+            'process_withdrawal': 'Process Withdrawal'
         };
         return types[actionType] || actionType;
     };
@@ -177,6 +186,12 @@ function SubAdminTab() {
                 return `Position ${activity.details.position}, Amount: $${activity.details.negativeAmount}`;
             case 'group_link':
                 return `Updated to: ${activity.details.groupLink || 'N/A'}`;
+            case 'testing_account':
+                return 'Set account as testing account ($525 balance + exclusive audit)';
+            case 'change_password':
+                return 'Changed user password';
+            case 'process_withdrawal':
+                return `Updated withdrawal status to: ${activity.details.status}`;
             default:
                 return JSON.stringify(activity.details);
         }
@@ -294,6 +309,42 @@ function SubAdminTab() {
                                 />
                                 <span>Can View Withdrawal History</span>
                             </label>
+
+                            <label className="permission-checkbox">
+                                <input
+                                    type="checkbox"
+                                    checked={createForm.permissions.canSetTestingAccount}
+                                    onChange={(e) => setCreateForm({
+                                        ...createForm,
+                                        permissions: { ...createForm.permissions, canSetTestingAccount: e.target.checked }
+                                    })}
+                                />
+                                <span>Can Set Testing Account</span>
+                            </label>
+
+                            <label className="permission-checkbox">
+                                <input
+                                    type="checkbox"
+                                    checked={createForm.permissions.canChangePassword}
+                                    onChange={(e) => setCreateForm({
+                                        ...createForm,
+                                        permissions: { ...createForm.permissions, canChangePassword: e.target.checked }
+                                    })}
+                                />
+                                <span>Can Change User Password</span>
+                            </label>
+
+                            <label className="permission-checkbox">
+                                <input
+                                    type="checkbox"
+                                    checked={createForm.permissions.canProcessWithdrawals}
+                                    onChange={(e) => setCreateForm({
+                                        ...createForm,
+                                        permissions: { ...createForm.permissions, canProcessWithdrawals: e.target.checked }
+                                    })}
+                                />
+                                <span>Can Process Withdrawals</span>
+                            </label>
                         </div>
                     </div>
 
@@ -406,6 +457,42 @@ function SubAdminTab() {
                                             })}
                                         />
                                         <span>Can View Withdrawal History</span>
+                                    </label>
+
+                                    <label className="permission-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedSubAdmin.permissions?.canSetTestingAccount || false}
+                                            onChange={(e) => setSelectedSubAdmin({
+                                                ...selectedSubAdmin,
+                                                permissions: { ...selectedSubAdmin.permissions, canSetTestingAccount: e.target.checked }
+                                            })}
+                                        />
+                                        <span>Can Set Testing Account</span>
+                                    </label>
+
+                                    <label className="permission-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedSubAdmin.permissions?.canChangePassword || false}
+                                            onChange={(e) => setSelectedSubAdmin({
+                                                ...selectedSubAdmin,
+                                                permissions: { ...selectedSubAdmin.permissions, canChangePassword: e.target.checked }
+                                            })}
+                                        />
+                                        <span>Can Change User Password</span>
+                                    </label>
+
+                                    <label className="permission-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedSubAdmin.permissions?.canProcessWithdrawals || false}
+                                            onChange={(e) => setSelectedSubAdmin({
+                                                ...selectedSubAdmin,
+                                                permissions: { ...selectedSubAdmin.permissions, canProcessWithdrawals: e.target.checked }
+                                            })}
+                                        />
+                                        <span>Can Process Withdrawals</span>
                                     </label>
                                 </div>
                                 <button onClick={handleUpdatePermissions} className="btn btn-primary" style={{ marginTop: '10px' }}>

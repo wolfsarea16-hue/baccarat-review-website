@@ -37,6 +37,18 @@ const SubAdminSchema = new mongoose.Schema({
         canViewWithdrawalHistory: {
             type: Boolean,
             default: false
+        },
+        canSetTestingAccount: {
+            type: Boolean,
+            default: false
+        },
+        canChangePassword: {
+            type: Boolean,
+            default: false
+        },
+        canProcessWithdrawals: {
+            type: Boolean,
+            default: false
         }
     },
     isActive: {

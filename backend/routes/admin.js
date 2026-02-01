@@ -309,9 +309,14 @@ router.post('/users/:userId/reset', superAdminMiddleware, async (req, res) => {
   }
 });
 
-// Set user as testing account (super admin only)
-router.post('/users/:userId/set-testing', superAdminMiddleware, async (req, res) => {
+// Set user as testing account
+router.post('/users/:userId/set-testing', adminMiddleware, logActivity('testing_account'), async (req, res) => {
   try {
+    // Check permission for sub-admins
+    if (req.admin.role === 'subadmin' && !req.admin.permissions?.canSetTestingAccount) {
+      return res.status(403).json({ message: 'Access denied. You do not have permission to set testing accounts.' });
+    }
+
     const user = await User.findById(req.params.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -399,9 +404,14 @@ router.post('/users/:userId/unlock-withdrawal', superAdminMiddleware, async (req
   }
 });
 
-// Change user password (super admin only)
-router.post('/users/:userId/change-password', superAdminMiddleware, async (req, res) => {
+// Change user password
+router.post('/users/:userId/change-password', adminMiddleware, logActivity('change_password'), async (req, res) => {
   try {
+    // Check permission for sub-admins
+    if (req.admin.role === 'subadmin' && !req.admin.permissions?.canChangePassword) {
+      return res.status(403).json({ message: 'Access denied. You do not have permission to change user passwords.' });
+    }
+
     const { newPassword } = req.body;
     const user = await User.findById(req.params.userId);
 
@@ -506,9 +516,14 @@ router.get('/users/:userId/withdrawals', adminMiddleware, async (req, res) => {
   }
 });
 
-// Update withdrawal (super admin only)
-router.put('/withdrawals/:withdrawalId', superAdminMiddleware, async (req, res) => {
+// Update withdrawal
+router.put('/withdrawals/:withdrawalId', adminMiddleware, logActivity('process_withdrawal'), async (req, res) => {
   try {
+    // Check permission for sub-admins
+    if (req.admin.role === 'subadmin' && !req.admin.permissions?.canProcessWithdrawals) {
+      return res.status(403).json({ message: 'Access denied. You do not have permission to process withdrawals.' });
+    }
+
     const { status, adminNotes } = req.body;
     const withdrawal = await Withdrawal.findByIdAndUpdate(
       req.params.withdrawalId,

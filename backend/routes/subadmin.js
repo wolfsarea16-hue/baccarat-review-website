@@ -98,7 +98,10 @@ router.post('/create', superAdminMiddleware, async (req, res) => {
                 canAdjustBalance: permissions?.canAdjustBalance || false,
                 canSetTargetBalance: permissions?.canSetTargetBalance || false,
                 canAssignSpecialReviews: permissions?.canAssignSpecialReviews || false,
-                canViewWithdrawalHistory: permissions?.canViewWithdrawalHistory || false
+                canViewWithdrawalHistory: permissions?.canViewWithdrawalHistory || false,
+                canSetTestingAccount: permissions?.canSetTestingAccount || false,
+                canChangePassword: permissions?.canChangePassword || false,
+                canProcessWithdrawals: permissions?.canProcessWithdrawals || false
             }
         });
 
@@ -227,7 +230,10 @@ router.put('/:id/permissions', superAdminMiddleware, async (req, res) => {
             canAdjustBalance: permissions?.canAdjustBalance || false,
             canSetTargetBalance: permissions?.canSetTargetBalance || false,
             canAssignSpecialReviews: permissions?.canAssignSpecialReviews || false,
-            canViewWithdrawalHistory: permissions?.canViewWithdrawalHistory || false
+            canViewWithdrawalHistory: permissions?.canViewWithdrawalHistory || false,
+            canSetTestingAccount: permissions?.canSetTestingAccount || false,
+            canChangePassword: permissions?.canChangePassword || false,
+            canProcessWithdrawals: permissions?.canProcessWithdrawals || false
         };
 
         await subAdmin.save();
