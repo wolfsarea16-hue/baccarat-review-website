@@ -163,7 +163,7 @@ function Home() {
             >
               <div
                 className="menu-card-content"
-                onClick={() => navigate('/audits')}
+                onClick={() => navigate('/review')}
               >
                 <h2>Start Auditing</h2>
                 <p>Audit products for commission</p>
