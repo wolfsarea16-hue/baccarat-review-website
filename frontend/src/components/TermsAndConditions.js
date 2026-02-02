@@ -27,7 +27,7 @@ const TermsAndConditions = () => {
         "The platform will implement identity verification procedures as mandated by local government anti-money laundering and anti-terrorism financing regulations, prohibiting any member's fraudulent and abusive account activities, and member must strictly comply with local and international laws, including tax and foreign exchange regulations.",
         "If a member fails to complete auditing of all products in the account on time and does not provide a reasonable explanation or notify the Customer Support in time, the platform reserves the right to take necessary measures, including temporary account freezing, demanding a security deposit, or taking legal action to pursue personal negligence responsibility.",
         "If you need to turn off membership upgrade privileges, you must go to Customer Support and request that this privilege be turned off before you begin auditing.",
-        "The platform reserves the right to update these rules as necessary to ensure compliance with legal regulations and market practices. Any changes will be notified to booster in advance through announcements and email"
+        "The platform reserves the right to update these rules as necessary to ensure compliance with legal regulations and market practices. Any changes will be notified to members in advance through announcements and email"
     ];
 
     return (

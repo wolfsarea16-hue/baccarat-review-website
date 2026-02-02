@@ -42,7 +42,7 @@ function Sidebar({ onToggle }) {
     { path: '/forum', icon: '💬', label: 'Forum' },
     { path: '/faq', icon: '❓', label: 'FAQ' },
     { path: '/terms', icon: '📝', label: 'T&C' },
-    { path: '/about', icon: '🤓', label: 'About Us' },
+    { path: '/about', icon: '🏛️', label: 'About Us' },
   ];
 
   const handleNavigate = (path) => {
