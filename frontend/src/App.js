@@ -55,6 +55,11 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    console.log("DEBUG: Current Window Location Path:", window.location.pathname);
+    console.log("DEBUG: App component mounted");
+  }, []);
+
   return (
     <Router>
       <div className="App">
@@ -135,6 +140,15 @@ function App() {
             <AdminProtectedRoute>
               <AdminDashboardWrapper />
             </AdminProtectedRoute>
+          } />
+
+          {/* Catch-all route to debug path matching */}
+          <Route path="*" element={
+            <div style={{ padding: '50px', textAlign: 'center', background: '#f8f9fa', minHeight: '100vh' }}>
+              <h1>🔍 Route Not Found</h1>
+              <p>React thinks the current path is: <strong>{window.location.pathname}</strong></p>
+              <button onClick={() => window.location.href = '/'} className="btn btn-primary">Go to Home</button>
+            </div>
           } />
         </Routes>
       </div>
