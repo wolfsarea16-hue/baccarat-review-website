@@ -445,7 +445,7 @@ function AdminDashboard({ hideHeader = false }) {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/admin/login');
+    navigate('/manage/login');
   };
 
   if (loading) {

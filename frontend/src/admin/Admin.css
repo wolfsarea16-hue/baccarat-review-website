@@ -5,7 +5,8 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url('./moni.png') center/cover no-repeat;
+  /* background: url('./moni.png') center/cover no-repeat; */
+  background: #222;
 }
 
 .admin-login-box {

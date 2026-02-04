@@ -38,7 +38,7 @@ const AdminProtectedRoute = ({ children }) => {
   const role = localStorage.getItem('role');
 
   if (!token || (role !== 'admin' && role !== 'subadmin')) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/manage/login" replace />;
   }
 
   return children;
@@ -126,9 +126,12 @@ function App() {
             </ProtectedRoute>
           } />
 
+          {/* Diagnostic Route */}
+          <Route path="/check" element={<div style={{ padding: '50px', textAlign: 'center' }}><h1>✅ App is running!</h1></div>} />
+
           {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={
+          <Route path="/manage/login" element={<AdminLogin />} />
+          <Route path="/manage/dashboard" element={
             <AdminProtectedRoute>
               <AdminDashboardWrapper />
             </AdminProtectedRoute>

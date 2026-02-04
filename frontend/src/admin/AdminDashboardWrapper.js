@@ -15,7 +15,7 @@ function AdminDashboardWrapper() {
 
     const handleLogout = () => {
         localStorage.clear();
-        navigate('/admin/login');
+        navigate('/manage/login');
     };
 
     return (
