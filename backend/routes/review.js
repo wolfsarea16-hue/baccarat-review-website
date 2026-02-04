@@ -51,18 +51,18 @@ router.post('/start', authMiddleware, async (req, res) => {
 
     // Check if user has pending review
     if (user.pendingReview.productId) {
-      return res.status(400).json({ message: 'You already have a pending review' });
+      return res.status(400).json({ message: 'You already have a pending audit' });
     }
 
     // Check if user has completed all reviews
     if (user.reviewsCompleted >= user.totalReviewsAssigned) {
-      return res.status(400).json({ message: 'You have completed all assigned reviews' });
+      return res.status(400).json({ message: 'You have completed all assigned audits' });
     }
 
     // MINIMUM BALANCE CHECK - Must have at least $50
     if (user.accountBalance < 50) {
       return res.status(400).json({
-        message: 'Minimum balance of $50 required to start reviews. Please contact admin to add balance.',
+        message: 'Minimum balance of $50 required to start audits.',
         currentBalance: user.accountBalance,
         requiredBalance: 50
       });
@@ -107,7 +107,7 @@ router.post('/start', authMiddleware, async (req, res) => {
       hasSpecialProduct = true;
       product = await Product.findById(specialReview.productId);
       if (!product) {
-        return res.status(404).json({ message: 'Special product not found' });
+        return res.status(404).json({ message: 'Exclusive Audit not found' });
       }
 
       // Calculate price to make balance negative by negativeAmount
@@ -128,7 +128,7 @@ router.post('/start', authMiddleware, async (req, res) => {
       product = await Product.findOne().skip(randomIndex);
 
       if (!product) {
-        return res.status(404).json({ message: 'No products available' });
+        return res.status(404).json({ message: 'No audits available' });
       }
 
       // Check if user had a special product previously
@@ -232,7 +232,7 @@ router.get('/pending', authMiddleware, async (req, res) => {
     }
 
     if (!user.pendingReview.productId) {
-      return res.status(404).json({ message: 'No pending review' });
+      return res.status(404).json({ message: 'No pending audits' });
     }
 
     const product = await Product.findById(user.pendingReview.productId);
@@ -275,13 +275,13 @@ router.post('/submit/:reviewId', authMiddleware, async (req, res) => {
     }
 
     if (!user.pendingReview.productId) {
-      return res.status(400).json({ message: 'No pending review' });
+      return res.status(400).json({ message: 'No pending audit' });
     }
 
     // Check if balance is negative
     if (user.accountBalance < 0) {
       return res.status(400).json({
-        message: 'Cannot submit review with negative balance. Please contact admin to add balance.',
+        message: 'Cannot submit audit with negative balance.',
         currentBalance: user.accountBalance,
         requiredAmount: Math.abs(user.accountBalance),
         productPrice: user.pendingReview.productPrice

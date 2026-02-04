@@ -137,7 +137,8 @@ function ReviewTab() {
               </>
             ) : (
               <div className="completed-message">
-                <h2>🎉 All Audits Completed!</h2>
+                <h2><p>🎉🎉🎉</p></h2>
+                <h2>All Audits Completed!</h2>
                 <p>You have successfully completed all assigned audits.</p>
               </div>
             )}

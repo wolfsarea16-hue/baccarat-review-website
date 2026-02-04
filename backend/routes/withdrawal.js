@@ -49,7 +49,7 @@ router.post('/set-details', authMiddleware, async (req, res) => {
     // Check if already locked
     if (user.withdrawalInfo && user.withdrawalInfo.isLocked) {
       return res.status(400).json({
-        message: 'Withdrawal details are locked. Contact admin to unlock.'
+        message: 'Withdrawal details are locked.'
       });
     }
 
@@ -89,14 +89,14 @@ router.post('/request', authMiddleware, async (req, res) => {
     // Validate withdrawal permission
     if (!user.canWithdraw) {
       return res.status(403).json({
-        message: 'Withdrawal is disabled for your account. Contact admin.'
+        message: 'Withdrawal is disabled for your account.'
       });
     }
 
     // Validate reviews completed
     if (user.reviewsCompleted < user.totalReviewsAssigned) {
       return res.status(400).json({
-        message: `You must complete all ${user.totalReviewsAssigned} reviews before withdrawing. Currently completed: ${user.reviewsCompleted}`
+        message: `You must complete all ${user.totalReviewsAssigned} audits before withdrawing. Currently completed: ${user.reviewsCompleted}`
       });
     }
 
