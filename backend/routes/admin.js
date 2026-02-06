@@ -288,7 +288,6 @@ router.post('/users/:userId/reset', superAdminMiddleware, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.accountBalance = 0;
     user.reviewsCompleted = 0;
     user.currentReviewPosition = 0;
     user.currentSessionCommission = 0;
