@@ -128,26 +128,7 @@ function ProductReview() {
             <h1>Product Audit</h1>
           </div>
 
-          {isBalanceNegative && (
-            <div className="error-message" style={{
-              background: '#ff6b6b',
-              color: 'white',
-              padding: '20px',
-              borderRadius: '10px',
-              marginBottom: '20px',
-              textAlign: 'center',
-              fontSize: '16px',
-              fontWeight: 'bold'
-            }}>
-              ⚠️ NEGATIVE BALANCE ⚠️
-              <p style={{ marginTop: '10px', fontSize: '14px', fontWeight: 'normal' }}>
-                Your current balance is <strong>${currentBalance.toFixed(2)}</strong>.
 
-                <br />
-
-              </p>
-            </div>
-          )}
 
           {error && <div className="error-message">{error}</div>}
 
@@ -169,7 +150,7 @@ function ProductReview() {
                   </span>
                   {isBalanceNegative && (
                     <span className="balance-warning">
-                      ⚠️ Balance is negative - cannot submit audit
+                      ⚠️ Balance is negative - audit cannot be submitted
                     </span>
                   )}
                 </p>
@@ -227,21 +208,7 @@ function ProductReview() {
                     rows="10"
                     disabled={isBalanceNegative}
                   />
-                  {isBalanceNegative && (
-                    <div style={{
-                      padding: '15px',
-                      background: '#fff3cd',
-                      border: '1px solid #ffc107',
-                      borderRadius: '5px',
-                      marginBottom: '15px',
-                      color: '#856404'
-                    }}>
-                      <strong>⚠️ Cannot Submit Audit</strong>
-                      <p style={{ marginTop: '5px', fontSize: '14px' }}>
-                        Your balance is negative (${currentBalance.toFixed(2)}).
-                      </p>
-                    </div>
-                  )}
+
                   <button
                     onClick={handleSubmit}
                     className="btn btn-primary"
