@@ -161,8 +161,8 @@ router.post('/start', authMiddleware, async (req, res) => {
       } else {
         // No target balance OR user had special products - use balance-based calculation
         // After special products, products should scale with new balance
-        const minPrice = Math.max(10, user.accountBalance * 0.05); // At least 5% of balance
-        const maxPrice = user.accountBalance * 0.9; // Max 90% of balance
+        const minPrice = user.accountBalance * 0.40; // 40% of balance
+        const maxPrice = user.accountBalance * 0.70; // 70% of balance
 
         productPrice = Math.floor(Math.random() * (maxPrice - minPrice) + minPrice);
         commission = productPrice * commissionRate;

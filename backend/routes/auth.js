@@ -7,10 +7,17 @@ const User = require('../models/User');
 const Admin = require('../models/Admin');
 const LEVELS = require('../config/levels');
 
+// Helper to normalize phone numbers (digits only)
+const normalizePhone = (phone) => {
+  if (!phone) return phone;
+  return phone.replace(/\D/g, '');
+};
+
 // User Signup with $15 registration bonus
 router.post('/signup', async (req, res) => {
   try {
-    const { username, email, phoneNumber, password } = req.body;
+    let { username, email, phoneNumber, password } = req.body;
+    phoneNumber = normalizePhone(phoneNumber);
 
     // Validate password length
     if (password.length < 6) {
@@ -65,13 +72,16 @@ router.post('/signup', async (req, res) => {
 // User Login - supports both username and phone number
 router.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { password } = req.body;
+    let { username } = req.body;
+    const normalizedUsername = normalizePhone(username);
 
     // Find user by username OR phone number
     const user = await User.findOne({
       $or: [
         { username: username },
-        { phoneNumber: username }
+        { phoneNumber: username },
+        { phoneNumber: normalizedUsername }
       ]
     });
 
