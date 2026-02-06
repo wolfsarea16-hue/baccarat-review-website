@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Modal from './Modal';
-import logo from '../assets/baccarat-logo.svg';
 import './Sidebar.css';
 
 import { userAPI } from '../services/api';
@@ -97,7 +96,7 @@ function Sidebar({ onToggle }) {
       <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
-            <img src={logo} alt="Logo" />
+            <img src="/baccarat-logo.svg" alt="Logo" />
           </div>
           {isOpen && (
             <div className="sidebar-user-info">
