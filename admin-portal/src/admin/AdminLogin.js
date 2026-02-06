@@ -50,7 +50,7 @@ function AdminLogin() {
     <div className="admin-login-container">
       <div className="admin-login-box">
         <div className="admin-logo">
-          <img src="/baccarat-logo.svg" alt="Logo" />
+          <img src={process.env.PUBLIC_URL + '/baccarat-logo.svg'} alt="Logo" />
         </div>
         <h2>Admin Login</h2>
         {error && <div className="error-message">{error}</div>}
