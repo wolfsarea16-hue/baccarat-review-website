@@ -5,7 +5,6 @@ import { authAPI, subAdminAPI } from '../services/api';
 import './Admin.css';
 
 function AdminLogin() {
-  console.log("DEBUG: AdminLogin component rendering");
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
@@ -30,8 +29,7 @@ function AdminLogin() {
       localStorage.setItem('role', 'admin');
       localStorage.setItem('username', response.data.username || 'admin');
       localStorage.removeItem('permissions');
-      console.log("DEBUG: Super Admin login success, navigating to /manage/dashboard");
-      navigate('/manage/dashboard');
+      navigate('/dashboard');
     } catch (adminErr) {
       // If super admin login fails, try sub-admin login
       try {
@@ -40,8 +38,7 @@ function AdminLogin() {
         localStorage.setItem('role', 'subadmin');
         localStorage.setItem('username', response.data.username || 'subadmin');
         localStorage.setItem('permissions', JSON.stringify(response.data.permissions || {}));
-        console.log("DEBUG: Sub Admin login success, navigating to /manage/dashboard");
-        navigate('/manage/dashboard');
+        navigate('/dashboard');
       } catch (subAdminErr) {
         setError('Invalid username or password');
         setLoading(false);
@@ -51,7 +48,6 @@ function AdminLogin() {
 
   return (
     <div className="admin-login-container">
-      <h1 style={{ color: 'red', textAlign: 'center', background: 'white', padding: '10px' }}>DEBUG: Admin Login Page</h1>
       <div className="admin-login-box">
         <div className="admin-logo">
           <img src="/baccarat-logo.svg" alt="Logo" />

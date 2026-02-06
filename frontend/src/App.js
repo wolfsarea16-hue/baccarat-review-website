@@ -16,8 +16,6 @@ import TermsAndConditions from './components/TermsAndConditions';
 import AboutUs from './components/AboutUs';
 import Forum from './components/Forum';
 import FAQ from './components/FAQ';
-import AdminLogin from './admin/AdminLogin';
-import AdminDashboardWrapper from './admin/AdminDashboardWrapper';
 import './App.css';
 
 // Protected Route Component
@@ -32,17 +30,6 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Admin Protected Route Component
-const AdminProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role');
-
-  if (!token || (role !== 'admin' && role !== 'subadmin')) {
-    return <Navigate to="/manage/login" replace />;
-  }
-
-  return children;
-};
 
 function App() {
   useEffect(() => {
@@ -53,11 +40,6 @@ function App() {
     if (token && role) {
       console.log('User session restored:', role);
     }
-  }, []);
-
-  useEffect(() => {
-    console.log("DEBUG: Current Window Location Path:", window.location.pathname);
-    console.log("DEBUG: App component mounted");
   }, []);
 
   return (
@@ -131,25 +113,6 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* Diagnostic Route */}
-          <Route path="/check" element={<div style={{ padding: '50px', textAlign: 'center' }}><h1>✅ App is running!</h1></div>} />
-
-          {/* Admin Routes */}
-          <Route path="/manage/login" element={<AdminLogin />} />
-          <Route path="/manage/dashboard" element={
-            <AdminProtectedRoute>
-              <AdminDashboardWrapper />
-            </AdminProtectedRoute>
-          } />
-
-          {/* Catch-all route to debug path matching */}
-          <Route path="*" element={
-            <div style={{ padding: '50px', textAlign: 'center', background: '#f8f9fa', minHeight: '100vh' }}>
-              <h1>🔍 Route Not Found</h1>
-              <p>React thinks the current path is: <strong>{window.location.pathname}</strong></p>
-              <button onClick={() => window.location.href = '/'} className="btn btn-primary">Go to Home</button>
-            </div>
-          } />
         </Routes>
       </div>
     </Router>
